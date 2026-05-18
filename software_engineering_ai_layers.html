@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Software Engineering AI Layers</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #657386;
+      --line: #d7deea;
+      --bg: #f7f9fc;
+      --work: #f4f5f7;
+      --app: #eef6ff;
+      --agent: #f5f0ff;
+      --data: #edf7f0;
+      --blue: #2f6fed;
+      --violet: #7856c7;
+      --green: #23845f;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Segoe UI, Arial, sans-serif; color: var(--ink); background: var(--bg); }
+    header { padding: 24px 32px 16px; background: #fff; border-bottom: 1px solid var(--line); }
+    h1 { margin: 0; font-size: 24px; letter-spacing: 0; }
+    .sub { margin-top: 8px; color: var(--muted); font-size: 14px; }
+    main { padding: 24px 32px 40px; }
+    .matrix { display: grid; gap: 14px; }
+    .layer {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .layer-head {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 14px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      align-items: center;
+    }
+    .layer.work .layer-head { background: var(--work); }
+    .layer.app .layer-head { background: var(--app); }
+    .layer.agent .layer-head { background: var(--agent); }
+    .layer.data .layer-head { background: var(--data); }
+    .layer-title { font-weight: 800; font-size: 15px; }
+    .layer-desc { color: var(--muted); font-size: 13px; }
+    .columns {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(190px, 1fr));
+      gap: 12px;
+      padding: 14px;
+    }
+    .cell {
+      min-height: 118px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .cell h2 { margin: 0 0 8px; font-size: 14px; letter-spacing: 0; }
+    .cell p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .badge {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .agent .badge { background: #f1eaff; color: var(--violet); }
+    .data .badge { background: #e9f7ef; color: var(--green); }
+    @media (max-width: 1080px) {
+      .columns { grid-template-columns: repeat(2, minmax(190px, 1fr)); }
+    }
+    @media (max-width: 720px) {
+      header, main { padding-left: 16px; padding-right: 16px; }
+      .layer-head { grid-template-columns: 1fr; }
+      .columns { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Software Engineering Phases with AI Layered Architecture</h1>
+    <div class="sub">Four-layer MVC-style architecture mapped to lifecycle phase groups and platform responsibilities.</div>
+  </header>
+  <main class="matrix">
+    <section class="layer work">
+      <div class="layer-head"><div class="layer-title">Work Process Layer</div><div class="layer-desc">Biz process activities performed by users and governed by lifecycle gates.</div></div>
+      <div class="columns">
+        <article class="cell"><span class="badge">1-3</span><h2>Intake to Risk</h2><p>Scope, requirements, acceptance criteria, feasibility, testability, and capacity risk.</p></article>
+        <article class="cell"><span class="badge">4-7</span><h2>Design to Review</h2><p>Architecture, detailed design, implementation, code review, and static quality gates.</p></article>
+        <article class="cell"><span class="badge">8-13</span><h2>Validation to Readiness</h2><p>Test design, lab setup, CI, execution, RCA, analytics, and go/no-go.</p></article>
+        <article class="cell"><span class="badge">14-15</span><h2>Release to Learning</h2><p>Customer package, sign-off, post-release monitoring, and continuous improvement.</p></article>
+      </div>
+    </section>
+    <section class="layer app">
+      <div class="layer-head"><div class="layer-title">Application Layer</div><div class="layer-desc">Viewer/input-output services only: web UI, chatbot, dashboards, workbenches, and reports.</div></div>
+      <div class="columns">
+        <article class="cell"><span class="badge">Viewer</span><h2>Requirement Workspace</h2><p>Intake portal, review board, risk dashboard, and traceability matrix.</p></article>
+        <article class="cell"><span class="badge">Viewer</span><h2>Engineering Workbench</h2><p>Architecture canvas, planning board, code review panel, and standards report.</p></article>
+        <article class="cell"><span class="badge">Viewer</span><h2>Quality Cockpit</h2><p>Test design studio, lab dashboard, execution monitor, RCA viewer, release readiness dashboard.</p></article>
+        <article class="cell"><span class="badge">Viewer</span><h2>Release Console</h2><p>Sign-off workflow, customer package viewer, post-release dashboard, and feedback chatbot.</p></article>
+      </div>
+    </section>
+    <section class="layer agent">
+      <div class="layer-head"><div class="layer-title">Agent Layer</div><div class="layer-desc">Controller logic using AI agents, machine learning, heuristics, and orchestration.</div></div>
+      <div class="columns">
+        <article class="cell"><span class="badge">Controller</span><h2>Requirements Agents</h2><p>Extraction, ambiguity detection, acceptance criteria generation, traceability, risk scoring.</p></article>
+        <article class="cell"><span class="badge">Controller</span><h2>Engineering Agents</h2><p>Architecture reasoning, work breakdown, code generation, unit-test generation, static review.</p></article>
+        <article class="cell"><span class="badge">Controller</span><h2>Quality Agents</h2><p>Test generation, coverage optimization, lab orchestration, execution control, anomaly detection, RCA.</p></article>
+        <article class="cell"><span class="badge">Controller</span><h2>Release Agents</h2><p>Predictive scoring, checklist validation, release-note drafting, field issue clustering, backlog recommendations.</p></article>
+      </div>
+    </section>
+    <section class="layer data">
+      <div class="layer-head"><div class="layer-title">Data Layer</div><div class="layer-desc">Application model: databases, RAG indexes, graphs, logs, telemetry, artifacts, and metrics.</div></div>
+      <div class="columns">
+        <article class="cell"><span class="badge">Model</span><h2>Requirement Knowledge</h2><p>PRD/SRS repo, requirement graph, risk register, domain ontology, customer asks.</p></article>
+        <article class="cell"><span class="badge">Model</span><h2>Engineering Knowledge</h2><p>Architecture repo, source code repo, dependency graph, coding standards, API specs.</p></article>
+        <article class="cell"><span class="badge">Model</span><h2>Quality Knowledge</h2><p>Test repository, lab inventory, build logs, telemetry, defect DB, quality metrics lake.</p></article>
+        <article class="cell"><span class="badge">Model</span><h2>Release Knowledge</h2><p>Artifact repository, release records, support tickets, customer logs, lessons learned KB.</p></article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

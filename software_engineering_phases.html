@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Software Engineering Phases</title>
+  <style>
+    :root {
+      --ink: #1b2430;
+      --muted: #627084;
+      --line: #d6dde8;
+      --panel: #ffffff;
+      --bg: #f6f8fb;
+      --blue: #2f6fed;
+      --green: #23845f;
+      --amber: #b56b00;
+      --red: #c2413d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Segoe UI, Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+    header {
+      padding: 24px 32px 16px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+    h1 { margin: 0; font-size: 24px; letter-spacing: 0; }
+    .sub { margin-top: 8px; color: var(--muted); font-size: 14px; }
+    main { padding: 24px 32px 40px; }
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .chip {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .phase-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .phase {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+      min-height: 168px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, .06);
+    }
+    .phase:nth-child(3n) { border-left-color: var(--amber); }
+    .phase:nth-child(4n) { border-left-color: var(--green); }
+    .phase:nth-child(5n) { border-left-color: var(--red); }
+    .idx {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #eef4ff;
+      color: var(--blue);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    h2 { font-size: 15px; margin: 12px 0 8px; letter-spacing: 0; }
+    p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .auto {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--green);
+      font-weight: 600;
+    }
+    .feedback {
+      margin-top: 20px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+    .arrow {
+      font-size: 13px;
+      color: var(--blue);
+      font-weight: 700;
+    }
+    @media (max-width: 1180px) { .phase-grid { grid-template-columns: repeat(3, minmax(180px, 1fr)); } }
+    @media (max-width: 760px) {
+      header, main { padding-left: 16px; padding-right: 16px; }
+      .phase-grid { grid-template-columns: 1fr; }
+      .feedback { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Software Engineering Phases</h1>
+    <div class="sub">Requirements to customer release and post-release learning for an AI powered software quality platform.</div>
+  </header>
+  <main>
+    <section class="toolbar" aria-label="phase filters">
+      <div class="chip">Lifecycle</div>
+      <div class="chip">AI automation map</div>
+      <div class="chip">Quality gates</div>
+      <div class="chip">Continuous feedback loop</div>
+    </section>
+    <section class="phase-grid">
+      <article class="phase"><div><div class="idx">1</div><h2>Product Strategy and Intake</h2><p>Collect customer asks, roadmap inputs, quality goals, constraints, and release scope.</p></div><div class="auto">AI: summarize, cluster, detect conflicts</div></article>
+      <article class="phase"><div><div class="idx">2</div><h2>Requirements Engineering</h2><p>Capture PRD/SRS, acceptance criteria, traceability, ambiguity, and edge cases.</p></div><div class="auto">AI: extract, validate, trace</div></article>
+      <article class="phase"><div><div class="idx">3</div><h2>Feasibility and Risk Analysis</h2><p>Assess technical feasibility, testability, schedule, hardware, and lab capacity risk.</p></div><div class="auto">AI: score risk, forecast capacity</div></article>
+      <article class="phase"><div><div class="idx">4</div><h2>Architecture and High-Level Design</h2><p>Define interfaces, flows, quality attributes, observability, and automation hooks.</p></div><div class="auto">AI: draft options, find gaps</div></article>
+      <article class="phase"><div><div class="idx">5</div><h2>Detailed Design and Planning</h2><p>Break down epics, stories, APIs, milestones, test points, and implementation tasks.</p></div><div class="auto">AI: plan, estimate, validate checklist</div></article>
+      <article class="phase"><div><div class="idx">6</div><h2>Development and Code Generation</h2><p>Implement product code, scripts, configuration, mocks, drivers, and integrations.</p></div><div class="auto">AI: generate, refactor, document</div></article>
+      <article class="phase"><div><div class="idx">7</div><h2>Code Review and Static Gates</h2><p>Check standards, security, maintainability, complexity, and change impact.</p></div><div class="auto">AI: review, classify, summarize</div></article>
+      <article class="phase"><div><div class="idx">8</div><h2>Test Strategy and Design</h2><p>Create scenarios, coverage model, regression suite, negative and stress tests.</p></div><div class="auto">AI: generate tests, optimize coverage</div></article>
+      <article class="phase"><div><div class="idx">9</div><h2>Environment and Lab Provisioning</h2><p>Reserve labs, provision OS, prepare DUTs, connect devices, and validate readiness.</p></div><div class="auto">AI + Zion: zero-touch lab setup</div></article>
+      <article class="phase"><div><div class="idx">10</div><h2>Build, Integration, and CI</h2><p>Compile, package, publish artifacts, run smoke tests, and enforce gates.</p></div><div class="auto">AI: triage failures, enforce gates</div></article>
+      <article class="phase"><div><div class="idx">11</div><h2>Test Execution and Monitoring</h2><p>Execute validation, monitor logs and telemetry, recover from known execution issues.</p></div><div class="auto">AI + Zion: execution orchestration</div></article>
+      <article class="phase"><div><div class="idx">12</div><h2>Defect Triage and RCA</h2><p>Classify failures, deduplicate defects, assign owners, and rank likely causes.</p></div><div class="auto">AI: cluster, RCA, recommend owner</div></article>
+      <article class="phase"><div><div class="idx">13</div><h2>Quality Analytics and Release Readiness</h2><p>Evaluate release risk, coverage, defect trends, pass rate, and criteria compliance.</p></div><div class="auto">AI + DSA: predictive go/no-go</div></article>
+      <article class="phase"><div><div class="idx">14</div><h2>Customer Release and Deployment</h2><p>Package release, produce notes, validate artifacts, sign off, and hand over support.</p></div><div class="auto">AI: validate package, draft notes</div></article>
+      <article class="phase"><div><div class="idx">15</div><h2>Post Release Monitoring</h2><p>Analyze customer issues, field telemetry, escapes, and lessons learned.</p></div><div class="auto">AI: cluster tickets, feed backlog</div></article>
+    </section>
+    <section class="feedback">
+      <div>
+        <strong>Continuous improvement loop</strong>
+        <p>Post-release signals feed requirements, risk analysis, test strategy, and release scoring for the next product cycle.</p>
+      </div>
+      <div class="arrow">15 -> 2 -> 8 -> 13</div>
+    </section>
+  </main>
+</body>
+</html>

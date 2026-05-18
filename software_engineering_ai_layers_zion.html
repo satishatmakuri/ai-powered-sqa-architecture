@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Layers with Zion Embedded</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #637184;
+      --line: #d7deea;
+      --bg: #f7f9fc;
+      --panel: #ffffff;
+      --uth: #8a6500;
+      --uth-bg: #fff4d8;
+      --laas: #207854;
+      --laas-bg: #e4f5eb;
+      --dsa: #2f6fed;
+      --dsa-bg: #e8f1ff;
+      --robot: #bc3b35;
+      --robot-bg: #fdebea;
+      --agent: #7856c7;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Segoe UI, Arial, sans-serif; color: var(--ink); background: var(--bg); }
+    header { padding: 24px 32px 16px; background: #fff; border-bottom: 1px solid var(--line); }
+    h1 { margin: 0; font-size: 24px; letter-spacing: 0; }
+    .sub { margin-top: 8px; color: var(--muted); font-size: 14px; }
+    main { padding: 24px 32px 40px; display: grid; gap: 18px; }
+    .topology {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, .05);
+    }
+    .panel h2 { margin: 0 0 12px; font-size: 16px; letter-spacing: 0; }
+    .layers {
+      display: grid;
+      gap: 10px;
+    }
+    .layer {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+    .layer strong { font-size: 14px; }
+    .layer span { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .zion-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .zion {
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      padding: 14px;
+      min-height: 150px;
+    }
+    .zion h3 { margin: 0 0 8px; font-size: 15px; letter-spacing: 0; }
+    .zion p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .uth { background: var(--uth-bg); border-color: #e0c36a; }
+    .uth h3 { color: var(--uth); }
+    .laas { background: var(--laas-bg); border-color: #8ecaa9; }
+    .laas h3 { color: var(--laas); }
+    .dsa { background: var(--dsa-bg); border-color: #a9c4f8; }
+    .dsa h3 { color: var(--dsa); }
+    .robot { background: var(--robot-bg); border-color: #e8aaa6; }
+    .robot h3 { color: var(--robot); }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(150px, 1fr));
+      gap: 12px;
+    }
+    .step {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--agent);
+      border-radius: 8px;
+      padding: 14px;
+      min-height: 126px;
+    }
+    .step h3 { margin: 0 0 8px; font-size: 14px; letter-spacing: 0; }
+    .step p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+    .tag { border-radius: 999px; padding: 4px 7px; background: #eef2f7; font-size: 11px; color: #475569; font-weight: 700; }
+    .tag.uth { color: var(--uth); background: var(--uth-bg); border: 0; }
+    .tag.laas { color: var(--laas); background: var(--laas-bg); border: 0; }
+    .tag.dsa { color: var(--dsa); background: var(--dsa-bg); border: 0; }
+    .tag.robot { color: var(--robot); background: var(--robot-bg); border: 0; }
+    @media (max-width: 1120px) {
+      .topology { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
+    }
+    @media (max-width: 720px) {
+      header, main { padding-left: 16px; padding-right: 16px; }
+      .layer { grid-template-columns: 1fr; }
+      .zion-grid, .flow { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI Powered Software Quality Architecture with Zion Embedded</h1>
+    <div class="sub">Platform wireframe showing lifecycle orchestration, AI agent control, data fabric, and Zion execution subsystems.</div>
+  </header>
+  <main>
+    <section class="topology">
+      <div class="panel">
+        <h2>Layered Platform</h2>
+        <div class="layers">
+          <div class="layer"><strong>Work Process Layer</strong><span>Software engineering phase flow from requirements through release and post-release improvement.</span></div>
+          <div class="layer"><strong>Application Layer</strong><span>Lifecycle cockpit, requirement workspace, quality dashboards, lab console, release console, and chatbot.</span></div>
+          <div class="layer"><strong>Agent Layer</strong><span>AI controller layer for requirements, planning, code, test, lab, execution, RCA, analytics, and release decisions.</span></div>
+          <div class="layer"><strong>Data Layer</strong><span>Quality knowledge fabric with RAG, graph, logs, telemetry, test data, lab data, artifacts, and support signals.</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Zion Embedded Components</h2>
+        <div class="zion-grid">
+          <article class="zion uth"><h3>UTH</h3><p>Unified automation hub for QA planning, configuration, execution, monitoring, metrics, status, and reports.</p></article>
+          <article class="zion laas"><h3>LaaS</h3><p>Lab-as-a-Service for resource reservation, OS provisioning, utilization, infra consolidation, and infra on demand.</p></article>
+          <article class="zion dsa"><h3>DSA</h3><p>Data science and analytics for test optimization, anomaly detection, predictive analytics, and quality intelligence.</p></article>
+          <article class="zion robot"><h3>Robotics</h3><p>Physical zero-touch automation for device insertion, removal, storage, inventory, and smart rack operations.</p></article>
+        </div>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>End-to-End Automation Flow</h2>
+      <div class="flow">
+        <article class="step"><h3>1. Requirement Intelligence</h3><p>Extract, validate, trace, and score requirements and feasibility risks.</p><div class="tags"><span class="tag dsa">DSA</span></div></article>
+        <article class="step"><h3>2. Design and Build Quality</h3><p>Generate design checks, implementation support, code review insights, and static quality gates.</p><div class="tags"><span class="tag">AI Agents</span></div></article>
+        <article class="step"><h3>3. Test and Lab Orchestration</h3><p>Create optimized tests, reserve resources, provision systems, and prepare DUTs.</p><div class="tags"><span class="tag uth">UTH</span><span class="tag laas">LaaS</span><span class="tag robot">Robotics</span></div></article>
+        <article class="step"><h3>4. Execution and RCA</h3><p>Run validation, monitor telemetry, detect anomalies, triage defects, and recommend owners.</p><div class="tags"><span class="tag uth">UTH</span><span class="tag dsa">DSA</span></div></article>
+        <article class="step"><h3>5. Release and Learning</h3><p>Predict release readiness, validate artifacts, monitor field issues, and feed the next cycle.</p><div class="tags"><span class="tag dsa">DSA</span><span class="tag">RAG</span></div></article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
