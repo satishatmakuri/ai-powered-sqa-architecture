@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPE AI Adoption Survey — Solution Product Engineering</title>
+<style>
+/* ============================================================
+   CONFLUENCE HTML MACRO — SPE AI SURVEY
+   All styles scoped under #spe-survey to prevent Confluence
+   CSS conflicts. No external dependencies. Web-safe fonts only.
+   ============================================================ */
+
+#spe-survey * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#spe-survey {
+  font-family: "Trebuchet MS", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #1e2d3d;
+  background: #f4f6fa;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #d6dde8;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ---- HEADER ---- */
+#spe-survey .sv-header {
+  background: linear-gradient(135deg, #1a2744 0%, #243760 60%, #1e3a6e 100%);
+  padding: 28px 32px 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+#spe-survey .sv-header::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: rgba(0,180,162,0.12);
+  pointer-events: none;
+}
+
+#spe-survey .sv-badge {
+  display: inline-block;
+  background: rgba(0,180,162,0.18);
+  border: 1px solid rgba(0,180,162,0.45);
+  color: #4dd9cc;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 11px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+#spe-survey .sv-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffffff;
+  line-height: 1.25;
+  margin-bottom: 5px;
+}
+
+#spe-survey .sv-subtitle {
+  color: #8ba8cc;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+/* ---- STATS BAR ---- */
+#spe-survey .sv-statsbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  background: #1e2d47;
+  border-bottom: 2px solid #00b4a2;
+}
+
+#spe-survey .sv-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+#spe-survey .sv-stat:last-child { border-right: none; }
+
+#spe-survey .sv-stat-num {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  font-weight: bold;
+  color: #00b4a2;
+  line-height: 1;
+}
+
+#spe-survey .sv-stat-label {
+  color: #7a9cbf;
+  font-size: 10.5px;
+  line-height: 1.3;
+}
+
+/* ---- TAB NAV ---- */
+#spe-survey .sv-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  background: #ffffff;
+  border-bottom: 2px solid #e2e8f0;
+  gap: 0;
+  padding: 0 12px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+#spe-survey .sv-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 14px;
+  cursor: pointer;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #64748b;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+  user-select: none;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: inherit;
+}
+
+#spe-survey .sv-tab:hover { color: #1a2744; }
+
+#spe-survey .sv-tab.active {
+  color: #1a2744;
+  border-bottom-color: #00b4a2;
+}
+
+#spe-survey .sv-tab-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: #f1f5f9;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+#spe-survey .sv-tab.active .sv-tab-icon {
+  background: #00b4a2;
+  color: #fff;
+}
+
+/* ---- PANEL / CONTENT ---- */
+#spe-survey .sv-panel { display: none; padding: 28px 32px 36px; }
+#spe-survey .sv-panel.active { display: block; }
+
+#spe-survey .sv-panel-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid #e8edf5;
+}
+
+#spe-survey .sv-panel-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1a2744, #243760);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Georgia, serif;
+  font-size: 20px;
+  font-weight: bold;
+  color: #4dd9cc;
+  flex-shrink: 0;
+}
+
+#spe-survey .sv-panel-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1a2744;
+  margin-bottom: 4px;
+}
+
+#spe-survey .sv-panel-desc {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* ---- QUESTION CARD ---- */
+#spe-survey .sv-qcard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  border-left: 4px solid transparent;
+  transition: border-left-color 0.15s, box-shadow 0.15s;
+}
+
+#spe-survey .sv-qcard:hover {
+  border-left-color: #00b4a2;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+#spe-survey .sv-qcard.open-ended {
+  border-left-color: #e2963a;
+}
+
+#spe-survey .sv-qcard.matrix-type {
+  border-left-color: #3b6fd4;
+}
+
+#spe-survey .sv-q-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+#spe-survey .sv-qnum {
+  background: #1a2744;
+  color: #4dd9cc;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 1px;
+  letter-spacing: 0.04em;
+}
+
+#spe-survey .sv-qtext {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e2d3d;
+  line-height: 1.5;
+}
+
+#spe-survey .sv-qtype {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f1f5f9;
+  border: 1px solid #dde4ef;
+  color: #3b6fd4;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  margin-left: 46px;
+}
+
+#spe-survey .sv-options {
+  margin-left: 46px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+#spe-survey .sv-chip {
+  background: #f8f9fc;
+  border: 1px solid #dde4ef;
+  border-radius: 5px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: #3d5477;
+}
+
+#spe-survey .sv-openbox {
+  margin-left: 46px;
+  margin-top: 6px;
+  border: 1px dashed #c5d0e0;
+  border-radius: 6px;
+  padding: 10px 14px;
+  background: #fafbfd;
+  color: #94a3b8;
+  font-size: 11px;
+  font-style: italic;
+}
+
+/* ---- MATRIX TABLE ---- */
+#spe-survey .sv-matrix {
+  margin-left: 46px;
+  margin-top: 8px;
+  width: calc(100% - 46px);
+  border-collapse: collapse;
+  font-size: 11px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+#spe-survey .sv-matrix th {
+  background: #f1f5f9;
+  color: #64748b;
+  font-weight: 600;
+  padding: 7px 10px;
+  text-align: center;
+  border-bottom: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  font-size: 10px;
+}
+
+#spe-survey .sv-matrix th:first-child {
+  text-align: left;
+  width: 42%;
+}
+
+#spe-survey .sv-matrix td {
+  padding: 7px 10px;
+  border-bottom: 1px solid #f1f5f9;
+  border-right: 1px solid #f1f5f9;
+  color: #3d5477;
+  text-align: center;
+}
+
+#spe-survey .sv-matrix td:first-child {
+  text-align: left;
+  color: #1e2d3d;
+  font-weight: 500;
+}
+
+#spe-survey .sv-matrix tr:last-child td { border-bottom: none; }
+
+#spe-survey .sv-matrix tr:nth-child(even) td {
+  background: #fafbfd;
+}
+
+#spe-survey .sv-radio {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #c5d0e0;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ---- SECTION DIVIDERS ---- */
+#spe-survey .sv-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #00b4a2;
+  margin: 24px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#spe-survey .sv-section-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, #d6e4f0, transparent);
+}
+
+/* ---- TWO COLUMN GRID ---- */
+#spe-survey .sv-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+/* ---- INFOBOX ---- */
+#spe-survey .sv-infobox {
+  background: #f0f9f8;
+  border: 1px solid #b2e0da;
+  border-left: 4px solid #00b4a2;
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  font-size: 12.5px;
+  color: #1e4040;
+  line-height: 1.7;
+}
+
+#spe-survey .sv-infobox strong { color: #00836e; }
+
+/* ---- MATURITY CARDS ---- */
+#spe-survey .sv-maturity-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+#spe-survey .sv-ml-card {
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid;
+  position: relative;
+}
+
+#spe-survey .sv-ml-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: 8px 8px 0 0;
+}
+
+#spe-survey .ml0 { background: #f8f9fc; border-color: #c5d0e0; }
+#spe-survey .ml0::before { background: #94a3b8; }
+#spe-survey .ml1 { background: #fffbf0; border-color: #f6d860; }
+#spe-survey .ml1::before { background: #e6a800; }
+#spe-survey .ml2 { background: #fff7f0; border-color: #f6c49a; }
+#spe-survey .ml2::before { background: #e07820; }
+#spe-survey .ml3 { background: #f0f4ff; border-color: #a0b6f0; }
+#spe-survey .ml3::before { background: #3b6fd4; }
+#spe-survey .ml4 { background: #f5f0ff; border-color: #c0a0e8; }
+#spe-survey .ml4::before { background: #7c3aed; }
+#spe-survey .ml5 { background: #f0faf8; border-color: #7fd4c8; }
+#spe-survey .ml5::before { background: #00b4a2; }
+
+#spe-survey .sv-ml-badge {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+#spe-survey .ml0 .sv-ml-badge { color: #64748b; }
+#spe-survey .ml1 .sv-ml-badge { color: #b07800; }
+#spe-survey .ml2 .sv-ml-badge { color: #b05010; }
+#spe-survey .ml3 .sv-ml-badge { color: #1e4db4; }
+#spe-survey .ml4 .sv-ml-badge { color: #5b21b6; }
+#spe-survey .ml5 .sv-ml-badge { color: #00836e; }
+
+#spe-survey .sv-ml-name {
+  font-family: Georgia, serif;
+  font-size: 14px;
+  font-weight: bold;
+  color: #1a2744;
+  margin-bottom: 4px;
+}
+
+#spe-survey .sv-ml-range {
+  font-size: 10.5px;
+  color: #64748b;
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+#spe-survey .sv-ml-desc {
+  font-size: 11px;
+  color: #3d5477;
+  line-height: 1.55;
+}
+
+/* ---- SCORING DIMENSIONS TABLE ---- */
+#spe-survey .sv-dim-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+#spe-survey .sv-dim-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+#spe-survey .sv-dim-badge {
+  background: #1a2744;
+  color: #4dd9cc;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+#spe-survey .sv-dim-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #1e2d3d;
+  margin-bottom: 2px;
+}
+
+#spe-survey .sv-dim-qs {
+  font-size: 10.5px;
+  color: #64748b;
+}
+
+/* ---- DASHBOARD CARDS ---- */
+#spe-survey .sv-dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+#spe-survey .sv-dash-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  border-top: 3px solid #1a2744;
+}
+
+#spe-survey .sv-dash-title {
+  font-family: Georgia, serif;
+  font-size: 13px;
+  font-weight: bold;
+  color: #1a2744;
+  margin-bottom: 6px;
+}
+
+#spe-survey .sv-dash-desc {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.55;
+}
+
+/* ---- PHASE BAR CHART ---- */
+#spe-survey .sv-phasechart { margin: 16px 0; }
+
+#spe-survey .sv-phase-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 11px;
+}
+
+#spe-survey .sv-phase-label {
+  width: 150px;
+  color: #3d5477;
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 10.5px;
+}
+
+#spe-survey .sv-phase-track {
+  flex: 1;
+  height: 8px;
+  background: #e8edf5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#spe-survey .sv-phase-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #1a2744, #00b4a2);
+}
+
+#spe-survey .sv-phase-pct {
+  width: 36px;
+  color: #64748b;
+  font-size: 10.5px;
+  text-align: right;
+  font-style: italic;
+}
+
+/* ---- INSIGHTS LIST ---- */
+#spe-survey .sv-insights { list-style: none; }
+
+#spe-survey .sv-insight-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 12px;
+  color: #3d5477;
+}
+
+#spe-survey .sv-insight-item:last-child { border-bottom: none; }
+
+#spe-survey .sv-insight-num {
+  background: #00b4a2;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ---- CLOSING BOX ---- */
+#spe-survey .sv-closing {
+  background: linear-gradient(135deg, #f0faf8, #f0f4ff);
+  border: 1px solid #b2d8d4;
+  border-left: 5px solid #00b4a2;
+  border-radius: 8px;
+  padding: 22px 26px;
+  margin-top: 20px;
+  font-size: 12.5px;
+  color: #2d4a44;
+  line-height: 1.8;
+  font-style: italic;
+}
+
+#spe-survey .sv-closing strong {
+  font-style: normal;
+  color: #00836e;
+  display: block;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+/* ---- OVERVIEW TILES ---- */
+#spe-survey .sv-overview-tile {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px 18px;
+}
+
+#spe-survey .sv-tile-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #00b4a2;
+  margin-bottom: 10px;
+}
+
+#spe-survey .sv-phase-list { list-style: none; }
+
+#spe-survey .sv-phase-list li {
+  padding: 5px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 11.5px;
+  color: #3d5477;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#spe-survey .sv-phase-list li:last-child { border-bottom: none; }
+
+#spe-survey .sv-phase-list li::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00b4a2;
+  flex-shrink: 0;
+}
+
+#spe-survey .sv-team-list { list-style: none; }
+
+#spe-survey .sv-team-block {
+  margin-bottom: 12px;
+}
+
+#spe-survey .sv-team-block-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #1a2744;
+  margin-bottom: 5px;
+}
+
+#spe-survey .sv-team-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+#spe-survey .sv-team-chip {
+  background: #f1f5f9;
+  border: 1px solid #dde4ef;
+  border-radius: 4px;
+  padding: 3px 9px;
+  font-size: 10.5px;
+  color: #3d5477;
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 700px) {
+  #spe-survey .sv-maturity-grid { grid-template-columns: 1fr; }
+  #spe-survey .sv-dash-grid { grid-template-columns: 1fr; }
+  #spe-survey .sv-grid-2 { grid-template-columns: 1fr; }
+  #spe-survey .sv-dim-grid { grid-template-columns: 1fr; }
+  #spe-survey .sv-statsbar { flex-direction: column; }
+  #spe-survey .sv-phase-label { width: 110px; }
+  #spe-survey .sv-panel { padding: 20px 16px; }
+  #spe-survey .sv-header { padding: 20px 16px; }
+}
+
+/* ---- PRINT ---- */
+@media print {
+  #spe-survey .sv-tabs { display: none; }
+  #spe-survey .sv-panel { display: block !important; page-break-before: always; }
+  #spe-survey .sv-panel:first-of-type { page-break-before: avoid; }
+}
+</style>
+</head>
+<body>
+
+<div id="spe-survey">
+
+  <!-- ════════════════════════════════
+       HEADER
+  ════════════════════════════════ -->
+  <div class="sv-header">
+    <div class="sv-badge">Solution Product Engineering &nbsp;·&nbsp; AI Transformation Office</div>
+    <div class="sv-title">AI Adoption &amp; Maturity Survey</div>
+    <div class="sv-subtitle">Engineering Intelligence: Mapping Our AI Journey Across Storage Solution Development &nbsp;·&nbsp; May 2026</div>
+  </div>
+
+  <!-- ════════════════════════════════
+       STATS BAR
+  ════════════════════════════════ -->
+  <div class="sv-statsbar">
+    <div class="sv-stat">
+      <div class="sv-stat-num">37</div>
+      <div class="sv-stat-label">Questions</div>
+    </div>
+    <div class="sv-stat">
+      <div class="sv-stat-num">10</div>
+      <div class="sv-stat-label">Sections</div>
+    </div>
+    <div class="sv-stat">
+      <div class="sv-stat-num">6</div>
+      <div class="sv-stat-label">Maturity Levels</div>
+    </div>
+    <div class="sv-stat">
+      <div class="sv-stat-num">12–15</div>
+      <div class="sv-stat-label">Min to Complete</div>
+    </div>
+    <div class="sv-stat">
+      <div class="sv-stat-num">300+</div>
+      <div class="sv-stat-label">Target Respondents</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       TAB NAVIGATION
+  ════════════════════════════════ -->
+  <div class="sv-tabs">
+    <button class="sv-tab active" onclick="svShowTab('overview', this)">
+      <span class="sv-tab-icon">◈</span>Overview
+    </button>
+    <button class="sv-tab" onclick="svShowTab('secA', this)">
+      <span class="sv-tab-icon">A</span>Profile
+    </button>
+    <button class="sv-tab" onclick="svShowTab('secB', this)">
+      <span class="sv-tab-icon">B</span>Tools
+    </button>
+    <button class="sv-tab" onclick="svShowTab('secC', this)">
+      <span class="sv-tab-icon">C</span>Maturity
+    </button>
+    <button class="sv-tab" onclick="svShowTab('secD', this)">
+      <span class="sv-tab-icon">D</span>Lifecycle
+    </button>
+    <button class="sv-tab" onclick="svShowTab('secE', this)">
+      <span class="sv-tab-icon">E</span>Impact
+    </button>
+    <button class="sv-tab" onclick="svShowTab('secF', this)">
+      <span class="sv-tab-icon">F</span>Pain Points
+    </button>
+    <button class="sv-tab" onclick="svShowTab('secG', this)">
+      <span class="sv-tab-icon">G</span>Opportunities
+    </button>
+    <button class="sv-tab" onclick="svShowTab('secH', this)">
+      <span class="sv-tab-icon">H</span>Risks
+    </button>
+    <button class="sv-tab" onclick="svShowTab('secI', this)">
+      <span class="sv-tab-icon">I</span>Enablement
+    </button>
+    <button class="sv-tab" onclick="svShowTab('secJ', this)">
+      <span class="sv-tab-icon">J</span>Roadmap
+    </button>
+    <button class="sv-tab" onclick="svShowTab('model', this)">
+      <span class="sv-tab-icon">★</span>Model
+    </button>
+    <button class="sv-tab" onclick="svShowTab('dashboard', this)">
+      <span class="sv-tab-icon">▦</span>Dashboard
+    </button>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL: OVERVIEW
+  ════════════════════════════════ -->
+  <div class="sv-panel active" id="overview">
+    <div class="sv-panel-header">
+      <div class="sv-panel-icon">◈</div>
+      <div>
+        <div class="sv-panel-title">Survey Overview</div>
+        <div class="sv-panel-desc">Purpose, scope, sub-teams covered, and lifecycle phases</div>
+      </div>
+    </div>
+
+    <div class="sv-infobox">
+      <strong>Purpose Statement</strong>
+      This survey provides Solution Product Engineering leadership with a structured, data-driven view of how AI technologies are currently used — or could be used — across all teams and software engineering lifecycle phases. Findings will directly inform the AI transformation roadmap, enablement investments, governance framework, and prioritized use-case pilots across Mobile, Automotive, Server, Client/Brand, and Operational Excellence teams. Your candid responses are critical to shaping a strategy grounded in real engineering experience.
+    </div>
+
+    <div class="sv-grid-2">
+      <div class="sv-overview-tile">
+        <div class="sv-tile-label">Sub-Teams Covered</div>
+        <div class="sv-team-block">
+          <div class="sv-team-block-title">Core Business Domains</div>
+          <div class="sv-team-chips">
+            <span class="sv-team-chip">Mobile</span>
+            <span class="sv-team-chip">Automotive</span>
+            <span class="sv-team-chip">Server</span>
+            <span class="sv-team-chip">Client / Brand</span>
+          </div>
+        </div>
+        <div class="sv-team-block">
+          <div class="sv-team-block-title">New Capability</div>
+          <div class="sv-team-chips">
+            <span class="sv-team-chip">3P Partnership</span>
+            <span class="sv-team-chip">Security Coverage</span>
+            <span class="sv-team-chip">Server Validation</span>
+            <span class="sv-team-chip">Claim Debug Tool Dev</span>
+          </div>
+        </div>
+        <div class="sv-team-block">
+          <div class="sv-team-block-title">Operational Excellence</div>
+          <div class="sv-team-chips">
+            <span class="sv-team-chip">Quality</span>
+            <span class="sv-team-chip">Efficiency</span>
+            <span class="sv-team-chip">Speed</span>
+            <span class="sv-team-chip">GenAI Innovation</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sv-overview-tile">
+        <div class="sv-tile-label">Software Engineering Lifecycle Phases</div>
+        <ul class="sv-phase-list">
+          <li>Requirements Engineering</li>
+          <li>Test Strategy and Design</li>
+          <li>Environment &amp; Lab Provisioning</li>
+          <li>Verification and Validation</li>
+          <li>Test Execution and Monitoring</li>
+          <li>Defect Triage and Root Cause Analysis</li>
+          <li>Quality Analytics and Release Readiness</li>
+          <li>Post-Release Monitoring</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sv-section-label">Survey Section Map</div>
+
+    <table style="width:100%; border-collapse:collapse; font-size:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+      <thead>
+        <tr style="background:#1a2744; color:#fff;">
+          <th style="padding:10px 14px; text-align:left; width:60px;">Section</th>
+          <th style="padding:10px 14px; text-align:left;">Focus Area</th>
+          <th style="padding:10px 14px; text-align:left; width:100px;">Questions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:9px 14px; font-weight:700; color:#00836e;">A</td><td style="padding:9px 14px; color:#3d5477;">Respondent Profile — Role, team, experience, product domain</td><td style="padding:9px 14px; color:#64748b;">Q1 – Q4</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9; background:#fafbfd;"><td style="padding:9px 14px; font-weight:700; color:#00836e;">B</td><td style="padding:9px 14px; color:#3d5477;">Current AI Tool Usage — Tools, frequency, and activities</td><td style="padding:9px 14px; color:#64748b;">Q5 – Q7</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:9px 14px; font-weight:700; color:#00836e;">C</td><td style="padding:9px 14px; color:#3d5477;">AI Maturity Assessment — Level, dimensions, formal pilots</td><td style="padding:9px 14px; color:#64748b;">Q8 – Q10</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9; background:#fafbfd;"><td style="padding:9px 14px; font-weight:700; color:#00836e;">D</td><td style="padding:9px 14px; color:#3d5477;">Lifecycle Phase AI Coverage — Phase-by-phase usage and value</td><td style="padding:9px 14px; color:#64748b;">Q11 – Q12</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:9px 14px; font-weight:700; color:#00836e;">E</td><td style="padding:9px 14px; color:#3d5477;">Productivity, Quality &amp; Speed Impact — Measured and perceived gains</td><td style="padding:9px 14px; color:#64748b;">Q13 – Q15</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9; background:#fafbfd;"><td style="padding:9px 14px; font-weight:700; color:#00836e;">F</td><td style="padding:9px 14px; color:#3d5477;">Pain Points &amp; Manual Effort Areas — Repetitive, high-effort tasks</td><td style="padding:9px 14px; color:#64748b;">Q16 – Q19</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:9px 14px; font-weight:700; color:#00836e;">G</td><td style="padding:9px 14px; color:#3d5477;">AI Opportunity Identification — High-potential use cases for storage validation</td><td style="padding:9px 14px; color:#64748b;">Q20 – Q24</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9; background:#fafbfd;"><td style="padding:9px 14px; font-weight:700; color:#00836e;">H</td><td style="padding:9px 14px; color:#3d5477;">Risks, Blockers &amp; Governance — Barriers and governance needs</td><td style="padding:9px 14px; color:#64748b;">Q25 – Q28</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:9px 14px; font-weight:700; color:#00836e;">I</td><td style="padding:9px 14px; color:#3d5477;">Training &amp; Enablement Needs — Skills, formats, and infrastructure</td><td style="padding:9px 14px; color:#64748b;">Q29 – Q32</td></tr>
+        <tr><td style="padding:9px 14px; font-weight:700; color:#00836e;">J</td><td style="padding:9px 14px; color:#3d5477;">Future AI Adoption Roadmap — 6–12 month intent and commitment</td><td style="padding:9px 14px; color:#64748b;">Q33 – Q37</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL: SECTION A
+  ════════════════════════════════ -->
+  <div class="sv-panel" id="secA">
+    <div class="sv-panel-header">
+      <div class="sv-panel-icon">A</div>
+      <div>
+        <div class="sv-panel-title">Section A — Respondent Profile</div>
+        <div class="sv-panel-desc">Q1–Q4 &nbsp;·&nbsp; Role, team, experience, and product domain</div>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q1</span><span class="sv-qtext">What is your primary role within Solution Product Engineering?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Engineering Manager</span><span class="sv-chip">Technical Lead / Architect</span><span class="sv-chip">Validation / QA Engineer</span><span class="sv-chip">Software / Firmware Developer</span><span class="sv-chip">Automation Engineer</span><span class="sv-chip">Lab Engineer</span><span class="sv-chip">Defect Triage / RCA Owner</span><span class="sv-chip">Domain Lead</span><span class="sv-chip">Operational Excellence Member</span><span class="sv-chip">Other: ___</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q2</span><span class="sv-qtext">Which sub-team do you primarily work in?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Core BD — Mobile</span><span class="sv-chip">Core BD — Automotive</span><span class="sv-chip">Core BD — Server</span><span class="sv-chip">Core BD — Client / Brand</span><span class="sv-chip">New Cap — 3P Partnership</span><span class="sv-chip">New Cap — Security Coverage</span><span class="sv-chip">New Cap — Server Validation</span><span class="sv-chip">New Cap — Claim Debug Tool Dev</span><span class="sv-chip">OpEx — Quality</span><span class="sv-chip">OpEx — Efficiency / Speed</span><span class="sv-chip">OpEx — GenAI Innovation</span><span class="sv-chip">Cross-functional</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q3</span><span class="sv-qtext">How many years of experience do you have in software or validation engineering?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Less than 2 years</span><span class="sv-chip">2–5 years</span><span class="sv-chip">6–10 years</span><span class="sv-chip">11–15 years</span><span class="sv-chip">More than 15 years</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q4</span><span class="sv-qtext">Which storage product domains does your work primarily involve? (Select all that apply)</span></div>
+      <div class="sv-qtype">&#10003; Multiple Choice — Multi-Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">NVMe</span><span class="sv-chip">SATA</span><span class="sv-chip">eMMC</span><span class="sv-chip">UFS</span><span class="sv-chip">uSD</span><span class="sv-chip">SSD (Client / Enterprise)</span><span class="sv-chip">Multiple / Cross-domain</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL: SECTION B
+  ════════════════════════════════ -->
+  <div class="sv-panel" id="secB">
+    <div class="sv-panel-header">
+      <div class="sv-panel-icon">B</div>
+      <div>
+        <div class="sv-panel-title">Section B — Current AI Tool Usage</div>
+        <div class="sv-panel-desc">Q5–Q7 &nbsp;·&nbsp; Tools in active use, frequency, and engineering activities</div>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q5</span><span class="sv-qtext">Which AI tools or platforms do you currently use in your engineering work? (Select all that apply)</span></div>
+      <div class="sv-qtype">&#10003; Multiple Choice — Multi-Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">ChatGPT / GPT-4</span><span class="sv-chip">GitHub Copilot</span><span class="sv-chip">Microsoft Copilot (M365 / Azure)</span><span class="sv-chip">Google Gemini / Bard</span><span class="sv-chip">Internal / Company LLM</span><span class="sv-chip">AI-powered test generation tool</span><span class="sv-chip">AI-powered log analysis tool</span><span class="sv-chip">AI defect triage / RCA assistant</span><span class="sv-chip">Analytics / dashboarding AI tool</span><span class="sv-chip">Custom AI workflow / agent</span><span class="sv-chip">None</span><span class="sv-chip">Other: ___</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q6</span><span class="sv-qtext">How frequently do you use AI tools in your day-to-day engineering work?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Daily</span><span class="sv-chip">Several times per week</span><span class="sv-chip">Once a week</span><span class="sv-chip">Occasionally (few times per month)</span><span class="sv-chip">Rarely (once a quarter or less)</span><span class="sv-chip">Never</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q7</span><span class="sv-qtext">For what engineering activities do you currently use AI? (Select all that apply)</span></div>
+      <div class="sv-qtype">&#10003; Multiple Choice — Multi-Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Writing or reviewing code</span><span class="sv-chip">Writing test cases / test plans</span><span class="sv-chip">Log analysis and failure investigation</span><span class="sv-chip">Defect triage and root cause analysis</span><span class="sv-chip">Requirements review or summarization</span><span class="sv-chip">Documentation generation</span><span class="sv-chip">Regression suite optimization</span><span class="sv-chip">Release notes / status reports</span><span class="sv-chip">Lab automation scripting</span><span class="sv-chip">Coverage analysis and gap identification</span><span class="sv-chip">Security review / compliance check</span><span class="sv-chip">None of the above</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL: SECTION C
+  ════════════════════════════════ -->
+  <div class="sv-panel" id="secC">
+    <div class="sv-panel-header">
+      <div class="sv-panel-icon">C</div>
+      <div>
+        <div class="sv-panel-title">Section C — AI Maturity Assessment</div>
+        <div class="sv-panel-desc">Q8–Q10 &nbsp;·&nbsp; Self-reported maturity level and dimensions</div>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q8</span><span class="sv-qtext">How would you describe your team's current AI maturity level?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Level 0 — No AI awareness or usage</span><span class="sv-chip">Level 1 — Basic awareness; occasional personal experiments</span><span class="sv-chip">Level 2 — Active experimentation; some team members exploring tools</span><span class="sv-chip">Level 3 — Pilot adoption; defined use cases being tested</span><span class="sv-chip">Level 4 — Production usage; AI is part of regular workflows</span><span class="sv-chip">Level 5 — Scaled AI-driven engineering; AI embedded in processes and pipelines</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard matrix-type">
+      <div class="sv-q-row"><span class="sv-qnum">Q9</span><span class="sv-qtext">Rate your team's AI maturity across the following dimensions. (Scale: 1 = Very Low &nbsp;→&nbsp; 5 = Very High)</span></div>
+      <div class="sv-qtype">&#9632; Matrix — Likert 1–5</div>
+      <table class="sv-matrix">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>AI tool awareness among team members</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Active AI usage in engineering tasks</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>AI integration in test / validation workflows</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Leadership support for AI adoption</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Access to approved AI tools</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Confidence in AI output quality and reliability</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Team skill level to use or customize AI tools</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q10</span><span class="sv-qtext">Has your team formally defined any AI-driven use cases, pilots, or workflows in the past 12 months?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Yes — multiple defined and running pilots</span><span class="sv-chip">Yes — one pilot is in progress</span><span class="sv-chip">Discussed but nothing formal yet</span><span class="sv-chip">No — AI has not been formally discussed in our team</span><span class="sv-chip">I am not aware of any such initiatives</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL: SECTION D
+  ════════════════════════════════ -->
+  <div class="sv-panel" id="secD">
+    <div class="sv-panel-header">
+      <div class="sv-panel-icon">D</div>
+      <div>
+        <div class="sv-panel-title">Section D — AI Usage Across Lifecycle Phases</div>
+        <div class="sv-panel-desc">Q11–Q12 &nbsp;·&nbsp; Phase-by-phase coverage and highest-value prioritization</div>
+      </div>
+    </div>
+
+    <div class="sv-qcard matrix-type">
+      <div class="sv-q-row"><span class="sv-qnum">Q11</span><span class="sv-qtext">For each software engineering lifecycle phase below, indicate your current level of AI usage.</span></div>
+      <div class="sv-qtype">&#9632; Matrix — 5-Option Scale</div>
+      <table class="sv-matrix">
+        <thead>
+          <tr>
+            <th>Lifecycle Phase</th>
+            <th>Not Used</th><th>Aware</th><th>Experimenting</th><th>Piloting</th><th>In Production</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Requirements Engineering</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Test Strategy and Design</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Environment &amp; Lab Provisioning</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Verification and Validation</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Test Execution and Monitoring</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Defect Triage and Root Cause Analysis</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Quality Analytics and Release Readiness</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Post-Release Monitoring</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q12</span><span class="sv-qtext">In which lifecycle phases do you believe AI would deliver the <strong>highest value</strong> for your team? Rank your top 3 (1 = Highest Value).</span></div>
+      <div class="sv-qtype">&#8597; Ranking — Top 3</div>
+      <div class="sv-options">
+        <span class="sv-chip">Requirements Engineering</span><span class="sv-chip">Test Strategy and Design</span><span class="sv-chip">Environment &amp; Lab Provisioning</span><span class="sv-chip">Verification and Validation</span><span class="sv-chip">Test Execution and Monitoring</span><span class="sv-chip">Defect Triage and Root Cause Analysis</span><span class="sv-chip">Quality Analytics and Release Readiness</span><span class="sv-chip">Post-Release Monitoring</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL: SECTION E
+  ════════════════════════════════ -->
+  <div class="sv-panel" id="secE">
+    <div class="sv-panel-header">
+      <div class="sv-panel-icon">E</div>
+      <div>
+        <div class="sv-panel-title">Section E — Productivity, Quality &amp; Speed Impact</div>
+        <div class="sv-panel-desc">Q13–Q15 &nbsp;·&nbsp; Measured or perceived impact from AI tool usage</div>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q13</span><span class="sv-qtext">If you currently use AI tools, approximately what percentage improvement in productivity have you experienced?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">I do not use AI tools</span><span class="sv-chip">Less than 5% improvement</span><span class="sv-chip">5–15% improvement</span><span class="sv-chip">16–30% improvement</span><span class="sv-chip">31–50% improvement</span><span class="sv-chip">More than 50% improvement</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard matrix-type">
+      <div class="sv-q-row"><span class="sv-qnum">Q14</span><span class="sv-qtext">Rate the impact AI has had (or could have) on each dimension. (1 = No Impact &nbsp;→&nbsp; 5 = Transformational)</span></div>
+      <div class="sv-qtype">&#9632; Matrix — Likert 1–5</div>
+      <table class="sv-matrix">
+        <thead>
+          <tr><th>Impact Area</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Test case authoring speed</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Defect detection rate</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Root cause analysis turnaround time</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Regression cycle duration</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Lab setup and provisioning efficiency</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Release readiness confidence</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Post-release issue response time</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Engineering documentation quality</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Cross-team knowledge sharing</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sv-qcard open-ended">
+      <div class="sv-q-row"><span class="sv-qnum">Q15</span><span class="sv-qtext">What has been the most significant measurable or perceived gain from AI usage in your work?</span></div>
+      <div class="sv-qtype">&#9998; Open-Ended</div>
+      <div class="sv-openbox">Your response here...</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL: SECTION F
+  ════════════════════════════════ -->
+  <div class="sv-panel" id="secF">
+    <div class="sv-panel-header">
+      <div class="sv-panel-icon">F</div>
+      <div>
+        <div class="sv-panel-title">Section F — Pain Points &amp; Manual Effort Areas</div>
+        <div class="sv-panel-desc">Q16–Q19 &nbsp;·&nbsp; Identifying unautomated, repetitive engineering work</div>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q16</span><span class="sv-qtext">Which activities in your team are currently <strong>manual, repetitive, and effort-intensive</strong>? (Select all that apply)</span></div>
+      <div class="sv-qtype">&#10003; Multiple Choice — Multi-Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Writing test cases from scratch for each product variant</span><span class="sv-chip">Analyzing large NVMe / SATA / eMMC / UFS test logs for failure patterns</span><span class="sv-chip">Triaging defects and assigning root cause categories</span><span class="sv-chip">Setting up lab environments for each test cycle</span><span class="sv-chip">Generating release readiness reports and quality dashboards</span><span class="sv-chip">Tracking test coverage gaps across firmware versions</span><span class="sv-chip">Monitoring post-release field issues and correlating with test data</span><span class="sv-chip">Cross-referencing customer complaints with known defect databases</span><span class="sv-chip">Managing regression suite optimization across product variants</span><span class="sv-chip">Writing or updating compliance documentation</span><span class="sv-chip">Security review across storage protocol stacks</span><span class="sv-chip">Other: ___</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q17</span><span class="sv-qtext">Estimate the percentage of your weekly engineering time spent on manual, low-complexity, and repetitive tasks.</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Less than 10%</span><span class="sv-chip">10–20%</span><span class="sv-chip">21–35%</span><span class="sv-chip">36–50%</span><span class="sv-chip">More than 50%</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q18</span><span class="sv-qtext">Which engineering phase has the highest volume of manual and unstructured effort in your team?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Requirements Engineering</span><span class="sv-chip">Test Strategy and Design</span><span class="sv-chip">Lab Provisioning</span><span class="sv-chip">Test Execution and Monitoring</span><span class="sv-chip">Defect Triage and RCA</span><span class="sv-chip">Quality Analytics and Release Readiness</span><span class="sv-chip">Post-Release Monitoring</span><span class="sv-chip">Equally distributed</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard open-ended">
+      <div class="sv-q-row"><span class="sv-qnum">Q19</span><span class="sv-qtext">Describe the single most painful manual process in your team's engineering workflow that you believe AI could meaningfully address.</span></div>
+      <div class="sv-qtype">&#9998; Open-Ended</div>
+      <div class="sv-openbox">Your response here...</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL: SECTION G
+  ════════════════════════════════ -->
+  <div class="sv-panel" id="secG">
+    <div class="sv-panel-header">
+      <div class="sv-panel-icon">G</div>
+      <div>
+        <div class="sv-panel-title">Section G — AI Opportunity Identification</div>
+        <div class="sv-panel-desc">Q20–Q24 &nbsp;·&nbsp; High-potential AI use cases specific to semiconductor storage validation</div>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q20</span><span class="sv-qtext">Which of the following AI use cases do you believe are <strong>most viable</strong> for your team? Select your top 5.</span></div>
+      <div class="sv-qtype">&#10003; Multiple Choice — Select Up to 5</div>
+      <div class="sv-options">
+        <span class="sv-chip">AI-assisted test case generation from requirements or spec documents</span><span class="sv-chip">Automated log parsing and failure classification for storage protocols</span><span class="sv-chip">LLM-powered defect triage with historical correlation</span><span class="sv-chip">Predictive regression selection based on code delta and risk</span><span class="sv-chip">AI-driven lab scheduling and environment provisioning</span><span class="sv-chip">Release risk prediction using quality and coverage signals</span><span class="sv-chip">Agentic AI for end-to-end test-run-analyze-report cycles</span><span class="sv-chip">GenAI-based RCA assistant for NVMe / SATA / UFS command failures</span><span class="sv-chip">AI-powered security vulnerability scanning in storage firmware</span><span class="sv-chip">Automated customer claim analysis and correlation with test data</span><span class="sv-chip">Coverage gap detection using AI over historical test runs</span><span class="sv-chip">AI-generated compliance documentation and traceability matrices</span><span class="sv-chip">Other: ___</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q21</span><span class="sv-qtext">How ready is your team to adopt <strong>Agentic AI</strong> — autonomous AI workflows that plan, execute, and reason across multiple engineering tasks with minimal human intervention?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Not ready — foundational AI adoption hasn't started</span><span class="sv-chip">Somewhat ready — we have experimented with basic AI tools</span><span class="sv-chip">Moderately ready — we have some AI workflows and are exploring agents</span><span class="sv-chip">Ready — we have infrastructure and culture to support agentic pilots</span><span class="sv-chip">Very ready — we have active agentic workflows in production</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q22</span><span class="sv-qtext">Which storage-validation-specific AI scenario excites your team the most?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Automated NVMe / SATA command log analysis and failure clustering</span><span class="sv-chip">AI-assisted test plan generation for new UFS or eMMC product variants</span><span class="sv-chip">Predictive quality analytics for pre-release Go / No-Go decisions</span><span class="sv-chip">Agentic defect triage and RCA summarization</span><span class="sv-chip">GenAI-driven regression optimization for multi-SKU storage validation</span><span class="sv-chip">AI-powered post-release field issue correlation and clustering</span><span class="sv-chip">Other: ___</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q23</span><span class="sv-qtext">Are there existing internal datasets (test logs, defect databases, regression histories, field issue records) that could be used to train or ground AI models for your team's use cases?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Yes — large volumes of structured, accessible data are available</span><span class="sv-chip">Yes — data exists but is unstructured, siloed, or inconsistently formatted</span><span class="sv-chip">Partial — some structured data exists, much is inaccessible</span><span class="sv-chip">No — largely unstructured, incomplete, or unavailable</span><span class="sv-chip">I am not aware of the data landscape in my team</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard open-ended">
+      <div class="sv-q-row"><span class="sv-qnum">Q24</span><span class="sv-qtext">Describe one AI use case that, if implemented, would most significantly accelerate your team's engineering velocity or quality outcomes.</span></div>
+      <div class="sv-qtype">&#9998; Open-Ended</div>
+      <div class="sv-openbox">Your response here...</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL: SECTION H
+  ════════════════════════════════ -->
+  <div class="sv-panel" id="secH">
+    <div class="sv-panel-header">
+      <div class="sv-panel-icon">H</div>
+      <div>
+        <div class="sv-panel-title">Section H — Risks, Blockers &amp; Governance</div>
+        <div class="sv-panel-desc">Q25–Q28 &nbsp;·&nbsp; Barriers to adoption, risk concerns, and governance readiness</div>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q25</span><span class="sv-qtext">What are the <strong>primary barriers</strong> preventing greater AI adoption in your team? (Select all that apply)</span></div>
+      <div class="sv-qtype">&#10003; Multiple Choice — Multi-Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Lack of approved or accessible AI tools</span><span class="sv-chip">Data privacy and IP sensitivity concerns</span><span class="sv-chip">Insufficient training or awareness</span><span class="sv-chip">Distrust in AI output quality or reliability</span><span class="sv-chip">Lack of engineering time to experiment</span><span class="sv-chip">No clear AI strategy or direction from leadership</span><span class="sv-chip">Infrastructure limitations (compute, data pipelines, APIs)</span><span class="sv-chip">Governance and compliance concerns</span><span class="sv-chip">Resistance to change or cultural inertia</span><span class="sv-chip">Lack of domain-specific AI tools for storage validation</span><span class="sv-chip">No perceived business value in current AI tools</span><span class="sv-chip">Other: ___</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard matrix-type">
+      <div class="sv-q-row"><span class="sv-qnum">Q26</span><span class="sv-qtext">Rate your level of concern about the following AI-related risks. (1 = Not Concerned &nbsp;→&nbsp; 5 = Very Concerned)</span></div>
+      <div class="sv-qtype">&#9632; Matrix — Likert 1–5</div>
+      <table class="sv-matrix">
+        <thead>
+          <tr><th>Risk</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>AI generating incorrect test cases or false-positive defects</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>IP or trade-secret exposure via external AI tools</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>AI-generated compliance documentation with inaccuracies</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Over-reliance on AI reducing engineering skill depth</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Security vulnerabilities introduced via AI-generated code</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>AI bias in defect prioritization or release risk scoring</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+          <tr><td>Lack of auditability for AI-assisted engineering decisions</td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td><td><span class="sv-radio"></span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q27</span><span class="sv-qtext">Does your team currently have any guidelines or governance policies for AI tool usage?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Yes — formal written policies are in place and communicated</span><span class="sv-chip">Partial — informal guidelines exist but are not formalized</span><span class="sv-chip">No — there are no policies and we rely on individual judgment</span><span class="sv-chip">I am not aware of any policies</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q28</span><span class="sv-qtext">What governance capability is most urgently needed before your team can safely scale AI usage?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Clear policy on which data can be shared with AI tools</span><span class="sv-chip">AI output validation and human-review checkpoints</span><span class="sv-chip">Approved toolchain and platform list</span><span class="sv-chip">Auditability and traceability of AI-assisted decisions</span><span class="sv-chip">Role-based access and permissions for AI tools</span><span class="sv-chip">Legal and IP framework for AI-generated artifacts</span><span class="sv-chip">Other: ___</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL: SECTION I
+  ════════════════════════════════ -->
+  <div class="sv-panel" id="secI">
+    <div class="sv-panel-header">
+      <div class="sv-panel-icon">I</div>
+      <div>
+        <div class="sv-panel-title">Section I — Training &amp; Enablement Needs</div>
+        <div class="sv-panel-desc">Q29–Q32 &nbsp;·&nbsp; Skills, training formats, infrastructure, and available time</div>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q29</span><span class="sv-qtext">Rate your current proficiency with AI tools relevant to your engineering work.</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">No proficiency — I have not used AI tools</span><span class="sv-chip">Beginner — I can use basic AI prompts for simple tasks</span><span class="sv-chip">Intermediate — I can design prompts, interpret outputs, and integrate results</span><span class="sv-chip">Advanced — I can build or customize AI workflows and evaluate reliability</span><span class="sv-chip">Expert — I can design, fine-tune, or deploy AI systems for engineering use cases</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q30</span><span class="sv-qtext">Which training and enablement formats would most accelerate your team's AI adoption? Select your top 3.</span></div>
+      <div class="sv-qtype">&#10003; Multiple Choice — Select Up to 3</div>
+      <div class="sv-options">
+        <span class="sv-chip">Hands-on workshops with real storage validation use cases</span><span class="sv-chip">AI prompt engineering training for engineers</span><span class="sv-chip">Role-specific AI playbooks (e.g. "AI for QA Engineers")</span><span class="sv-chip">Live demos of AI tools solving real team pain points</span><span class="sv-chip">Self-paced learning modules integrated with work tools</span><span class="sv-chip">Dedicated AI champions or coaches embedded in each sub-team</span><span class="sv-chip">Cross-team AI case study sharing sessions</span><span class="sv-chip">AI sandbox environment with real engineering data</span><span class="sv-chip">Certification programs in AI for engineering professionals</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q31</span><span class="sv-qtext">What infrastructure or platform investment would most accelerate AI adoption in your team? (Select all that apply)</span></div>
+      <div class="sv-qtype">&#10003; Multiple Choice — Multi-Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Internal LLM with access to internal engineering data</span><span class="sv-chip">AI-integrated test management and defect tracking platform</span><span class="sv-chip">Structured access to anonymized / sanitized test logs for AI training</span><span class="sv-chip">AI-enabled lab automation platform</span><span class="sv-chip">Centralized AI experimentation environment (sandbox)</span><span class="sv-chip">Integration of AI into existing CI/CD or test pipeline tools</span><span class="sv-chip">Knowledge graph or RAG system over engineering data</span><span class="sv-chip">None — current infrastructure is sufficient</span><span class="sv-chip">Other: ___</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q32</span><span class="sv-qtext">How much dedicated time per week could your team realistically invest in AI adoption activities (learning, piloting, building)?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Less than 1 hour</span><span class="sv-chip">1–2 hours</span><span class="sv-chip">3–5 hours</span><span class="sv-chip">6–10 hours</span><span class="sv-chip">More than 10 hours</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL: SECTION J
+  ════════════════════════════════ -->
+  <div class="sv-panel" id="secJ">
+    <div class="sv-panel-header">
+      <div class="sv-panel-icon">J</div>
+      <div>
+        <div class="sv-panel-title">Section J — Future AI Adoption Roadmap</div>
+        <div class="sv-panel-desc">Q33–Q37 &nbsp;·&nbsp; 6–12 month intent, priorities, and personal commitment</div>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q33</span><span class="sv-qtext">What is your team's AI adoption priority for the <strong>next 6 months</strong>?</span></div>
+      <div class="sv-qtype">&#9679; Multiple Choice — Single Select</div>
+      <div class="sv-options">
+        <span class="sv-chip">Start awareness and training — no tool usage yet</span><span class="sv-chip">Experiment with 1–2 AI tools in low-risk workflows</span><span class="sv-chip">Define and launch 1 formal pilot use case</span><span class="sv-chip">Expand an existing pilot to broader team usage</span><span class="sv-chip">Integrate AI into a production-grade engineering workflow</span><span class="sv-chip">Scale AI-driven engineering across multiple phases</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q34</span><span class="sv-qtext">Which best describes your team's confidence in achieving AI-driven productivity gains within the next 12 months?</span></div>
+      <div class="sv-qtype">&#8596; Likert Scale — 5 Points</div>
+      <div class="sv-options">
+        <span class="sv-chip">Strongly Disagree — We see no viable path in 12 months</span><span class="sv-chip">Disagree — Significant blockers exist</span><span class="sv-chip">Neutral — Possible but uncertain</span><span class="sv-chip">Agree — We have a clear path and initial momentum</span><span class="sv-chip">Strongly Agree — We are on track for meaningful AI-driven gains</span>
+      </div>
+    </div>
+
+    <div class="sv-qcard open-ended">
+      <div class="sv-q-row"><span class="sv-qnum">Q35</span><span class="sv-qtext">If you could ask the AI transformation leadership team to solve <strong>one problem</strong> to accelerate AI adoption in your team, what would it be?</span></div>
+      <div class="sv-qtype">&#9998; Open-Ended</div>
+      <div class="sv-openbox">Your response here...</div>
+    </div>
+
+    <div class="sv-qcard open-ended">
+      <div class="sv-q-row"><span class="sv-qnum">Q36</span><span class="sv-qtext">In your view, what should the organization's <strong>top 3 AI engineering priorities</strong> be for the next 12 months?</span></div>
+      <div class="sv-qtype">&#9998; Open-Ended</div>
+      <div class="sv-openbox">Your response here...</div>
+    </div>
+
+    <div class="sv-qcard">
+      <div class="sv-q-row"><span class="sv-qnum">Q37</span><span class="sv-qtext">On a scale of 1 to 10, how committed are you personally to contributing to AI adoption efforts in your team? (1 = Not at all committed &nbsp;·&nbsp; 10 = Fully committed)</span></div>
+      <div class="sv-qtype">&#9733; Rating Scale — 1 to 10</div>
+      <div class="sv-options">
+        <span class="sv-chip">1</span><span class="sv-chip">2</span><span class="sv-chip">3</span><span class="sv-chip">4</span><span class="sv-chip">5</span><span class="sv-chip">6</span><span class="sv-chip">7</span><span class="sv-chip">8</span><span class="sv-chip">9</span><span class="sv-chip">10</span>
+      </div>
+    </div>
+
+    <div class="sv-closing">
+      <strong>Closing Note</strong>
+      Thank you for completing the Solution Product Engineering AI Adoption Survey. Your input directly shapes our AI transformation strategy and ensures our approach is grounded in the real experiences of our engineering community.<br><br>
+      All responses are confidential and will be analyzed in aggregate. Individual responses will not be attributed without explicit consent.<br><br>
+      Results and insights will be shared with the broader SPE team through a leadership briefing and team-level summary within 4 weeks of survey close.<br><br>
+      <em>Together, we are building an AI-driven engineering future — one use case at a time.</em>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL: MATURITY MODEL
+  ════════════════════════════════ -->
+  <div class="sv-panel" id="model">
+    <div class="sv-panel-header">
+      <div class="sv-panel-icon">★</div>
+      <div>
+        <div class="sv-panel-title">AI Maturity Scoring Model</div>
+        <div class="sv-panel-desc">6-level classification system with composite scoring across 7 engineering dimensions</div>
+      </div>
+    </div>
+
+    <div class="sv-maturity-grid">
+      <div class="sv-ml-card ml0">
+        <span class="sv-ml-badge">Level 0</span>
+        <div class="sv-ml-name">No AI Awareness</div>
+        <div class="sv-ml-range">Composite Score: 0–7</div>
+        <div class="sv-ml-desc">No tools used. No awareness or intent. Engineering work is entirely manual and traditional. No exposure to AI concepts in team discussions.</div>
+      </div>
+      <div class="sv-ml-card ml1">
+        <span class="sv-ml-badge">Level 1</span>
+        <div class="sv-ml-name">Basic Awareness</div>
+        <div class="sv-ml-range">Composite Score: 8–14</div>
+        <div class="sv-ml-desc">Aware of AI tools; occasional personal experiments. No team-level adoption. Individual engineers may have explored ChatGPT or similar tools informally.</div>
+      </div>
+      <div class="sv-ml-card ml2">
+        <span class="sv-ml-badge">Level 2</span>
+        <div class="sv-ml-name">Experimentation</div>
+        <div class="sv-ml-range">Composite Score: 15–22</div>
+        <div class="sv-ml-desc">Active experimentation by multiple team members. No formal pilots or structured use cases. AI usage is ad hoc and not tracked or measured.</div>
+      </div>
+      <div class="sv-ml-card ml3">
+        <span class="sv-ml-badge">Level 3</span>
+        <div class="sv-ml-name">Pilot Adoption</div>
+        <div class="sv-ml-range">Composite Score: 23–29</div>
+        <div class="sv-ml-desc">1+ defined AI use cases in structured pilot. Leadership is aware and supportive. Initial results are being measured and documented.</div>
+      </div>
+      <div class="sv-ml-card ml4">
+        <span class="sv-ml-badge">Level 4</span>
+        <div class="sv-ml-name">Production Usage</div>
+        <div class="sv-ml-range">Composite Score: 30–32</div>
+        <div class="sv-ml-desc">AI embedded in regular engineering workflows. Measurable outcomes in at least one lifecycle phase. Governance and tooling are in place.</div>
+      </div>
+      <div class="sv-ml-card ml5">
+        <span class="sv-ml-badge">Level 5</span>
+        <div class="sv-ml-name">Scaled AI Engineering</div>
+        <div class="sv-ml-range">Composite Score: 33–35</div>
+        <div class="sv-ml-desc">AI across multiple lifecycle phases. KPIs tracked. Agentic workflows in use. Center of excellence established. Continuous improvement cycle active.</div>
+      </div>
+    </div>
+
+    <div class="sv-section-label">Scoring Dimensions &amp; Question Mapping</div>
+
+    <div class="sv-dim-grid">
+      <div class="sv-dim-row">
+        <span class="sv-dim-badge">D1</span>
+        <div>
+          <div class="sv-dim-label">AI Awareness</div>
+          <div class="sv-dim-qs">Key Questions: Q5, Q8, Q10</div>
+        </div>
+      </div>
+      <div class="sv-dim-row">
+        <span class="sv-dim-badge">D2</span>
+        <div>
+          <div class="sv-dim-label">Active Tool Usage</div>
+          <div class="sv-dim-qs">Key Questions: Q6, Q7, Q11</div>
+        </div>
+      </div>
+      <div class="sv-dim-row">
+        <span class="sv-dim-badge">D3</span>
+        <div>
+          <div class="sv-dim-label">Workflow Integration</div>
+          <div class="sv-dim-qs">Key Questions: Q11, Q20, Q33</div>
+        </div>
+      </div>
+      <div class="sv-dim-row">
+        <span class="sv-dim-badge">D4</span>
+        <div>
+          <div class="sv-dim-label">Impact Realization</div>
+          <div class="sv-dim-qs">Key Questions: Q13, Q14</div>
+        </div>
+      </div>
+      <div class="sv-dim-row">
+        <span class="sv-dim-badge">D5</span>
+        <div>
+          <div class="sv-dim-label">Governance Readiness</div>
+          <div class="sv-dim-qs">Key Questions: Q27, Q28</div>
+        </div>
+      </div>
+      <div class="sv-dim-row">
+        <span class="sv-dim-badge">D6</span>
+        <div>
+          <div class="sv-dim-label">Enablement &amp; Skill</div>
+          <div class="sv-dim-qs">Key Questions: Q29, Q30</div>
+        </div>
+      </div>
+      <div class="sv-dim-row">
+        <span class="sv-dim-badge">D7</span>
+        <div>
+          <div class="sv-dim-label">Strategic Intent</div>
+          <div class="sv-dim-qs">Key Questions: Q34, Q37</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sv-section-label">Response Type Summary</div>
+
+    <table style="width:100%; border-collapse:collapse; font-size:11.5px; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+      <thead>
+        <tr style="background:#1a2744; color:#fff;">
+          <th style="padding:9px 14px; text-align:left;">Question Range</th>
+          <th style="padding:9px 14px; text-align:left;">Response Type</th>
+          <th style="padding:9px 14px; text-align:left;">Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q1–Q4</td><td style="padding:8px 14px; color:#3d5477;">Multiple Choice (Single / Multi-select)</td><td style="padding:8px 14px; color:#64748b;">Segment respondents by role, team, domain</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9; background:#fafbfd;"><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q5–Q7</td><td style="padding:8px 14px; color:#3d5477;">Multiple Choice (Multi-select)</td><td style="padding:8px 14px; color:#64748b;">Map current tool landscape and usage patterns</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q8–Q10</td><td style="padding:8px 14px; color:#3d5477;">Multiple Choice (Single)</td><td style="padding:8px 14px; color:#64748b;">Self-reported maturity baseline</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9; background:#fafbfd;"><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q11</td><td style="padding:8px 14px; color:#3d5477;">Matrix (5-option scale)</td><td style="padding:8px 14px; color:#64748b;">Phase-by-phase AI coverage heatmap</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q12</td><td style="padding:8px 14px; color:#3d5477;">Ranking (Top 3)</td><td style="padding:8px 14px; color:#64748b;">Priority phases for AI investment</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9; background:#fafbfd;"><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q13</td><td style="padding:8px 14px; color:#3d5477;">Multiple Choice (Single)</td><td style="padding:8px 14px; color:#64748b;">Quantified productivity impact</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q14</td><td style="padding:8px 14px; color:#3d5477;">Matrix (Likert 1–5)</td><td style="padding:8px 14px; color:#64748b;">Impact heatmap across engineering dimensions</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9; background:#fafbfd;"><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q15, Q19, Q24, Q35, Q36</td><td style="padding:8px 14px; color:#3d5477;">Open-Ended</td><td style="padding:8px 14px; color:#64748b;">Qualitative insights and theme clustering</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q16–Q18</td><td style="padding:8px 14px; color:#3d5477;">Multiple Choice (Multi / Single)</td><td style="padding:8px 14px; color:#64748b;">Manual effort burden mapping</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9; background:#fafbfd;"><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q20–Q23</td><td style="padding:8px 14px; color:#3d5477;">Multiple Choice (Multi / Single)</td><td style="padding:8px 14px; color:#64748b;">Use case opportunity prioritization</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q25–Q28</td><td style="padding:8px 14px; color:#3d5477;">Multiple Choice + Matrix</td><td style="padding:8px 14px; color:#64748b;">Blocker profiling and governance gap analysis</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9; background:#fafbfd;"><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q29–Q32</td><td style="padding:8px 14px; color:#3d5477;">Multiple Choice (Single / Multi)</td><td style="padding:8px 14px; color:#64748b;">Enablement and skill gap mapping</td></tr>
+        <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q33–Q34</td><td style="padding:8px 14px; color:#3d5477;">Multiple Choice / Likert</td><td style="padding:8px 14px; color:#64748b;">Roadmap intent and confidence</td></tr>
+        <tr><td style="padding:8px 14px; color:#3d5477; font-weight:600;">Q37</td><td style="padding:8px 14px; color:#3d5477;">Rating Scale (1–10)</td><td style="padding:8px 14px; color:#64748b;">Personal commitment index</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL: DASHBOARD
+  ════════════════════════════════ -->
+  <div class="sv-panel" id="dashboard">
+    <div class="sv-panel-header">
+      <div class="sv-panel-icon">▦</div>
+      <div>
+        <div class="sv-panel-title">Analytics Dashboard Guide</div>
+        <div class="sv-panel-desc">Recommended views for leadership insights and AI transformation decisions</div>
+      </div>
+    </div>
+
+    <div class="sv-section-label">Illustrative Phase Coverage (Sample Data)</div>
+
+    <div class="sv-phasechart">
+      <div class="sv-phase-row"><span class="sv-phase-label">Requirements Eng.</span><div class="sv-phase-track"><div class="sv-phase-fill" style="width:18%"></div></div><span class="sv-phase-pct">18%</span></div>
+      <div class="sv-phase-row"><span class="sv-phase-label">Test Strategy / Design</span><div class="sv-phase-track"><div class="sv-phase-fill" style="width:32%"></div></div><span class="sv-phase-pct">32%</span></div>
+      <div class="sv-phase-row"><span class="sv-phase-label">Lab Provisioning</span><div class="sv-phase-track"><div class="sv-phase-fill" style="width:22%"></div></div><span class="sv-phase-pct">22%</span></div>
+      <div class="sv-phase-row"><span class="sv-phase-label">Verification &amp; Validation</span><div class="sv-phase-track"><div class="sv-phase-fill" style="width:40%"></div></div><span class="sv-phase-pct">40%</span></div>
+      <div class="sv-phase-row"><span class="sv-phase-label">Test Execution</span><div class="sv-phase-track"><div class="sv-phase-fill" style="width:28%"></div></div><span class="sv-phase-pct">28%</span></div>
+      <div class="sv-phase-row"><span class="sv-phase-label">Defect Triage / RCA</span><div class="sv-phase-track"><div class="sv-phase-fill" style="width:45%"></div></div><span class="sv-phase-pct">45%</span></div>
+      <div class="sv-phase-row"><span class="sv-phase-label">Quality / Release</span><div class="sv-phase-track"><div class="sv-phase-fill" style="width:20%"></div></div><span class="sv-phase-pct">20%</span></div>
+      <div class="sv-phase-row"><span class="sv-phase-label">Post-Release</span><div class="sv-phase-track"><div class="sv-phase-fill" style="width:15%"></div></div><span class="sv-phase-pct">15%</span></div>
+    </div>
+    <div style="font-size:10px; color:#94a3b8; font-style:italic; margin-top:4px; margin-bottom:20px;">* Illustrative sample — actual values generated post-survey from Q11 aggregation</div>
+
+    <div class="sv-section-label">Recommended Dashboard Views</div>
+
+    <div class="sv-dash-grid">
+      <div class="sv-dash-card">
+        <div class="sv-dash-title">AI Maturity Heatmap</div>
+        <div class="sv-dash-desc">Team-by-team maturity level visualization (L0–L5). Phase-by-phase AI coverage map. Identifies leaders and laggards across all sub-teams. Source: Q8, Q9, Q11.</div>
+      </div>
+      <div class="sv-dash-card">
+        <div class="sv-dash-title">Tool Adoption Distribution</div>
+        <div class="sv-dash-desc">% of respondents using each AI tool category. Breakdown by team, role, and product domain (NVMe, UFS, eMMC). Source: Q5, Q6, Q7.</div>
+      </div>
+      <div class="sv-dash-card">
+        <div class="sv-dash-title">Productivity Impact Index</div>
+        <div class="sv-dash-desc">Self-reported productivity gain distribution. Perceived impact heatmap by activity type. Correlation of impact with usage frequency. Source: Q13, Q14.</div>
+      </div>
+      <div class="sv-dash-card">
+        <div class="sv-dash-title">Manual Effort Burden Map</div>
+        <div class="sv-dash-desc">Top manual activities by vote frequency (treemap). Teams with highest % time in repetitive tasks. Phase-level effort concentration. Source: Q16, Q17, Q18.</div>
+      </div>
+      <div class="sv-dash-card">
+        <div class="sv-dash-title">AI Opportunity Priority Matrix</div>
+        <div class="sv-dash-desc">Ranked list of most-voted AI use cases across the org. Feasibility vs. Value quadrant for top opportunities. Segmented by sub-team vote patterns. Source: Q20, Q22.</div>
+      </div>
+      <div class="sv-dash-card">
+        <div class="sv-dash-title">Barrier &amp; Risk Profile</div>
+        <div class="sv-dash-desc">Stacked bar of top adoption blockers by team. Risk concern heatmap by category. Governance readiness gap analysis. Source: Q25, Q26, Q27.</div>
+      </div>
+      <div class="sv-dash-card">
+        <div class="sv-dash-title">Enablement Gap Analysis</div>
+        <div class="sv-dash-desc">Skill proficiency distribution across the org. Most-requested training formats ranked. Infrastructure investment priority scoring. Source: Q29, Q30, Q31.</div>
+      </div>
+      <div class="sv-dash-card">
+        <div class="sv-dash-title">Open Insight Cluster</div>
+        <div class="sv-dash-desc">AI-parsed theme clusters from qualitative responses. Word cloud from Q15, Q19, Q24, Q35, Q36. Emerging patterns from frontline engineering teams.</div>
+      </div>
+      <div class="sv-dash-card">
+        <div class="sv-dash-title">Agentic AI Readiness Index</div>
+        <div class="sv-dash-desc">Team-level readiness scores for Agentic AI adoption. Cross-referenced with existing data quality and infrastructure investment signals. Source: Q21, Q23, Q31.</div>
+      </div>
+      <div class="sv-dash-card">
+        <div class="sv-dash-title">Strategic Commitment Index</div>
+        <div class="sv-dash-desc">Distribution of Q37 personal commitment scores (1–10). 12-month adoption intent breakdown by team. Confidence levels mapped against blocker scores. Source: Q34, Q37.</div>
+      </div>
+    </div>
+
+    <div class="sv-section-label">Top 7 Questions This Survey Answers for Leadership</div>
+
+    <div style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:16px 20px;">
+      <ul class="sv-insights">
+        <li class="sv-insight-item"><span class="sv-insight-num">1</span><span>Which teams are AI-ready and can host the first scaled pilots across Mobile, Automotive, Server, and OpEx?</span></li>
+        <li class="sv-insight-item"><span class="sv-insight-num">2</span><span>Which lifecycle phases represent the highest AI-impact opportunity across storage validation workflows?</span></li>
+        <li class="sv-insight-item"><span class="sv-insight-num">3</span><span>What are the top 5 AI use cases the organization should prioritize for investment and pilot development?</span></li>
+        <li class="sv-insight-item"><span class="sv-insight-num">4</span><span>What is blocking the majority of engineers from using AI today — access, trust, governance, or skills?</span></li>
+        <li class="sv-insight-item"><span class="sv-insight-num">5</span><span>What governance and data policies must be formalized before AI can safely scale across the organization?</span></li>
+        <li class="sv-insight-item"><span class="sv-insight-num">6</span><span>How much engineering capacity is realistically available for AI adoption activities per team per week?</span></li>
+        <li class="sv-insight-item"><span class="sv-insight-num">7</span><span>Where should the first AI champions and Centers of Excellence be established to maximize organizational impact?</span></li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- end #spe-survey -->
+
+<script>
+(function () {
+  "use strict";
+  function svShowTab(panelId, tabEl) {
+    var panels = document.querySelectorAll("#spe-survey .sv-panel");
+    var tabs   = document.querySelectorAll("#spe-survey .sv-tab");
+    for (var i = 0; i < panels.length; i++) {
+      panels[i].classList.remove("active");
+    }
+    for (var j = 0; j < tabs.length; j++) {
+      tabs[j].classList.remove("active");
+    }
+    var target = document.getElementById(panelId);
+    if (target) { target.classList.add("active"); }
+    if (tabEl)  { tabEl.classList.add("active"); }
+  }
+  // Expose globally for inline onclick
+  window.svShowTab = svShowTab;
+}());
+</script>
+
+</body>
+</html>
