@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STLC Phases — Zion AI Quality Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060a14;
+  --surface: #0c1220;
+  --card: #101827;
+  --card-hover: #141f30;
+  --border: #1a2540;
+  --border-bright: #243050;
+  --text: #dde5f0;
+  --text-muted: #7a8ba8;
+  --text-dim: #3a4a65;
+  --c1:#3b82f6; --c2:#8b5cf6; --c3:#ec4899; --c4:#f59e0b;
+  --c5:#10b981; --c6:#ef4444; --c7:#06b6d4; --c8:#84cc16;
+  --c9:#f97316; --c10:#a78bfa;
+  --ai-full-bg: rgba(16,185,129,0.1); --ai-full-border: rgba(16,185,129,0.3); --ai-full-txt: #34d399;
+  --ai-part-bg: rgba(245,158,11,0.1); --ai-part-border: rgba(245,158,11,0.3); --ai-part-txt: #fbbf24;
+  --ai-man-bg: rgba(100,116,139,0.12); --ai-man-border: rgba(100,116,139,0.25); --ai-man-txt: #64748b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── HEADER ── */
+.header{
+  background:linear-gradient(135deg,#0c1220 0%,#0d1629 50%,#0c1220 100%);
+  border-bottom:1px solid var(--border);
+  padding:18px 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;
+  backdrop-filter:blur(12px);
+}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{
+  width:42px;height:42px;border-radius:12px;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6,#ec4899);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-weight:600;font-size:1.1rem;color:#fff;
+  box-shadow:0 0 20px rgba(139,92,246,0.4);
+}
+.brand-name{font-size:1.05rem;font-weight:700;color:#fff;letter-spacing:-0.3px}
+.brand-sub{font-size:0.62rem;color:var(--text-muted);margin-top:2px;font-weight:400}
+.hdr-center{font-size:0.78rem;font-weight:500;color:var(--text-muted);text-align:center}
+.hdr-center strong{color:var(--text)}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.tag{
+  padding:5px 11px;border-radius:20px;
+  font-family:'JetBrains Mono',monospace;font-size:0.6rem;font-weight:600;
+}
+.tag-doc{background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.35);color:#818cf8}
+.tag-wf{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#34d399}
+
+/* ── PHASE NAVIGATOR ── */
+.phase-nav{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:10px 32px;display:flex;align-items:center;gap:3px;
+  overflow-x:auto;scrollbar-width:none;
+}
+.phase-nav::-webkit-scrollbar{display:none}
+.pn-item{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.pn-pill{
+  padding:5px 11px;border-radius:6px;font-size:0.62rem;font-weight:600;
+  cursor:pointer;white-space:nowrap;transition:all 0.2s;letter-spacing:0.01em;
+}
+.pn-pill:hover{filter:brightness(1.4);transform:translateY(-1px)}
+.pn-sep{color:var(--text-dim);font-size:0.75rem;margin:0 2px}
+
+/* ── STATS BAR ── */
+.stats-bar{
+  display:flex;align-items:center;gap:0;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:0 32px;
+}
+.stat{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 24px 14px 0;margin-right:24px;
+  border-right:1px solid var(--border);
+}
+.stat:last-child{border-right:none}
+.stat-ico{
+  width:36px;height:36px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+}
+.stat-n{font-size:1.3rem;font-weight:700;color:#fff;font-family:'JetBrains Mono',monospace}
+.stat-l{font-size:0.6rem;color:var(--text-muted);margin-top:1px;font-weight:400}
+
+/* ── MAIN ── */
+.main{padding:24px 32px 80px}
+.section-hdr{
+  display:flex;align-items:center;gap:12px;margin-bottom:18px;
+}
+.section-lbl{
+  font-size:0.65rem;font-weight:600;color:var(--text-dim);
+  text-transform:uppercase;letter-spacing:0.12em;white-space:nowrap;
+}
+.section-rule{flex:1;height:1px;background:var(--border)}
+
+/* ── PHASE GRID ── */
+.phase-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:14px;margin-bottom:24px;
+}
+.phase-card{
+  background:var(--card);border-radius:14px;
+  border:1px solid var(--border);overflow:hidden;
+  transition:all 0.25s;cursor:pointer;
+}
+.phase-card:hover{
+  border-color:var(--border-bright);transform:translateY(-3px);
+  box-shadow:0 12px 40px rgba(0,0,0,0.6);background:var(--card-hover);
+}
+.pc-top{
+  padding:13px 15px 11px;display:flex;align-items:flex-start;gap:9px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.pc-num{
+  width:26px;height:26px;border-radius:7px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:0.65rem;font-weight:700;color:#fff;
+}
+.pc-meta{flex:1}
+.pc-name{font-size:0.75rem;font-weight:600;color:#f0f6ff;line-height:1.35}
+.pc-pct{
+  margin-top:5px;font-size:0.58rem;font-weight:600;
+  background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.28);
+  color:#a78bfa;padding:2px 7px;border-radius:8px;display:inline-block;
+  font-family:'JetBrains Mono',monospace;
+}
+.pc-body{padding:9px 15px 13px}
+.pc-act{
+  display:flex;align-items:flex-start;gap:7px;
+  padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.03);
+  font-size:0.67rem;
+}
+.pc-act:last-child{border-bottom:none}
+.ai-num{
+  font-size:0.58rem;font-weight:700;color:var(--text-dim);
+  flex-shrink:0;min-width:24px;margin-top:1px;
+  font-family:'JetBrains Mono',monospace;
+}
+.ai-desc{flex:1;color:var(--text-muted);line-height:1.45}
+.ai-tag{
+  flex-shrink:0;padding:1px 5px;border-radius:6px;
+  font-size:0.52rem;font-weight:700;letter-spacing:0.04em;margin-top:1px;
+  font-family:'JetBrains Mono',monospace;
+}
+.ai-full{background:var(--ai-full-bg);border:1px solid var(--ai-full-border);color:var(--ai-full-txt)}
+.ai-partial{background:var(--ai-part-bg);border:1px solid var(--ai-part-border);color:var(--ai-part-txt)}
+.ai-manual{background:var(--ai-man-bg);border:1px solid var(--ai-man-border);color:var(--ai-man-txt)}
+
+/* ── FOOTER ── */
+.footer{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:10px 32px;display:flex;align-items:center;gap:20px;
+}
+.legend-ttl{font-size:0.6rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:0.62rem;color:var(--text-muted)}
+.l-chip{
+  padding:2px 7px;border-radius:5px;font-size:0.55rem;font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+}
+.copyright{margin-left:auto;font-size:0.6rem;color:var(--text-dim)}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="brand">
+    <div class="brand-mark">Z</div>
+    <div>
+      <div class="brand-name">Zion Quality Platform</div>
+      <div class="brand-sub">AI-Powered Software Quality Architecture · Multi-Layer AI Agent System</div>
+    </div>
+  </div>
+  <div class="hdr-center">
+    <strong>Software Testing Life Cycle — Phase Architecture</strong><br>
+    Activities · AI Automation Mapping · Agent Readiness
+  </div>
+  <div class="hdr-right">
+    <span class="tag tag-wf">Wireframe 1 / 3</span>
+    <span class="tag tag-doc">STLC Phases</span>
+  </div>
+</header>
+
+<nav class="phase-nav" id="phaseNav"></nav>
+<div class="stats-bar" id="statsBar"></div>
+
+<div class="main">
+  <div class="section-hdr">
+    <span class="section-lbl">STLC — All Phases · Detailed Activities · AI Automation Classification</span>
+    <div class="section-rule"></div>
+    <span class="section-lbl">10 Phases · Full Lifecycle</span>
+  </div>
+  <div class="phase-grid" id="phaseGrid"></div>
+</div>
+
+<footer class="footer">
+  <span class="legend-ttl">AI Automation Legend</span>
+  <div class="legend-item"><span class="l-chip ai-full">AUTO</span>Fully AI-Automated</div>
+  <div class="legend-item"><span class="l-chip ai-partial">AI+</span>AI-Assisted / Partial</div>
+  <div class="legend-item"><span class="l-chip ai-manual">MAN</span>Human-Led / Manual</div>
+  <div class="copyright">AI-Powered Software Quality Architecture — Multi-Layer AI Agent System · Zion Platform © 2025</div>
+</footer>
+
+<script>
+const phases = [
+  {id:1,name:"Requirements\nAnalysis & Review",color:"#3b82f6",pct:"75",
+   acts:[
+     {id:"1.1",txt:"Requirements Elicitation & Documentation Review",ai:"partial"},
+     {id:"1.2",txt:"NL Requirement Parsing & Classification",ai:"full"},
+     {id:"1.3",txt:"Requirement Feasibility & Testability Analysis",ai:"partial"},
+     {id:"1.4",txt:"Test Basis Identification from Docs",ai:"partial"},
+     {id:"1.5",txt:"RTM (Req. Traceability Matrix) Creation",ai:"full"},
+     {id:"1.6",txt:"Ambiguity, Gap & Inconsistency Detection",ai:"full"},
+     {id:"1.7",txt:"Risk Identification from Requirements",ai:"partial"},
+     {id:"1.8",txt:"Acceptance Criteria Definition",ai:"partial"}
+   ]},
+  {id:2,name:"Test Planning",color:"#8b5cf6",pct:"67",
+   acts:[
+     {id:"2.1",txt:"Test Strategy Definition",ai:"partial"},
+     {id:"2.2",txt:"Test Scope Determination",ai:"partial"},
+     {id:"2.3",txt:"Resource Planning & Allocation",ai:"partial"},
+     {id:"2.4",txt:"Test Timeline & Schedule Creation",ai:"partial"},
+     {id:"2.5",txt:"Risk Assessment & Mitigation Planning",ai:"full"},
+     {id:"2.6",txt:"Test Tool Selection & Evaluation",ai:"partial"},
+     {id:"2.7",txt:"Entry / Exit Criteria Definition",ai:"partial"},
+     {id:"2.8",txt:"Test Effort Estimation (ML Model)",ai:"full"},
+     {id:"2.9",txt:"Test Plan Document Auto-Generation",ai:"full"}
+   ]},
+  {id:3,name:"Test Design &\nDevelopment",color:"#ec4899",pct:"88",
+   acts:[
+     {id:"3.1",txt:"Test Scenario Identification",ai:"partial"},
+     {id:"3.2",txt:"LLM-based Test Case Generation",ai:"full"},
+     {id:"3.3",txt:"BDD / Gherkin Specification Writing",ai:"full"},
+     {id:"3.4",txt:"Synthetic Test Data Generation",ai:"full"},
+     {id:"3.5",txt:"Automated Test Script Development",ai:"full"},
+     {id:"3.6",txt:"Test Case Review & Optimization",ai:"partial"},
+     {id:"3.7",txt:"Traceability Matrix Update & Validation",ai:"full"},
+     {id:"3.8",txt:"Test Coverage Analysis",ai:"full"}
+   ]},
+  {id:4,name:"Test Environment\nSetup",color:"#f59e0b",pct:"71",
+   acts:[
+     {id:"4.1",txt:"Environment Requirements Definition",ai:"partial"},
+     {id:"4.2",txt:"IaC-based Infrastructure Provisioning",ai:"full"},
+     {id:"4.3",txt:"Test Data Setup, Seeding & Masking",ai:"full"},
+     {id:"4.4",txt:"CI/CD Pipeline Configuration",ai:"partial"},
+     {id:"4.5",txt:"Test Tools Installation & Config",ai:"partial"},
+     {id:"4.6",txt:"Environment Health Verification",ai:"full"},
+     {id:"4.7",txt:"Access Management & Security Config",ai:"partial"}
+   ]},
+  {id:5,name:"Test Execution",color:"#10b981",pct:"100",
+   acts:[
+     {id:"5.1",txt:"Smoke / Sanity Testing",ai:"full"},
+     {id:"5.2",txt:"Functional Test Execution",ai:"full"},
+     {id:"5.3",txt:"Regression Test Execution",ai:"full"},
+     {id:"5.4",txt:"Integration Testing",ai:"full"},
+     {id:"5.5",txt:"System / End-to-End Testing",ai:"full"},
+     {id:"5.6",txt:"Performance / Load / Stress Testing",ai:"full"},
+     {id:"5.7",txt:"Security & Penetration Testing",ai:"full"},
+     {id:"5.8",txt:"API & Microservices Testing",ai:"full"},
+     {id:"5.9",txt:"Cross-Browser / Device Testing",ai:"full"},
+     {id:"5.10",txt:"Visual / UX Regression Testing",ai:"full"},
+     {id:"5.11",txt:"Test Result Recording & Analysis",ai:"full"}
+   ]},
+  {id:6,name:"Defect\nManagement",color:"#ef4444",pct:"88",
+   acts:[
+     {id:"6.1",txt:"Defect Identification & Auto-Logging",ai:"full"},
+     {id:"6.2",txt:"Defect Classification & Severity AI",ai:"full"},
+     {id:"6.3",txt:"Duplicate Defect Detection",ai:"full"},
+     {id:"6.4",txt:"Intelligent Defect Assignment & Routing",ai:"full"},
+     {id:"6.5",txt:"Root Cause Analysis (AI-assisted)",ai:"partial"},
+     {id:"6.6",txt:"Defect Retesting & Verification",ai:"full"},
+     {id:"6.7",txt:"Defect Triage Coordination",ai:"partial"},
+     {id:"6.8",txt:"Defect Trend & Pattern Analysis",ai:"full"}
+   ]},
+  {id:7,name:"Test Reporting\n& Metrics",color:"#06b6d4",pct:"100",
+   acts:[
+     {id:"7.1",txt:"Real-time Test Execution Dashboard",ai:"full"},
+     {id:"7.2",txt:"Defect Density & Quality Gate Analysis",ai:"full"},
+     {id:"7.3",txt:"Test Coverage Completeness Reporting",ai:"full"},
+     {id:"7.4",txt:"Risk-based Quality Reporting",ai:"full"},
+     {id:"7.5",txt:"Predictive Quality Trend Analysis",ai:"full"},
+     {id:"7.6",txt:"Stakeholder Report Auto-Generation",ai:"full"},
+     {id:"7.7",txt:"Test Summary Report Compilation",ai:"full"}
+   ]},
+  {id:8,name:"Test Closure",color:"#84cc16",pct:"67",
+   acts:[
+     {id:"8.1",txt:"Exit Criteria Evaluation",ai:"full"},
+     {id:"8.2",txt:"Test Artifact Archiving & Versioning",ai:"full"},
+     {id:"8.3",txt:"Lessons Learned Documentation",ai:"partial"},
+     {id:"8.4",txt:"Process Improvement Recommendations",ai:"full"},
+     {id:"8.5",txt:"Final Quality Sign-off Checklist",ai:"partial"},
+     {id:"8.6",txt:"Knowledge Base Update & Transfer",ai:"full"}
+   ]},
+  {id:9,name:"Customer\nRelease",color:"#f97316",pct:"71",
+   acts:[
+     {id:"9.1",txt:"Release Readiness Assessment",ai:"full"},
+     {id:"9.2",txt:"UAT Coordination & Monitoring",ai:"partial"},
+     {id:"9.3",txt:"Go-live Checklist Validation",ai:"full"},
+     {id:"9.4",txt:"Production Deployment Verification",ai:"full"},
+     {id:"9.5",txt:"Release Notes Auto-Generation",ai:"full"},
+     {id:"9.6",txt:"Customer Communication Preparation",ai:"partial"},
+     {id:"9.7",txt:"Rollback Plan Validation",ai:"partial"}
+   ]},
+  {id:10,name:"Post-Release &\nProd. Monitoring",color:"#a78bfa",pct:"100",
+   acts:[
+     {id:"10.1",txt:"Production Anomaly Detection & Alerting",ai:"full"},
+     {id:"10.2",txt:"Real-time Performance Monitoring",ai:"full"},
+     {id:"10.3",txt:"Customer Feedback Sentiment Analysis",ai:"full"},
+     {id:"10.4",txt:"Production Defect Auto-Triage",ai:"full"},
+     {id:"10.5",txt:"SLA Compliance Tracking",ai:"full"},
+     {id:"10.6",txt:"Hotfix Testing & Validation",ai:"full"},
+     {id:"10.7",txt:"Continuous Improvement Feedback Loop",ai:"full"},
+     {id:"10.8",txt:"AI Model Retraining & Knowledge Update",ai:"full"}
+   ]}
+];
+
+// Render Phase Nav
+const phaseNav = document.getElementById('phaseNav');
+phases.forEach((p,i)=>{
+  const div = document.createElement('div');
+  div.className='pn-item';
+  const name = p.name.replace('\n',' ');
+  div.innerHTML=`<div class="pn-pill" style="background:${p.color}18;border:1px solid ${p.color}45;color:${p.color}">${p.id}. ${name}</div>${i<phases.length-1?'<span class="pn-sep">›</span>':''}`;
+  phaseNav.appendChild(div);
+});
+
+// Stats
+const total = phases.reduce((s,p)=>s+p.acts.length,0);
+const full = phases.reduce((s,p)=>s+p.acts.filter(a=>a.ai==='full').length,0);
+const partial = phases.reduce((s,p)=>s+p.acts.filter(a=>a.ai==='partial').length,0);
+const manual = total - full - partial;
+
+const statsBar = document.getElementById('statsBar');
+const stats = [
+  {ico:'⬡',bg:'rgba(99,102,241,0.15)',n:phases.length,l:'STLC Phases'},
+  {ico:'◈',bg:'rgba(16,185,129,0.15)',n:total,l:'Total Activities'},
+  {ico:'⚡',bg:'rgba(139,92,246,0.15)',n:full,l:'Fully AI-Automated'},
+  {ico:'◑',bg:'rgba(245,158,11,0.15)',n:partial,l:'AI-Assisted'},
+  {ico:'◎',bg:'rgba(100,116,139,0.15)',n:manual,l:'Human-Led'},
+  {ico:'◐',bg:'rgba(6,182,212,0.15)',n:Math.round((full/total)*100)+'%',l:'Full AI Coverage'},
+  {ico:'◒',bg:'rgba(236,72,153,0.15)',n:Math.round(((full+partial)/total)*100)+'%',l:'Total AI Coverage'}
+];
+stats.forEach(s=>{
+  const el = document.createElement('div');
+  el.className='stat';
+  el.innerHTML=`<div class="stat-ico" style="background:${s.bg}">${s.ico}</div><div><div class="stat-n">${s.n}</div><div class="stat-l">${s.l}</div></div>`;
+  statsBar.appendChild(el);
+});
+
+// Render Cards
+const grid = document.getElementById('phaseGrid');
+phases.forEach(p=>{
+  const acts = p.acts.map(a=>`
+    <div class="pc-act">
+      <span class="ai-num">${a.id}</span>
+      <span class="ai-desc">${a.txt}</span>
+      <span class="ai-tag ai-${a.ai}">${a.ai==='full'?'AUTO':a.ai==='partial'?'AI+':'MAN'}</span>
+    </div>`).join('');
+  const card = document.createElement('div');
+  card.className='phase-card';
+  card.innerHTML=`
+    <div class="pc-top" style="border-top:3px solid ${p.color}">
+      <div class="pc-num" style="background:${p.color}22;color:${p.color};border:1px solid ${p.color}40">${p.id}</div>
+      <div class="pc-meta">
+        <div class="pc-name">${p.name.replace('\n','<br>')}</div>
+        <span class="pc-pct">🤖 ${p.pct}% AI Automation</span>
+      </div>
+    </div>
+    <div class="pc-body">${acts}</div>`;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>

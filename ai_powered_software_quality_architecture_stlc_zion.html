@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Powered Software Quality Architecture - Multi-Layer AI Agent System</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --ink: #172033;
+      --muted: #5c667a;
+      --line: #d9e1f2;
+      --blue: #2563eb;
+      --indigo: #4f46e5;
+      --cyan: #0891b2;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --violet: #7c3aed;
+      --slate: #334155;
+      --soft-blue: #eaf1ff;
+      --soft-green: #eafaf2;
+      --soft-amber: #fff7e6;
+      --soft-violet: #f3eefe;
+      --soft-cyan: #e8f8fb;
+      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    header {
+      background: linear-gradient(120deg, #111827, #1e3a8a 55%, #0891b2);
+      color: white;
+      padding: 42px 48px;
+    }
+
+    header h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+      letter-spacing: -0.04em;
+    }
+
+    header p {
+      margin: 0;
+      max-width: 1100px;
+      color: #dbeafe;
+      font-size: 16px;
+    }
+
+    main { padding: 28px 36px 60px; }
+
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 24px;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+    }
+
+    h3 {
+      margin: 22px 0 12px;
+      font-size: 18px;
+      color: #1e293b;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: -8px;
+      margin-bottom: 20px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0 8px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+      background: var(--blue);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .phase-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .phase-card, .layer-card, .zion-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      background: #fbfdff;
+      min-height: 180px;
+    }
+
+    .phase-card strong {
+      display: block;
+      color: var(--blue);
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .phase-card h3, .layer-card h3, .zion-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+
+    li { margin: 4px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      padding: 10px;
+    }
+
+    th {
+      background: #eef4ff;
+      color: #1e3a8a;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      margin: 2px 4px 2px 0;
+      background: #e2e8f0;
+      color: #334155;
+      white-space: nowrap;
+    }
+
+    .full { background: #dcfce7; color: #166534; }
+    .partial { background: #fef3c7; color: #92400e; }
+    .human { background: #ffe4e6; color: #9f1239; }
+    .uth { background: #dbeafe; color: #1d4ed8; }
+    .laas { background: #cffafe; color: #0e7490; }
+    .dsa { background: #ede9fe; color: #6d28d9; }
+    .robotics { background: #dcfce7; color: #047857; }
+
+    .wireframe {
+      border: 2px dashed #94a3b8;
+      border-radius: 18px;
+      padding: 20px;
+      background: #f8fafc;
+      margin-top: 18px;
+    }
+
+    .nav-bar {
+      height: 48px;
+      border-radius: 12px;
+      background: #111827;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+
+    .dashboard-row {
+      display: grid;
+      grid-template-columns: 260px 1fr 300px;
+      gap: 14px;
+    }
+
+    .side-panel, .main-panel, .right-panel {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      min-height: 320px;
+    }
+
+    .step-box {
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #ffffff;
+    }
+
+    .step-box b { color: #1d4ed8; }
+
+    .progress-line {
+      display: grid;
+      grid-template-columns: repeat(13, 1fr);
+      gap: 6px;
+      margin: 14px 0;
+    }
+
+    .progress-line span {
+      min-height: 54px;
+      border-radius: 10px;
+      background: var(--soft-blue);
+      border: 1px solid #bfdbfe;
+      color: #1e3a8a;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 7px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .layers {
+      display: grid;
+      gap: 10px;
+    }
+
+    .layer-strip {
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .layer-strip h3 { margin: 0; }
+    .layer-strip p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+
+    .work { background: var(--soft-amber); }
+    .app { background: var(--soft-blue); }
+    .agent { background: var(--soft-violet); }
+    .data { background: var(--soft-green); }
+
+    .component-map {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .component-map .zion-card:nth-child(1) { background: #eff6ff; }
+    .component-map .zion-card:nth-child(2) { background: #ecfeff; }
+    .component-map .zion-card:nth-child(3) { background: #f5f3ff; }
+    .component-map .zion-card:nth-child(4) { background: #ecfdf5; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .flow div {
+      border: 1px solid #cbd5e1;
+      background: white;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 12px;
+      min-height: 92px;
+    }
+
+    .note {
+      border-left: 5px solid var(--blue);
+      background: #eff6ff;
+      padding: 14px;
+      border-radius: 10px;
+      color: #1e3a8a;
+      margin: 16px 0;
+    }
+
+    @media (max-width: 1100px) {
+      .phase-grid, .grid-3, .component-map { grid-template-columns: repeat(2, 1fr); }
+      .dashboard-row { grid-template-columns: 1fr; }
+      .progress-line { grid-template-columns: repeat(3, 1fr); }
+      .flow { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      main { padding: 18px; }
+      header { padding: 28px 22px; }
+      .phase-grid, .grid-2, .grid-3, .component-map { grid-template-columns: 1fr; }
+      .layer-strip { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI Powered Software Quality Architecture</h1>
+    <p>Multi-Layer AI Agent System blueprint aligned to Software Testing Life Cycle phases from requirements to customer release and post-release intelligence, with Zion platform components embedded.</p>
+  </header>
+
+  <main>
+    <section id="section-1">
+      <h2>1. Software Testing Life Cycle Phases: Requirements to Customer Release / Post-Release</h2>
+      <p class="subtitle">Each phase includes detailed activities and AI automation suitability. Automation status uses: Fully Automatable, Partially Automatable, and Human-Governed.</p>
+
+      <div class="legend">
+        <span class="pill"><span class="dot" style="background:#16a34a"></span> Fully Automatable with AI</span>
+        <span class="pill"><span class="dot" style="background:#d97706"></span> Partially Automatable with AI</span>
+        <span class="pill"><span class="dot" style="background:#e11d48"></span> Human-Governed Decision</span>
+      </div>
+
+      <div class="phase-grid">
+        <div class="phase-card"><strong>STLC-01</strong><h3>Requirement Intake & Understanding</h3><ul><li>Import PRD, SRS, Jira epics, architecture docs, standards, customer issues.</li><li>Extract functional and non-functional requirements.</li><li>Identify requirement owners and release scope.</li><li><span class="tag full">AI: Full</span> document ingestion, summarization, classification.</li></ul></div>
+        <div class="phase-card"><strong>STLC-02</strong><h3>Requirement Quality Analysis</h3><ul><li>Detect ambiguity, inconsistency, missing acceptance criteria, conflicts, and duplicates.</li><li>Generate clarification questions.</li><li>Score requirement readiness.</li><li><span class="tag full">AI: Full</span> quality checks and gap detection.</li></ul></div>
+        <div class="phase-card"><strong>STLC-03</strong><h3>Impact & Dependency Analysis</h3><ul><li>Map changed requirements to modules, APIs, firmware areas, features, risks, and test assets.</li><li>Build dependency structure matrix.</li><li>Identify regression impact radius.</li><li><span class="tag full">AI: Full</span> code/spec/test graph impact analysis.</li></ul></div>
+        <div class="phase-card"><strong>STLC-04</strong><h3>Test Strategy & Scope Definition</h3><ul><li>Define verification approach, scope, out-of-scope, test levels, environments, and entry/exit criteria.</li><li>Prioritize risk-based coverage.</li><li><span class="tag partial">AI: Partial</span> strategy generation; approval remains human-governed.</li></ul></div>
+        <div class="phase-card"><strong>STLC-05</strong><h3>Test Planning & Resource Planning</h3><ul><li>Plan schedule, test cycles, lab needs, DUTs, host machines, OS matrix, tools, owners, and milestones.</li><li>Estimate effort and capacity.</li><li><span class="tag partial">AI: Partial</span> planning and optimization; resource trade-off approval by humans.</li></ul></div>
+        <div class="phase-card"><strong>STLC-06</strong><h3>Test Design & Scenario Generation</h3><ul><li>Generate positive, negative, boundary, stress, reliability, compliance, security, and exploratory scenarios.</li><li>Apply BVA, EP, state transition, pairwise, risk-based design.</li><li><span class="tag full">AI: Full</span> scenario generation with review gates.</li></ul></div>
+        <div class="phase-card"><strong>STLC-07</strong><h3>Test Case Authoring & Traceability</h3><ul><li>Create structured test cases with preconditions, steps, expected results, labels, and coverage links.</li><li>Maintain requirement-test-defect traceability.</li><li><span class="tag full">AI: Full</span> generation and trace matrix updates.</li></ul></div>
+        <div class="phase-card"><strong>STLC-08</strong><h3>Test Data & Configuration Generation</h3><ul><li>Generate parameter sets, corner values, datasets, device configs, workload profiles, and environment matrix.</li><li>Synthesize privacy-safe or synthetic data.</li><li><span class="tag full">AI: Full</span> data/config generation with constraints.</li></ul></div>
+        <div class="phase-card"><strong>STLC-09</strong><h3>Automation Script Generation</h3><ul><li>Generate test scripts, framework adapters, API tests, CLI flows, fixtures, mocks, and simulators.</li><li>Perform static review and self-healing updates.</li><li><span class="tag full">AI: Full</span> script generation and maintenance.</li></ul></div>
+        <div class="phase-card"><strong>STLC-10</strong><h3>Environment & Lab Provisioning</h3><ul><li>Reserve labs, provision OS, connect devices, configure DUTs, load firmware, validate readiness.</li><li>Run smoke checks before execution.</li><li><span class="tag full">AI: Full</span> orchestration, booking, readiness checks.</li></ul></div>
+        <div class="phase-card"><strong>STLC-11</strong><h3>Test Execution & Monitoring</h3><ul><li>Execute functional, performance, endurance, regression, compatibility, power, thermal, security, and compliance tests.</li><li>Monitor telemetry, logs, and failures in real time.</li><li><span class="tag full">AI: Full</span> autonomous execution and monitoring.</li></ul></div>
+        <div class="phase-card"><strong>STLC-12</strong><h3>Defect Detection, RCA & Triage</h3><ul><li>Cluster failures, detect duplicates, correlate logs, isolate suspects, generate RCA hypotheses.</li><li>Create defect reports with evidence.</li><li><span class="tag partial">AI: Partial</span> RCA support; final defect disposition human-governed.</li></ul></div>
+        <div class="phase-card"><strong>STLC-13</strong><h3>Regression Optimization</h3><ul><li>Select minimum high-value regression set based on change impact, defect history, risk, coverage, and time budget.</li><li>Optimize execution order.</li><li><span class="tag full">AI: Full</span> intelligent regression selection and prioritization.</li></ul></div>
+        <div class="phase-card"><strong>STLC-14</strong><h3>Quality Analytics & Release Readiness</h3><ul><li>Assess coverage, defect leakage risk, open defects, reliability trends, performance deltas, compliance status.</li><li>Generate release quality score.</li><li><span class="tag partial">AI: Partial</span> readiness recommendation; release decision human-governed.</li></ul></div>
+        <div class="phase-card"><strong>STLC-15</strong><h3>Customer Release Validation</h3><ul><li>Validate release package, customer acceptance scenarios, known issue notes, release notes, rollback plan.</li><li>Confirm final sanity and production-like tests.</li><li><span class="tag partial">AI: Partial</span> release validation automation; customer commitment approval human-governed.</li></ul></div>
+        <div class="phase-card"><strong>STLC-16</strong><h3>Post-Release Monitoring & Learning</h3><ul><li>Monitor field defects, telemetry, support tickets, customer escalations, RMA signals, and usage patterns.</li><li>Feed learnings into future requirements and regression intelligence.</li><li><span class="tag full">AI: Full</span> continuous learning and feedback-loop generation.</li></ul></div>
+      </div>
+
+      <h3>Activity-Level Automation Map</h3>
+      <table>
+        <thead><tr><th>Index</th><th>STLC Phase</th><th>Detailed Activities</th><th>AI Automation Fit</th><th>Recommended AI Capability</th></tr></thead>
+        <tbody>
+          <tr><td>STLC-01</td><td>Requirement Intake</td><td>Import, parse, classify, summarize PRD/SRS/customer inputs.</td><td><span class="tag full">Fully Automatable</span></td><td>RAG ingestion, document intelligence, semantic indexing.</td></tr>
+          <tr><td>STLC-02</td><td>Requirement Quality Analysis</td><td>Ambiguity detection, missing ACs, conflict checks, clarification generation.</td><td><span class="tag full">Fully Automatable</span></td><td>Requirement quality agent, LLM critique, rules engine.</td></tr>
+          <tr><td>STLC-03</td><td>Impact Analysis</td><td>Spec-to-code-to-test dependency mapping; DSM graph; risk propagation.</td><td><span class="tag full">Fully Automatable</span></td><td>Graph RAG, code intelligence, dependency graph, change impact model.</td></tr>
+          <tr><td>STLC-04</td><td>Test Strategy</td><td>Test level, risk scope, coverage model, exit criteria, quality gates.</td><td><span class="tag partial">Partially Automatable</span></td><td>Strategy recommendation agent with human approval.</td></tr>
+          <tr><td>STLC-05</td><td>Test Planning</td><td>Cycle planning, lab/resource planning, capacity, milestones.</td><td><span class="tag partial">Partially Automatable</span></td><td>Planning optimizer, lab scheduler, capacity predictor.</td></tr>
+          <tr><td>STLC-06</td><td>Test Scenario Generation</td><td>Positive, negative, boundary, exploratory, stress, security, reliability scenarios.</td><td><span class="tag full">Fully Automatable</span></td><td>Test design agent, pairwise/BVA/EP engines, domain templates.</td></tr>
+          <tr><td>STLC-07</td><td>Test Case Authoring</td><td>Generate steps, expected results, preconditions, labels, traceability matrix.</td><td><span class="tag full">Fully Automatable</span></td><td>Test case generation agent, traceability agent.</td></tr>
+          <tr><td>STLC-08</td><td>Test Data Generation</td><td>Synthetic data, boundary values, workload profiles, configuration matrix.</td><td><span class="tag full">Fully Automatable</span></td><td>Data synthesis agent, constraint solver, combinatorial engine.</td></tr>
+          <tr><td>STLC-09</td><td>Automation Script Generation</td><td>Generate framework scripts, mocks, API/CLI flows, self-healing patches.</td><td><span class="tag full">Fully Automatable</span></td><td>Code generation agent, static analysis, test framework adapter.</td></tr>
+          <tr><td>STLC-10</td><td>Environment Provisioning</td><td>Reserve lab, configure DUT/host, install OS/tools/firmware, readiness validation.</td><td><span class="tag full">Fully Automatable</span></td><td>Lab orchestration agent, infra-as-code, robotics adapter.</td></tr>
+          <tr><td>STLC-11</td><td>Execution & Monitoring</td><td>Execute tests, observe logs/telemetry, recover from known failures.</td><td><span class="tag full">Fully Automatable</span></td><td>Execution agent, telemetry monitor, auto-recovery agent.</td></tr>
+          <tr><td>STLC-12</td><td>Defect RCA & Triage</td><td>Failure clustering, duplicate detection, RCA hypothesis, owner suggestion.</td><td><span class="tag partial">Partially Automatable</span></td><td>RCA agent, log analytics, defect classifier, graph correlation.</td></tr>
+          <tr><td>STLC-13</td><td>Regression Optimization</td><td>Risk-based selection, prioritization, flaky-test handling, time-budget optimization.</td><td><span class="tag full">Fully Automatable</span></td><td>Regression intelligence agent, ML prioritization, coverage optimizer.</td></tr>
+          <tr><td>STLC-14</td><td>Release Readiness</td><td>Quality score, trend analysis, defect leakage prediction, recommendation.</td><td><span class="tag partial">Partially Automatable</span></td><td>Release quality agent, predictive analytics, governance workflow.</td></tr>
+          <tr><td>STLC-15</td><td>Customer Release Validation</td><td>Final validation, release notes, known issues, customer acceptance checklist.</td><td><span class="tag partial">Partially Automatable</span></td><td>Release validation agent, documentation agent, compliance checker.</td></tr>
+          <tr><td>STLC-16</td><td>Post-Release Learning</td><td>Field defect mining, telemetry analysis, customer escalation intelligence.</td><td><span class="tag full">Fully Automatable</span></td><td>Field intelligence agent, feedback-loop agent, continuous learning RAG.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="section-2">
+      <h2>2. HTML Wireframe: STLC Phases</h2>
+      <p class="subtitle">A lifecycle dashboard wireframe showing STLC phases, phase status, automation level, and quality signals.</p>
+      <div class="wireframe">
+        <div class="nav-bar"><b>Software Quality Command Center</b><span>Release: R26.05 | Product: Storage Firmware | User: QA Architect</span></div>
+        <div class="progress-line">
+          <span>01 Req Intake</span><span>02 Req Quality</span><span>03 Impact</span><span>04 Strategy</span><span>05 Planning</span><span>06 Design</span><span>07 Cases</span><span>08 Data</span><span>09 Scripts</span><span>10 Lab</span><span>11 Execute</span><span>12 RCA</span><span>13+ Release</span>
+        </div>
+        <div class="dashboard-row">
+          <div class="side-panel">
+            <h3>Phase Navigator</h3>
+            <div class="step-box"><b>STLC-01</b><br/>Requirement Intake<br/><span class="tag full">AI Full</span></div>
+            <div class="step-box"><b>STLC-03</b><br/>Impact Analysis<br/><span class="tag full">AI Full</span></div>
+            <div class="step-box"><b>STLC-11</b><br/>Execution Monitoring<br/><span class="tag full">AI Full</span></div>
+            <div class="step-box"><b>STLC-14</b><br/>Release Readiness<br/><span class="tag partial">AI Partial</span></div>
+          </div>
+          <div class="main-panel">
+            <h3>Selected Phase: STLC-06 Test Design & Scenario Generation</h3>
+            <div class="grid-2">
+              <div class="step-box"><b>Inputs</b><br/>Requirements, architecture docs, defect history, customer use cases, standards.</div>
+              <div class="step-box"><b>AI Actions</b><br/>Generate positive, negative, boundary, stress, reliability, security, and exploratory scenarios.</div>
+              <div class="step-box"><b>Outputs</b><br/>Scenario catalog, coverage matrix, risk score, traceability links.</div>
+              <div class="step-box"><b>Human Gate</b><br/>Review high-risk scope and approve final strategy baseline.</div>
+            </div>
+          </div>
+          <div class="right-panel">
+            <h3>Quality KPIs</h3>
+            <div class="step-box">Requirement Coverage: <b>92%</b></div>
+            <div class="step-box">AI Automation Potential: <b>78%</b></div>
+            <div class="step-box">Risk Hotspots: <b>7</b></div>
+            <div class="step-box">Regression Reduction: <b>34%</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-3">
+      <h2>3. STLC Phases Mapped to AI Layered Architecture</h2>
+      <p class="subtitle">The AI architecture is organized into four layers: Work Process, Application, Agent, and Data. Each STLC phase maps to user activities, UI surfaces, AI controllers, and data/model assets.</p>
+
+      <div class="layers">
+        <div class="layer-strip work"><h3>1. Work Process Layer<br/><small>Business Process</small></h3><p>Defines user activities, workflow gates, approvals, quality process states, and business ownership across STLC.</p></div>
+        <div class="layer-strip app"><h3>2. Application Layer<br/><small>Viewer / Experience</small></h3><p>Provides Web UI, chatbot, dashboard, workflow inbox, traceability views, analytics views, and release cockpit. Responsible only for input and output.</p></div>
+        <div class="layer-strip agent"><h3>3. Agent Layer<br/><small>Controller / Intelligence</small></h3><p>Implements AI agents, ML models, heuristic algorithms, rule engines, optimizers, orchestration logic, and human-in-loop governance.</p></div>
+        <div class="layer-strip data"><h3>4. Data Layer<br/><small>Model / Knowledge</small></h3><p>Stores requirements, source code, test cases, logs, defects, telemetry, embeddings, vector DB, graph DB, RAG corpus, metrics, and model outputs.</p></div>
+      </div>
+
+      <h3>Layer Mapping Table</h3>
+      <table>
+        <thead><tr><th>STLC Index</th><th>Work Process Layer</th><th>Application Layer</th><th>Agent Layer</th><th>Data Layer</th></tr></thead>
+        <tbody>
+          <tr><td>STLC-01</td><td>Requirement intake and release scope registration.</td><td>Requirement upload UI, Jira connector, chatbot intake.</td><td>Requirement ingestion agent, classifier, summarizer.</td><td>PRD/SRS corpus, Jira epics, customer issues, vector index.</td></tr>
+          <tr><td>STLC-02</td><td>Requirement review and clarification workflow.</td><td>Requirement quality dashboard, gap review panel.</td><td>Ambiguity detection agent, acceptance criteria generator.</td><td>Requirement rules, glossary, prior defect patterns, standards.</td></tr>
+          <tr><td>STLC-03</td><td>Change impact review and scope agreement.</td><td>Impact graph viewer, DSM matrix, risk heatmap.</td><td>Impact analysis agent, Graph RAG, dependency engine.</td><td>Code graph, test graph, module DSM, commit history, trace links.</td></tr>
+          <tr><td>STLC-04</td><td>Test strategy preparation and approval.</td><td>Strategy builder, risk dashboard, approval workflow.</td><td>Strategy recommendation agent, risk scoring model.</td><td>Past plans, risk models, standards, defect leakage history.</td></tr>
+          <tr><td>STLC-05</td><td>Test plan, schedule, resource and lab planning.</td><td>Planning board, lab booking UI, capacity dashboard.</td><td>Planning optimizer, resource allocation agent.</td><td>Lab inventory, people capacity, calendar, execution history.</td></tr>
+          <tr><td>STLC-06</td><td>Scenario design and review.</td><td>Scenario workbench, coverage visualizer.</td><td>Test design agent, BVA/EP/pairwise engine.</td><td>Requirements, domain templates, coverage model, risks.</td></tr>
+          <tr><td>STLC-07</td><td>Test case creation and baseline approval.</td><td>Test case editor, traceability matrix UI.</td><td>Test case authoring agent, traceability agent.</td><td>Test repository, requirement links, review comments.</td></tr>
+          <tr><td>STLC-08</td><td>Test data and configuration preparation.</td><td>Data/config generator UI, matrix editor.</td><td>Data synthesis agent, configuration optimizer.</td><td>Parameter constraints, workload library, config DB.</td></tr>
+          <tr><td>STLC-09</td><td>Automation development and review.</td><td>Script generation UI, code review view, CI status.</td><td>Script generation agent, static analyzer, self-healing agent.</td><td>Framework repo, APIs, CLI docs, code snippets, execution failures.</td></tr>
+          <tr><td>STLC-10</td><td>Environment reservation and readiness.</td><td>Lab cockpit, device readiness dashboard.</td><td>Provisioning agent, readiness validation agent, robotics orchestrator.</td><td>DUT inventory, OS images, firmware builds, topology data.</td></tr>
+          <tr><td>STLC-11</td><td>Execution, monitoring, and controlled recovery.</td><td>Execution console, live telemetry, alert dashboard.</td><td>Execution agent, monitor agent, auto-recovery agent.</td><td>Logs, traces, telemetry streams, test results, time-series DB.</td></tr>
+          <tr><td>STLC-12</td><td>Defect triage and RCA review.</td><td>Triage workbench, RCA assistant, duplicate defect view.</td><td>RCA agent, defect classifier, failure clustering model.</td><td>Defect DB, logs, stack traces, telemetry, known issue KB.</td></tr>
+          <tr><td>STLC-13</td><td>Regression selection and optimization.</td><td>Regression planner, priority queue, coverage delta view.</td><td>Regression intelligence agent, prioritization optimizer.</td><td>Coverage DB, change set, test history, flakiness index.</td></tr>
+          <tr><td>STLC-14</td><td>Release readiness review.</td><td>Release cockpit, quality scorecard, approval workflow.</td><td>Release quality agent, risk predictor, compliance checker.</td><td>Coverage metrics, open defects, execution trends, exit criteria.</td></tr>
+          <tr><td>STLC-15</td><td>Customer release validation and handoff.</td><td>Release package dashboard, customer validation checklist.</td><td>Release validation agent, documentation generator.</td><td>Release notes, known issues, package manifest, acceptance records.</td></tr>
+          <tr><td>STLC-16</td><td>Post-release monitoring and continuous learning.</td><td>Field quality dashboard, escalation cockpit.</td><td>Field intelligence agent, feedback-loop agent.</td><td>Customer tickets, telemetry, RMA, field defects, learned KB.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="section-4">
+      <h2>4. HTML Wireframe: STLC with AI Layered Architecture</h2>
+      <p class="subtitle">A layered architecture screen where each STLC phase is visualized across process, UI, agents, and data assets.</p>
+      <div class="wireframe">
+        <div class="nav-bar"><b>AI Quality Architecture Viewer</b><span>Layer Mode: STLC x AI Agents</span></div>
+        <div class="progress-line">
+          <span>Req</span><span>Quality</span><span>Impact</span><span>Strategy</span><span>Plan</span><span>Design</span><span>Cases</span><span>Data</span><span>Scripts</span><span>Lab</span><span>Execute</span><span>RCA</span><span>Release</span>
+        </div>
+        <div class="layers">
+          <div class="layer-strip work">
+            <h3>Work Process Layer</h3>
+            <p>Requirement review → Impact analysis → Test strategy → Planning → Design → Execution → RCA → Release readiness → Post-release learning.</p>
+          </div>
+          <div class="layer-strip app">
+            <h3>Application Layer</h3>
+            <p>Web UI, chatbot, lifecycle dashboard, DSM viewer, test workbench, lab cockpit, execution console, triage board, release cockpit.</p>
+          </div>
+          <div class="layer-strip agent">
+            <h3>Agent Layer</h3>
+            <p>Requirement agent, impact agent, strategy agent, test design agent, script agent, lab agent, execution agent, RCA agent, regression agent, release agent.</p>
+          </div>
+          <div class="layer-strip data">
+            <h3>Data Layer</h3>
+            <p>RAG corpus, vector DB, graph DB, test repository, source repository, defect DB, logs, telemetry, lab inventory, metrics warehouse.</p>
+          </div>
+        </div>
+        <div class="flow">
+          <div><b>1. User asks</b><br/>“What test scope is needed for this firmware change?”</div>
+          <div><b>2. Application routes</b><br/>Chatbot / dashboard sends request to controller.</div>
+          <div><b>3. Agents reason</b><br/>Impact agent + regression agent + risk model compute scope.</div>
+          <div><b>4. Data retrieved</b><br/>Graph DB, RAG, code repo, test history, defect history.</div>
+          <div><b>5. Output generated</b><br/>Recommended test scope, coverage gap, risk score, execution plan.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section-5">
+      <h2>5. Zion Platform Components Embedded into STLC + AI Layered Architecture</h2>
+      <p class="subtitle">Zion components are mapped as reusable platform capabilities across the lifecycle.</p>
+
+      <div class="component-map">
+        <div class="zion-card"><h3>Unified Test Hub — UTH</h3><p>Central intelligence and orchestration layer for test planning, test design, test case management, execution control, reporting, and quality workflows.</p><span class="tag uth">Test Planning</span><span class="tag uth">Execution</span><span class="tag uth">Traceability</span></div>
+        <div class="zion-card"><h3>Lab as a Service — LaaS</h3><p>Infrastructure on-demand for lab reservation, DUT preparation, OS provisioning, VM/container setup, host allocation, firmware deployment, and readiness validation.</p><span class="tag laas">Provisioning</span><span class="tag laas">Lab Scheduling</span><span class="tag laas">Environment Matrix</span></div>
+        <div class="zion-card"><h3>Data Science & Analytics — DSA</h3><p>Telemetry, log analytics, anomaly detection, quality metrics, RCA support, prediction, dashboards, release risk scoring, and post-release learning.</p><span class="tag dsa">Analytics</span><span class="tag dsa">RCA</span><span class="tag dsa">Prediction</span></div>
+        <div class="zion-card"><h3>Robotics Automation</h3><p>Physical lab automation for device handling, test bed setup, cable/device operations, rack movement, and zero-touch execution readiness.</p><span class="tag robotics">Physical Automation</span><span class="tag robotics">Device Handling</span><span class="tag robotics">Zero Touch</span></div>
+      </div>
+
+      <h3>Zion Embedded Mapping Table</h3>
+      <table>
+        <thead><tr><th>STLC Index</th><th>Primary Zion Component</th><th>Layered Architecture Fit</th><th>Embedded Capability</th></tr></thead>
+        <tbody>
+          <tr><td>STLC-01</td><td><span class="tag uth">UTH</span><span class="tag dsa">DSA</span></td><td>Application + Data + Agent</td><td>Requirement intake, document indexing, semantic search, requirement summarization.</td></tr>
+          <tr><td>STLC-02</td><td><span class="tag uth">UTH</span><span class="tag dsa">DSA</span></td><td>Agent + Data</td><td>Requirement quality scoring, ambiguity detection, clarification question generation.</td></tr>
+          <tr><td>STLC-03</td><td><span class="tag uth">UTH</span><span class="tag dsa">DSA</span></td><td>Agent + Data + Application</td><td>DSM, Graph RAG, dependency map, risk heatmap, change impact dashboard.</td></tr>
+          <tr><td>STLC-04</td><td><span class="tag uth">UTH</span><span class="tag dsa">DSA</span></td><td>Work Process + Agent</td><td>AI-assisted test strategy, risk-based scope recommendation, governance workflow.</td></tr>
+          <tr><td>STLC-05</td><td><span class="tag uth">UTH</span><span class="tag laas">LaaS</span></td><td>Work Process + Application + Agent</td><td>Test cycle planning, lab booking, capacity prediction, milestone tracking.</td></tr>
+          <tr><td>STLC-06</td><td><span class="tag uth">UTH</span></td><td>Agent + Application</td><td>Scenario generation, BVA/EP/pairwise design, coverage optimization.</td></tr>
+          <tr><td>STLC-07</td><td><span class="tag uth">UTH</span></td><td>Application + Agent + Data</td><td>Test case generation, traceability matrix, review workflow, baseline management.</td></tr>
+          <tr><td>STLC-08</td><td><span class="tag uth">UTH</span><span class="tag dsa">DSA</span></td><td>Agent + Data</td><td>Test data synthesis, workload profile generation, configuration matrix optimization.</td></tr>
+          <tr><td>STLC-09</td><td><span class="tag uth">UTH</span></td><td>Agent + Data</td><td>Automation script generation, framework adapter generation, self-healing scripts.</td></tr>
+          <tr><td>STLC-10</td><td><span class="tag laas">LaaS</span><span class="tag robotics">Robotics</span></td><td>Application + Agent + Data</td><td>Lab reservation, host/DUT provisioning, firmware flashing, device readiness, robotic test bed setup.</td></tr>
+          <tr><td>STLC-11</td><td><span class="tag uth">UTH</span><span class="tag laas">LaaS</span><span class="tag dsa">DSA</span><span class="tag robotics">Robotics</span></td><td>Agent + Application + Data</td><td>Autonomous execution, telemetry monitoring, auto-recovery, robotic interventions.</td></tr>
+          <tr><td>STLC-12</td><td><span class="tag dsa">DSA</span><span class="tag uth">UTH</span></td><td>Agent + Data + Application</td><td>Failure clustering, RCA assistant, duplicate detection, defect report generation.</td></tr>
+          <tr><td>STLC-13</td><td><span class="tag dsa">DSA</span><span class="tag uth">UTH</span></td><td>Agent + Data</td><td>Regression selection, priority optimization, risk-based test minimization.</td></tr>
+          <tr><td>STLC-14</td><td><span class="tag dsa">DSA</span><span class="tag uth">UTH</span></td><td>Application + Agent + Work Process</td><td>Release cockpit, quality score, defect leakage risk, exit criteria validation.</td></tr>
+          <tr><td>STLC-15</td><td><span class="tag uth">UTH</span><span class="tag dsa">DSA</span></td><td>Work Process + Application + Agent</td><td>Customer acceptance validation, release notes, known issue intelligence, final sanity automation.</td></tr>
+          <tr><td>STLC-16</td><td><span class="tag dsa">DSA</span><span class="tag uth">UTH</span></td><td>Data + Agent + Work Process</td><td>Field defect mining, customer escalation intelligence, continuous learning feedback to requirements and regression.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note"><b>Recommended platform principle:</b> UTH should act as the single user-facing quality command center; LaaS should own infrastructure orchestration; DSA should own analytics, prediction, RCA, and post-release learning; Robotics should act as a physical automation execution adapter integrated through LaaS and UTH.</div>
+    </section>
+
+    <section id="section-6">
+      <h2>6. HTML Wireframe: STLC + AI Layered Architecture + Zion Embedded Components</h2>
+      <p class="subtitle">Final integrated platform wireframe for AI Powered Software Quality Architecture using Zion as the enterprise quality platform backbone.</p>
+      <div class="wireframe">
+        <div class="nav-bar"><b>ZION AI Quality Command Center</b><span>UTH + LaaS + DSA + Robotics | Multi-Agent Quality Platform</span></div>
+        <div class="progress-line">
+          <span>Req Intake<br/><small>UTH/DSA</small></span>
+          <span>Req Quality<br/><small>UTH/DSA</small></span>
+          <span>Impact<br/><small>DSA</small></span>
+          <span>Strategy<br/><small>UTH</small></span>
+          <span>Planning<br/><small>UTH/LaaS</small></span>
+          <span>Design<br/><small>UTH</small></span>
+          <span>Cases<br/><small>UTH</small></span>
+          <span>Scripts<br/><small>UTH</small></span>
+          <span>Lab<br/><small>LaaS/Robotics</small></span>
+          <span>Execute<br/><small>All</small></span>
+          <span>RCA<br/><small>DSA</small></span>
+          <span>Release<br/><small>UTH/DSA</small></span>
+          <span>Post-Release<br/><small>DSA</small></span>
+        </div>
+
+        <div class="dashboard-row">
+          <div class="side-panel">
+            <h3>Zion Modules</h3>
+            <div class="step-box"><b>UTH</b><br/>Test lifecycle command center<br/><span class="tag uth">Planning</span><span class="tag uth">Execution</span></div>
+            <div class="step-box"><b>LaaS</b><br/>Lab and infrastructure on demand<br/><span class="tag laas">Provision</span><span class="tag laas">Reserve</span></div>
+            <div class="step-box"><b>DSA</b><br/>Quality intelligence and analytics<br/><span class="tag dsa">RCA</span><span class="tag dsa">Prediction</span></div>
+            <div class="step-box"><b>Robotics</b><br/>Zero-touch physical automation<br/><span class="tag robotics">Device Handling</span></div>
+          </div>
+
+          <div class="main-panel">
+            <h3>Selected Lifecycle Thread: Change Impact to Smart Regression</h3>
+            <div class="layers">
+              <div class="layer-strip work"><h3>Work Process</h3><p>Engineer submits change → QA architect reviews impact → AI recommends test scope → release manager approves coverage.</p></div>
+              <div class="layer-strip app"><h3>Application</h3><p>UTH dashboard shows impact graph, regression candidate list, coverage gaps, risk heatmap, and approval actions.</p></div>
+              <div class="layer-strip agent"><h3>Agent</h3><p>Impact Agent + Regression Agent + Risk Agent + Test Design Agent collaborate through an orchestrator.</p></div>
+              <div class="layer-strip data"><h3>Data</h3><p>Graph DB, vector DB, code repository, test repository, defect DB, telemetry warehouse, release history.</p></div>
+            </div>
+          </div>
+
+          <div class="right-panel">
+            <h3>AI Recommendations</h3>
+            <div class="step-box"><b>Impacted Modules</b><br/>FTL, HAL, Queue Manager, Power State Handler</div>
+            <div class="step-box"><b>Regression Scope</b><br/>312 tests selected from 1,840 candidates</div>
+            <div class="step-box"><b>Risk Score</b><br/>High — endurance + power transition path</div>
+            <div class="step-box"><b>Action</b><br/>Approve plan / request additional coverage / trigger LaaS provisioning</div>
+          </div>
+        </div>
+
+        <h3>Integrated Agent Flow</h3>
+        <div class="flow">
+          <div><b>UTH</b><br/>Captures change, requirement, and test planning context.</div>
+          <div><b>DSA</b><br/>Computes impact, anomaly patterns, defect risk, and readiness score.</div>
+          <div><b>LaaS</b><br/>Allocates DUTs, OS, hosts, containers, firmware, and lab schedule.</div>
+          <div><b>Robotics</b><br/>Performs physical setup, device placement, cable/device actions.</div>
+          <div><b>UTH</b><br/>Executes tests, tracks coverage, manages triage, and publishes release cockpit.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="implementation-notes">
+      <h2>Implementation Notes for the Multi-Layer AI Agent System</h2>
+      <div class="grid-3">
+        <div class="layer-card"><h3>Core Agents</h3><ul><li>Requirement Intelligence Agent</li><li>Impact Analysis Agent</li><li>Test Strategy Agent</li><li>Test Design Agent</li><li>Script Generation Agent</li><li>Lab Provisioning Agent</li><li>Execution Monitoring Agent</li><li>RCA Agent</li><li>Regression Optimization Agent</li><li>Release Readiness Agent</li><li>Post-Release Intelligence Agent</li></ul></div>
+        <div class="layer-card"><h3>Core Data Stores</h3><ul><li>Vector DB for RAG</li><li>Graph DB for module-test-defect dependency</li><li>Relational DB for workflow entities</li><li>Object store for logs/reports/artifacts</li><li>Time-series DB for telemetry</li><li>Knowledge base for known issues</li><li>Metrics warehouse for quality KPIs</li></ul></div>
+        <div class="layer-card"><h3>Governance Gates</h3><ul><li>Requirement baseline approval</li><li>Test strategy approval</li><li>High-risk test scope approval</li><li>Defect disposition approval</li><li>Release readiness approval</li><li>Customer release authorization</li><li>Post-release corrective action review</li></ul></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

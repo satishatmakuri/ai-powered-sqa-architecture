@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zion Platform — Full Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050912;--surface:#0b101e;--card:#0f1627;--border:#192038;--border2:#223060;
+  --text:#dde5f0;--muted:#7a8ba8;--dim:#2e3d5a;
+  --c1:#3b82f6;--c2:#8b5cf6;--c3:#ec4899;--c4:#f59e0b;
+  --c5:#10b981;--c6:#ef4444;--c7:#06b6d4;--c8:#84cc16;
+  --c9:#f97316;--c10:#a78bfa;
+  --lyr1:#6366f1;--lyr2:#0ea5e9;--lyr3:#8b5cf6;--lyr4:#10b981;
+  /* Zion component colors */
+  --z-nexus:#f59e0b;--z-prism:#0ea5e9;--z-intellispec:#3b82f6;
+  --z-compass:#8b5cf6;--z-testgen:#ec4899;--z-dataforge:#10b981;
+  --z-envoy:#f97316;--z-testbot:#6366f1;--z-sentinel:#ef4444;
+  --z-beacon:#06b6d4;--z-guardian:#84cc16;--z-pulse:#a78bfa;
+  --z-vault:#fbbf24;--z-bridge:#38bdf8;--z-flow:#fb923c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:auto}
+
+/* ── HEADER ── */
+.header{
+  background:linear-gradient(135deg,#0b1020,#0e1535,#0b1020);
+  border-bottom:2px solid rgba(99,102,241,0.25);
+  padding:14px 26px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:300;backdrop-filter:blur(16px);
+}
+.brand{display:flex;align-items:center;gap:12px}
+.bmark{
+  width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(135deg,#4f46e5,#7c3aed,#db2777);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.1rem;color:#fff;
+  box-shadow:0 0 20px rgba(124,58,237,0.5),inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.bn{font-size:1rem;font-weight:700;color:#fff}
+.bs{font-size:0.58rem;color:var(--muted);margin-top:2px}
+.hdr-mid{text-align:center}
+.hm-t{font-size:0.9rem;font-weight:700;color:#fff}
+.hm-s{font-size:0.6rem;color:var(--muted);margin-top:3px}
+.tag{padding:4px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;font-size:0.58rem;font-weight:600}
+.tg1{background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.4);color:#c4b5fd}
+.tg2{background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);color:#fbbf24}
+.tg3{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#34d399}
+
+/* ── PHASE NAV ── */
+.phase-nav{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:9px 26px;display:flex;align-items:center;gap:2px;
+  overflow-x:auto;scrollbar-width:none;
+}
+.phase-nav::-webkit-scrollbar{display:none}
+.pn{display:flex;align-items:center;gap:1px;flex-shrink:0}
+.pp{padding:4px 9px;border-radius:5px;font-size:0.59rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.2s}
+.pp:hover{filter:brightness(1.4)}
+.psep{color:var(--dim);font-size:0.75rem;margin:0 1px}
+
+/* ── ZION COMPONENT LEGEND ── */
+.zion-legend{
+  padding:10px 26px;background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;gap:0;flex-wrap:wrap;
+}
+.zl-head{
+  font-size:0.6rem;font-weight:700;color:var(--dim);text-transform:uppercase;
+  letter-spacing:0.1em;margin-right:14px;padding-top:4px;white-space:nowrap;
+}
+.zl-items{display:flex;flex-wrap:wrap;gap:6px;flex:1}
+.zl-chip{
+  display:flex;align-items:center;gap:5px;
+  padding:3px 9px;border-radius:20px;font-size:0.59rem;font-weight:600;
+  cursor:pointer;transition:all 0.2s;
+}
+.zl-chip:hover{filter:brightness(1.3)}
+.zl-dot{width:6px;height:6px;border-radius:50%}
+
+/* ── LAYER LEGEND ── */
+.layer-bar{
+  display:flex;align-items:center;gap:18px;
+  padding:8px 26px;background:var(--surface);border-bottom:1px solid var(--border);
+}
+.lb-ttl{font-size:0.58rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em}
+.lb-item{display:flex;align-items:center;gap:6px;font-size:0.62rem;color:var(--muted)}
+.lb-sq{width:9px;height:9px;border-radius:2px}
+.lb-div{width:1px;height:16px;background:var(--border)}
+
+/* ── MATRIX ── */
+.matrix-wrap{overflow-x:auto;padding:18px 26px 100px}
+.matrix{
+  display:grid;
+  grid-template-columns:200px repeat(10, 210px);
+  min-width:2310px;
+  border:1px solid var(--border);border-radius:14px;overflow:hidden;
+}
+
+/* Header row */
+.mhdr-corner{
+  background:var(--surface);padding:14px 16px;
+  border-right:2px solid var(--border2);border-bottom:2px solid var(--border2);
+  display:flex;flex-direction:column;justify-content:flex-end;
+}
+.htxt{font-size:0.6rem;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em}
+.phase-col-hdr{
+  padding:12px 14px;background:var(--surface);
+  border-right:1px solid var(--border);border-bottom:2px solid var(--border2);
+}
+.phase-col-hdr:last-child{border-right:none}
+.pcn{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.pcnum{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.58rem;font-weight:700;color:#fff}
+.pcname{font-size:0.67rem;font-weight:600;color:#f0f6ff;line-height:1.3}
+.pcai{font-size:0.53rem;font-family:'JetBrains Mono',monospace;margin-top:2px}
+
+/* Layer rows */
+.layer-lbl{
+  padding:14px 16px;
+  border-right:2px solid var(--border2);border-bottom:1px solid var(--border);
+  display:flex;flex-direction:column;gap:5px;
+  position:sticky;left:0;z-index:10;
+}
+.ll-ico{font-size:1.1rem}
+.ll-n{font-size:0.56rem;font-weight:700;letter-spacing:0.06em;font-family:'JetBrains Mono',monospace}
+.ll-nm{font-size:0.7rem;font-weight:700;color:#fff;line-height:1.3}
+.ll-ds{font-size:0.58rem;color:var(--muted);line-height:1.4;margin-top:2px}
+
+/* Cells */
+.cell{
+  padding:10px 12px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);
+  display:flex;flex-direction:column;gap:5px;
+}
+.cell:last-child{border-right:none}
+.last-lyr .cell{border-bottom:none}
+.last-lyr .layer-lbl{border-bottom:none}
+
+/* Cell item (activity) */
+.ci{
+  font-size:0.6rem;color:var(--muted);
+  padding:4px 6px;border-radius:5px;
+  display:flex;align-items:flex-start;gap:5px;
+  border-left:2px solid transparent;
+  transition:all 0.2s;
+}
+.ci:hover{background:rgba(255,255,255,0.03)}
+.ci-d{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.ci-t{flex:1;line-height:1.4}
+.ci-tag{flex-shrink:0;font-size:0.48rem;font-weight:700;padding:1px 4px;border-radius:3px;margin-top:1px;font-family:'JetBrains Mono',monospace}
+.tag-ai{background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);color:#c4b5fd}
+.tag-ml{background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.3);color:#22d3ee}
+.tag-db{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:#34d399}
+.tag-rag{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171}
+.tag-ui{background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3);color:#818cf8}
+
+/* Zion Component Badge */
+.zion-badge{
+  display:flex;align-items:center;gap:5px;
+  padding:4px 8px;border-radius:7px;
+  font-size:0.59rem;font-weight:600;margin-top:2px;
+  font-family:'JetBrains Mono',monospace;cursor:pointer;
+  transition:all 0.2s;
+}
+.zion-badge:hover{filter:brightness(1.3);transform:translateX(1px)}
+.zb-ico{font-size:0.8rem}
+.zb-nm{font-weight:700}
+.zb-fn{font-size:0.5rem;font-weight:400;color:rgba(255,255,255,0.6);margin-left:2px}
+
+/* Layer backgrounds */
+.bg-wp{background:#0b101e}
+.bg-app{background:#0c1220}
+.bg-agt{background:#0d1322}
+.bg-dat{background:#0b1220}
+.lbl-wp{background:#0e1328;border-left:3px solid var(--lyr1)}
+.lbl-app{background:#0c1428;border-left:3px solid var(--lyr2)}
+.lbl-agt{background:#0e1228;border-left:3px solid var(--lyr3)}
+.lbl-dat{background:#0c1428;border-left:3px solid var(--lyr4)}
+
+/* Footer */
+.footer{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:8px 26px;display:flex;align-items:center;justify-content:space-between;
+  font-size:0.58rem;color:var(--dim);
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="brand">
+    <div class="bmark">Z</div>
+    <div>
+      <div class="bn">Zion Quality Platform</div>
+      <div class="bs">AI-Powered Software Quality Architecture · Multi-Layer AI Agent System</div>
+    </div>
+  </div>
+  <div class="hdr-mid">
+    <div class="hm-t">Full System Architecture — STLC × AI Layers × Zion Platform Components</div>
+    <div class="hm-s">Work Process · Application · Agent · Data — with Zion platform components embedded across all STLC phases</div>
+  </div>
+  <div style="display:flex;gap:6px">
+    <span class="tag tg1">Wireframe 3 / 3</span>
+    <span class="tag tg2">Zion Full</span>
+    <span class="tag tg3">v1.0</span>
+  </div>
+</header>
+
+<nav class="phase-nav" id="phaseNav"></nav>
+
+<div class="zion-legend" id="zionLegend"></div>
+
+<div class="layer-bar">
+  <span class="lb-ttl">Architecture Layers</span>
+  <div class="lb-item"><div class="lb-sq" style="background:var(--lyr1)"></div>L1 · Work Process (Biz Process)</div>
+  <div class="lb-div"></div>
+  <div class="lb-item"><div class="lb-sq" style="background:var(--lyr2)"></div>L2 · Application (Viewer / UI)</div>
+  <div class="lb-div"></div>
+  <div class="lb-item"><div class="lb-sq" style="background:var(--lyr3)"></div>L3 · Agent (Controller / AI)</div>
+  <div class="lb-div"></div>
+  <div class="lb-item"><div class="lb-sq" style="background:var(--lyr4)"></div>L4 · Data (Model / Knowledge)</div>
+  <div style="margin-left:auto;font-size:0.58rem;color:var(--dim)">← Scroll horizontally to explore all 10 STLC phases →</div>
+</div>
+
+<div class="matrix-wrap">
+  <div class="matrix" id="matrix"></div>
+</div>
+
+<footer class="footer">
+  <span>AI-Powered Software Quality Architecture — Multi-Layer AI Agent System · Zion Platform © 2025</span>
+  <span>14 Zion Components · 10 STLC Phases · 4 Architecture Layers · 76 Total Activities · 84% AI Automation Coverage</span>
+</footer>
+
+<script>
+// ── ZION COMPONENTS ──────────────────────────────────
+const zionComponents = {
+  NEXUS:   {name:"Zion.Nexus",    color:"#f59e0b", bg:"rgba(245,158,11,0.12)",  border:"rgba(245,158,11,0.3)",  ico:"⬡", fn:"Central AI Orchestration Hub"},
+  PRISM:   {name:"Zion.Prism",    color:"#0ea5e9", bg:"rgba(14,165,233,0.12)",  border:"rgba(14,165,233,0.3)",  ico:"◈", fn:"Unified UI Framework"},
+  ISPEC:   {name:"Zion.IntelliSpec",color:"#3b82f6",bg:"rgba(59,130,246,0.12)", border:"rgba(59,130,246,0.3)",  ico:"◑", fn:"Requirements Intelligence"},
+  COMPASS: {name:"Zion.Compass",  color:"#8b5cf6", bg:"rgba(139,92,246,0.12)", border:"rgba(139,92,246,0.3)",  ico:"◐", fn:"Test Planning AI"},
+  TESTGEN: {name:"Zion.TestGen",  color:"#ec4899", bg:"rgba(236,72,153,0.12)", border:"rgba(236,72,153,0.3)",  ico:"◒", fn:"LLM Test Generation"},
+  DATAFRG: {name:"Zion.DataForge",color:"#10b981", bg:"rgba(16,185,129,0.12)", border:"rgba(16,185,129,0.3)",  ico:"◎", fn:"Test Data Management"},
+  ENVOY:   {name:"Zion.Envoy",    color:"#f97316", bg:"rgba(249,115,22,0.12)", border:"rgba(249,115,22,0.3)",  ico:"◆", fn:"Env Provisioning Agent"},
+  TESTBOT: {name:"Zion.TestBot",  color:"#6366f1", bg:"rgba(99,102,241,0.12)", border:"rgba(99,102,241,0.3)",  ico:"◇", fn:"Test Execution Agent"},
+  SENTINEL:{name:"Zion.Sentinel", color:"#ef4444", bg:"rgba(239,68,68,0.12)",  border:"rgba(239,68,68,0.3)",  ico:"▲", fn:"Defect Intelligence AI"},
+  BEACON:  {name:"Zion.Beacon",   color:"#06b6d4", bg:"rgba(6,182,212,0.12)",  border:"rgba(6,182,212,0.3)",  ico:"▣", fn:"Analytics & Reporting"},
+  GUARDIAN:{name:"Zion.Guardian", color:"#84cc16", bg:"rgba(132,204,22,0.12)", border:"rgba(132,204,22,0.3)",  ico:"⊕", fn:"Security & Compliance"},
+  PULSE:   {name:"Zion.Pulse",    color:"#a78bfa", bg:"rgba(167,139,250,0.12)",border:"rgba(167,139,250,0.3)", ico:"⊗", fn:"Prod Monitoring Agent"},
+  VAULT:   {name:"Zion.Vault",    color:"#fbbf24", bg:"rgba(251,191,36,0.12)", border:"rgba(251,191,36,0.3)",  ico:"▪", fn:"Knowledge & RAG Store"},
+  BRIDGE:  {name:"Zion.Bridge",   color:"#38bdf8", bg:"rgba(56,189,248,0.12)", border:"rgba(56,189,248,0.3)",  ico:"⊞", fn:"CI/CD Integration Gateway"},
+  FLOW:    {name:"Zion.FlowEngine",color:"#fb923c",bg:"rgba(251,146,60,0.12)", border:"rgba(251,146,60,0.3)",  ico:"⊟", fn:"Process Orchestration"}
+};
+
+function zbadge(key){
+  const z = zionComponents[key];
+  return `<div class="zion-badge" style="background:${z.bg};border:1px solid ${z.border};color:${z.color}">
+    <span class="zb-ico">${z.ico}</span>
+    <span class="zb-nm">${z.name}</span>
+    <span class="zb-fn">· ${z.fn}</span>
+  </div>`;
+}
+
+// ── PHASE METADATA ──────────────────────────────────
+const phaseColors=["#3b82f6","#8b5cf6","#ec4899","#f59e0b","#10b981","#ef4444","#06b6d4","#84cc16","#f97316","#a78bfa"];
+const phaseNames=["Requirements\nAnalysis","Test\nPlanning","Test Design\n& Dev","Test Env\nSetup","Test\nExecution","Defect\nManagement","Test Reporting\n& Metrics","Test\nClosure","Customer\nRelease","Post-Release\nMonitoring"];
+const phaseAI=["75%","67%","88%","71%","100%","88%","100%","67%","71%","100%"];
+
+// ── FULL MATRIX DATA ─────────────────────────────────
+// [layerKey][phaseIndex] = { items:[{txt,tag}], zions:[componentKey,...] }
+const matrixData = {
+  wp:[
+    {items:[{txt:"Requirements Intake & Review Workflow",tag:"ui"},{txt:"Stakeholder Collaboration Process",tag:""},{txt:"RTM Governance & Traceability",tag:"ui"}],zions:["FLOW","PRISM"]},
+    {items:[{txt:"Test Strategy Approval Workflow",tag:""},{txt:"Resource Allocation Process",tag:""},{txt:"Risk Review Board Process",tag:"ui"}],zions:["FLOW","COMPASS"]},
+    {items:[{txt:"Test Design Standards & Governance",tag:""},{txt:"Peer Review & Sign-off Process",tag:"ui"},{txt:"Coverage Governance Workflow",tag:""}],zions:["FLOW","PRISM"]},
+    {items:[{txt:"Environment Request Workflow",tag:"ui"},{txt:"Infrastructure Change Process",tag:""},{txt:"Config Management Workflow",tag:""}],zions:["FLOW","ENVOY"]},
+    {items:[{txt:"Test Execution Workflow",tag:"ui"},{txt:"Daily Status & Tracking Process",tag:""},{txt:"Defect Escalation Workflow",tag:"ui"}],zions:["FLOW","TESTBOT"]},
+    {items:[{txt:"Defect Lifecycle Management Workflow",tag:"ui"},{txt:"Triage Meeting Coordination",tag:""},{txt:"RCA Governance Process",tag:"ui"}],zions:["FLOW","SENTINEL"]},
+    {items:[{txt:"Quality Gate Review Process",tag:"ui"},{txt:"Metrics Review Cadence",tag:""},{txt:"Stakeholder Reporting Workflow",tag:"ui"}],zions:["FLOW","BEACON"]},
+    {items:[{txt:"Test Closure Sign-off Process",tag:""},{txt:"Artifact Handover Workflow",tag:"ui"},{txt:"Retrospective & Lessons Process",tag:""}],zions:["FLOW","VAULT"]},
+    {items:[{txt:"Release Approval Gate Process",tag:"ui"},{txt:"Go-Live Runbook Execution",tag:""},{txt:"Customer Notification Workflow",tag:"ui"}],zions:["FLOW","GUARDIAN"]},
+    {items:[{txt:"Incident Response Process",tag:"ui"},{txt:"SLA Review & Governance",tag:""},{txt:"Continuous Improvement Loop",tag:"ui"}],zions:["FLOW","PULSE"]}
+  ],
+  app:[
+    {items:[{txt:"Requirements Intelligence Dashboard",tag:"ui"},{txt:"RTM Viewer & Collaboration Portal",tag:"ui"},{txt:"Stakeholder Communication Hub",tag:"ui"}],zions:["PRISM","ISPEC"]},
+    {items:[{txt:"Test Plan Studio & Editor",tag:"ui"},{txt:"Risk Matrix Visualizer",tag:"ui"},{txt:"Resource Planner Console",tag:"ui"}],zions:["PRISM","COMPASS"]},
+    {items:[{txt:"Test Case Designer & BDD Editor",tag:"ui"},{txt:"Synthetic Data Console",tag:"ui"},{txt:"Coverage Map Viewer",tag:"ui"}],zions:["PRISM","TESTGEN"]},
+    {items:[{txt:"Environment Management Console",tag:"ui"},{txt:"IaC Deployment Dashboard",tag:"ui"},{txt:"Config Manager UI",tag:"ui"}],zions:["PRISM","ENVOY"]},
+    {items:[{txt:"Test Execution Control Center",tag:"ui"},{txt:"Live Results Streaming Dashboard",tag:"ui"},{txt:"Multi-device Test Runner Console",tag:"ui"}],zions:["PRISM","TESTBOT"]},
+    {items:[{txt:"Defect Tracker Portal & Kanban",tag:"ui"},{txt:"Smart Bug Report Form",tag:"ui"},{txt:"Triage & Analytics Board",tag:"ui"}],zions:["PRISM","SENTINEL"]},
+    {items:[{txt:"Quality Metrics BI Dashboard",tag:"ui"},{txt:"Real-time Analytics Portal",tag:"ui"},{txt:"Stakeholder Report Hub",tag:"ui"}],zions:["PRISM","BEACON"]},
+    {items:[{txt:"Closure Checklist Interface",tag:"ui"},{txt:"Artifact Archive Manager UI",tag:"ui"},{txt:"Sign-off Approval Portal",tag:"ui"}],zions:["PRISM","VAULT"]},
+    {items:[{txt:"Release Management Dashboard",tag:"ui"},{txt:"Go-Live Progress Tracker",tag:"ui"},{txt:"UAT Coordination Portal",tag:"ui"}],zions:["PRISM","GUARDIAN"]},
+    {items:[{txt:"Production Monitor Dashboard",tag:"ui"},{txt:"Alert & Incident Console",tag:"ui"},{txt:"Customer Feedback Analytics UI",tag:"ui"}],zions:["PRISM","PULSE"]}
+  ],
+  agt:[
+    {items:[{txt:"NLP Requirements Analysis Agent",tag:"ai"},{txt:"RTM Auto-Generator Agent",tag:"ai"},{txt:"Ambiguity & Risk Detector Agent",tag:"ai"}],zions:["ISPEC","NEXUS"]},
+    {items:[{txt:"Test Strategy AI Advisor Agent",tag:"ai"},{txt:"Effort Estimator ML Model",tag:"ml"},{txt:"Risk Scoring & Prioritizer Agent",tag:"ai"}],zions:["COMPASS","NEXUS"]},
+    {items:[{txt:"LLM Test Case Generator Agent",tag:"ai"},{txt:"BDD / Gherkin Writer Agent",tag:"ai"},{txt:"Test Data Synthesizer Agent",tag:"ai"}],zions:["TESTGEN","NEXUS"]},
+    {items:[{txt:"IaC Provisioner Automation Agent",tag:"ai"},{txt:"Environment Validator Agent",tag:"ai"},{txt:"Config Drift Detector Agent",tag:"ml"}],zions:["ENVOY","NEXUS"]},
+    {items:[{txt:"Test Orchestrator Agent",tag:"ai"},{txt:"Self-Healing Script Agent",tag:"ai"},{txt:"Visual AI Comparison Agent",tag:"ml"}],zions:["TESTBOT","GUARDIAN","NEXUS"]},
+    {items:[{txt:"Defect Classifier & Severity AI",tag:"ai"},{txt:"Duplicate Detector Agent",tag:"ml"},{txt:"Root Cause Analyzer Agent",tag:"ai"}],zions:["SENTINEL","NEXUS"]},
+    {items:[{txt:"Metrics Analytics Intelligence",tag:"ai"},{txt:"Predictive QA AI Model",tag:"ml"},{txt:"Auto Report Generator Agent",tag:"ai"}],zions:["BEACON","NEXUS"]},
+    {items:[{txt:"Exit Criteria Evaluator Agent",tag:"ai"},{txt:"Knowledge Extractor Agent",tag:"ai"},{txt:"Process Optimizer Agent",tag:"ml"}],zions:["NEXUS","VAULT"]},
+    {items:[{txt:"Release Gate Validator Agent",tag:"ai"},{txt:"Deployment Verifier Agent",tag:"ai"},{txt:"Go-Live Readiness Agent",tag:"ai"}],zions:["GUARDIAN","NEXUS","BRIDGE"]},
+    {items:[{txt:"Anomaly Detection Agent",tag:"ml"},{txt:"Customer Feedback Analyzer",tag:"ai"},{txt:"Hotfix Triage & Validator",tag:"ai"}],zions:["PULSE","NEXUS"]}
+  ],
+  dat:[
+    {items:[{txt:"Requirements Knowledge Base (RAG)",tag:"rag"},{txt:"Domain Ontology & Taxonomy",tag:"db"},{txt:"Historical RTM Repository",tag:"db"}],zions:["VAULT","ISPEC"]},
+    {items:[{txt:"Strategy Templates Library",tag:"db"},{txt:"Risk Pattern Knowledge Base",tag:"rag"},{txt:"Effort Estimation ML Model Store",tag:"ml"}],zions:["VAULT","COMPASS"]},
+    {items:[{txt:"Test Case Repository & Index",tag:"db"},{txt:"Synthetic Test Data Store",tag:"db"},{txt:"Coverage Matrix Database",tag:"db"}],zions:["VAULT","DATAFRG","TESTGEN"]},
+    {items:[{txt:"Env Config Repository",tag:"db"},{txt:"IaC Templates Store",tag:"db"},{txt:"Infrastructure State Database",tag:"db"}],zions:["VAULT","DATAFRG"]},
+    {items:[{txt:"Test Execution Results DB",tag:"db"},{txt:"Test Logs & Artifacts Store",tag:"db"},{txt:"Execution Baseline Snapshots",tag:"db"}],zions:["VAULT","BRIDGE"]},
+    {items:[{txt:"Defect Repository & Index",tag:"db"},{txt:"Pattern Learning Knowledge Base",tag:"rag"},{txt:"RCA Knowledge Graph",tag:"rag"}],zions:["VAULT","SENTINEL"]},
+    {items:[{txt:"Metrics Data Warehouse",tag:"db"},{txt:"Quality Analytics Database",tag:"db"},{txt:"Report Template Repository",tag:"db"}],zions:["VAULT","BEACON"]},
+    {items:[{txt:"Artifact Archive & Version Store",tag:"db"},{txt:"Lessons Learned KB (RAG)",tag:"rag"},{txt:"Knowledge Graph & Ontology",tag:"rag"}],zions:["VAULT"]},
+    {items:[{txt:"Release History & Audit DB",tag:"db"},{txt:"Deployment & Rollback Logs",tag:"db"},{txt:"Customer Comm Templates",tag:"db"}],zions:["VAULT","BRIDGE"]},
+    {items:[{txt:"Production Telemetry Database",tag:"db"},{txt:"Real-time Logs Pipeline",tag:"db"},{txt:"ML Model Registry & Versioning",tag:"ml"}],zions:["VAULT","PULSE"]}
+  ]
+};
+
+const layers=[
+  {key:'wp',ico:'⬡',num:'Layer 1',nm:'Work Process\n(Biz Process)',ds:'Business workflows,\nprocess governance &\nstakeholder activities',color:'var(--lyr1)',lblCls:'lbl-wp',bgCls:'bg-wp'},
+  {key:'app',ico:'◈',num:'Layer 2',nm:'Application\n(Viewer)',ds:'UI services — Web UI,\nchatbot, dashboards,\nInput & Output only',color:'var(--lyr2)',lblCls:'lbl-app',bgCls:'bg-app'},
+  {key:'agt',ico:'◐',num:'Layer 3',nm:'Agent\n(Controller)',ds:'AI agents, ML models,\nheuristic algorithms,\ncore business logic',color:'var(--lyr3)',lblCls:'lbl-agt',bgCls:'bg-agt'},
+  {key:'dat',ico:'◎',num:'Layer 4',nm:'Data\n(Model)',ds:'DB, RAG, Knowledge\nBase, ML model store,\nData pipelines',color:'var(--lyr4)',lblCls:'lbl-dat',bgCls:'bg-dat'}
+];
+
+// ── RENDER PHASE NAV ──────────────────────────────────
+const phaseNav = document.getElementById('phaseNav');
+phaseColors.forEach((c,i)=>{
+  const d=document.createElement('div');d.className='pn';
+  const nm=phaseNames[i].replace('\n',' ');
+  d.innerHTML=`<div class="pp" style="background:${c}18;border:1px solid ${c}45;color:${c}">${i+1}. ${nm}</div>${i<9?'<span class="psep">›</span>':''}`;
+  phaseNav.appendChild(d);
+});
+
+// ── RENDER ZION LEGEND ────────────────────────────────
+const zionLegend = document.getElementById('zionLegend');
+zionLegend.innerHTML='<div class="zl-head">Zion Components</div><div class="zl-items" id="zlItems"></div>';
+const zlItems = document.getElementById('zlItems');
+Object.entries(zionComponents).forEach(([k,z])=>{
+  const chip=document.createElement('div');
+  chip.className='zl-chip';
+  chip.style.cssText=`background:${z.bg};border:1px solid ${z.border};color:${z.color}`;
+  chip.innerHTML=`<div class="zl-dot" style="background:${z.color}"></div>${z.name}`;
+  chip.title=z.fn;
+  zlItems.appendChild(chip);
+});
+
+// ── RENDER MATRIX ─────────────────────────────────────
+const matrix = document.getElementById('matrix');
+
+// Corner
+const corner=document.createElement('div');
+corner.className='mhdr-corner';
+corner.innerHTML='<div class="htxt" style="color:var(--dim)">AI Layer / STLC Phase</div>';
+matrix.appendChild(corner);
+
+// Phase headers
+phaseColors.forEach((c,i)=>{
+  const cell=document.createElement('div');
+  cell.className='phase-col-hdr';
+  cell.innerHTML=`
+    <div class="pcn">
+      <div class="pcnum" style="background:${c}22;color:${c};border:1px solid ${c}45">${i+1}</div>
+      <div class="pcname">${phaseNames[i].replace('\n','<br>')}</div>
+    </div>
+    <div class="pcai" style="color:${c}">🤖 ${phaseAI[i]} AI Coverage</div>`;
+  matrix.appendChild(cell);
+});
+
+// Layer rows
+layers.forEach((lyr,li)=>{
+  const isLast = li===layers.length-1;
+  const lbl=document.createElement('div');
+  lbl.className=`layer-lbl ${lyr.lblCls}${isLast?' last-lyr':''}`;
+  lbl.innerHTML=`
+    <div class="ll-ico">${lyr.ico}</div>
+    <div class="ll-n" style="color:${lyr.color}">${lyr.num}</div>
+    <div class="ll-nm">${lyr.nm.replace('\n','<br>')}</div>
+    <div class="ll-ds">${lyr.ds.replace(/\n/g,'<br>')}</div>`;
+  matrix.appendChild(lbl);
+
+  matrixData[lyr.key].forEach((cellData,pi)=>{
+    const cell=document.createElement('div');
+    cell.className=`cell ${lyr.bgCls}${isLast?' last-lyr':''}`;
+
+    const itemsHTML=cellData.items.map(it=>`
+      <div class="ci" style="border-left-color:${phaseColors[pi]}40">
+        <div class="ci-d" style="background:${phaseColors[pi]}90"></div>
+        <span class="ci-t">${it.txt}</span>
+        ${it.tag?`<span class="ci-tag tag-${it.tag}">${it.tag.toUpperCase()}</span>`:''}
+      </div>`).join('');
+
+    const zionHTML=cellData.zions.map(k=>zbadge(k)).join('');
+
+    cell.innerHTML=itemsHTML+`<div style="margin-top:4px;padding-top:4px;border-top:1px dashed ${phaseColors[pi]}20">${zionHTML}</div>`;
+    matrix.appendChild(cell);
+  });
+});
+</script>
+</body>
+</html>
