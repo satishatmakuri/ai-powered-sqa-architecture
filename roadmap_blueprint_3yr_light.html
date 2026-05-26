@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zion Quality Platform — 3-Year Blueprint & Roadmap (Light · Confluence)</title>
+<style>
+/* ── CONFLUENCE-COMPATIBLE · LIGHT THEME · Self-contained · Static (no JS) ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f0f4f9; color: #1e293b; font-size: 13px; }
+
+/* HEADER */
+.hdr { background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%); border-bottom: 3px solid #e2e8f0; padding: 14px 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.brand { display: flex; align-items: center; gap: 11px; }
+.bmark { width: 40px; height: 40px; border-radius: 11px; background: linear-gradient(135deg, #4f46e5, #7c3aed, #db2777); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.05rem; color: #fff; box-shadow: 0 3px 10px rgba(124,58,237,0.3); }
+.bn { font-size: 0.95rem; font-weight: 700; color: #1e293b; }
+.bs { font-size: 0.6rem; color: #64748b; margin-top: 2px; }
+.htitle { font-size: 0.88rem; font-weight: 700; color: #1e293b; text-align: center; }
+.hsub { font-size: 0.62rem; color: #64748b; margin-top: 3px; text-align: center; }
+.htags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { padding: 4px 10px; border-radius: 20px; font-size: 0.6rem; font-weight: 600; }
+.t1 { background: #ede9fe; border: 1px solid #c4b5fd; color: #6d28d9; }
+.t2 { background: #fef9c3; border: 1px solid #fde047; color: #854d0e; }
+.t3 { background: #dcfce7; border: 1px solid #86efac; color: #166534; }
+.t4 { background: #e0f2fe; border: 1px solid #7dd3fc; color: #0369a1; }
+
+/* CONFLUENCE NOTE */
+.conf-note { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 7px 14px; margin: 12px 22px 0; font-size: 0.63rem; color: #1e40af; display: flex; align-items: center; gap: 8px; }
+
+.section-ttl { font-size: 0.8rem; font-weight: 800; color: #1e293b; margin: 20px 22px 8px; display: flex; align-items: center; gap: 8px; }
+.section-ttl .bar { width: 4px; height: 16px; border-radius: 2px; background: linear-gradient(180deg,#4f46e5,#db2777); }
+.section-sub { font-size: 0.63rem; color: #64748b; margin: 0 22px 12px; }
+
+/* GANTT */
+.gantt-wrap { overflow-x: auto; padding: 4px 22px 8px; }
+table.gantt { border-collapse: collapse; min-width: 1180px; width: 100%; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-radius: 10px; overflow: hidden; background:#fff; }
+table.gantt th, table.gantt td { border: 1px solid #e2e8f0; }
+.hz { padding: 8px; text-align: center; font-size: 0.66rem; font-weight: 800; color:#fff; }
+.hz1 { background: linear-gradient(135deg,#6366f1,#818cf8); }
+.hz2 { background: linear-gradient(135deg,#10b981,#34d399); }
+.hz3 { background: linear-gradient(135deg,#f97316,#fb923c); }
+.qh { padding: 7px 4px; text-align: center; font-size: 0.58rem; font-weight: 700; color: #475569; background: #f1f5f9; white-space: nowrap; }
+.qh small { display:block; font-size:0.5rem; color:#94a3b8; font-weight:600; }
+.lane-lbl { padding: 9px 11px; font-size: 0.62rem; font-weight: 700; color:#1e293b; background:#f8fafc; width: 210px; min-width:210px; border-left: 4px solid #cbd5e1; }
+.lane-lbl small { display:block; font-weight:500; color:#94a3b8; font-size:0.53rem; margin-top:2px; }
+td.q { background:#fcfdfe; height: 46px; }
+.bar { border-radius: 6px; padding: 6px 9px; color:#fff; font-size:0.57rem; font-weight:700; line-height:1.35; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+.bar small { display:block; font-weight:500; opacity:0.92; font-size:0.52rem; margin-top:2px; }
+.bar.light { opacity: 0.55; font-weight:600; }
+.ms { display:inline-block; font-size:0.48rem; background:rgba(255,255,255,0.28); padding:1px 5px; border-radius:8px; margin-top:3px; }
+
+/* HORIZON CARDS */
+.hz-cards { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; padding: 6px 22px 4px; }
+@media (max-width: 900px){ .hz-cards{ grid-template-columns:1fr; } }
+.hc { background:#fff; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.hc-top { padding:10px 14px; color:#fff; }
+.hc-top .t { font-size:0.74rem; font-weight:800; }
+.hc-top .s { font-size:0.56rem; opacity:0.9; margin-top:2px; }
+.hc-body { padding:11px 14px; }
+.hc-row { margin-bottom:9px; }
+.hc-k { font-size:0.55rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:#94a3b8; margin-bottom:3px; }
+.hc-v { font-size:0.63rem; color:#374151; line-height:1.5; }
+.hc-v li { margin-left:14px; margin-bottom:2px; }
+.pill { display:inline-block; font-size:0.55rem; font-weight:700; padding:2px 8px; border-radius:10px; }
+
+/* MATURITY RAMP */
+.ramp-wrap { padding: 6px 22px 18px; }
+.ramp { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:14px 16px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.ramp-grid { display:grid; grid-template-columns: 150px repeat(3,1fr); gap:8px; align-items:center; }
+.ramp-grid > div { font-size:0.6rem; }
+.ramp-h { font-weight:800; color:#475569; font-size:0.58rem; text-align:center; }
+.ramp-label { font-weight:700; color:#1e293b; }
+.meter { height:22px; border-radius:6px; background:#f1f5f9; position:relative; overflow:hidden; }
+.fill { height:100%; border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:7px; color:#fff; font-size:0.55rem; font-weight:800; }
+
+/* FOOTER */
+.zq-footer { background: #fff; border-top: 1px solid #e2e8f0; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 0.6rem; color: #475569; }
+.zq-copy { margin-left: auto; font-size: 0.58rem; color: #94a3b8; }
+</style>
+</head>
+<body>
+<div style="max-width:100%;overflow:hidden;border:1px solid #e2e8f0;border-radius:8px;margin:0 auto;">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="brand">
+    <div class="bmark">Z</div>
+    <div><div class="bn">Zion Quality Platform</div><div class="bs">AI-Powered Software Quality Architecture · Multi-Layer AI Agent System</div></div>
+  </div>
+  <div>
+    <div class="htitle">3-Year Implementation Blueprint &amp; Roadmap</div>
+    <div class="hsub">3 Horizons · 12 Quarters · 5 STLC Groups · 15 Zion Components · AI coverage ramp 15% → 84%+</div>
+  </div>
+  <div class="htags">
+    <span class="tag t1">Roadmap</span>
+    <span class="tag t2">Quarterly</span>
+    <span class="tag t3">Light Theme</span>
+    <span class="tag t4">Confluence Ready</span>
+  </div>
+</div>
+
+<div class="conf-note">ℹ️ <strong>Confluence:</strong> Insert → Other Macros → HTML → paste full file content. Static layout (no scripts) — renders identically in the macro frame. Scroll horizontally for the full 12-quarter view.</div>
+
+<!-- ── ROADMAP GANTT ── -->
+<div class="section-ttl"><span class="bar"></span>Delivery Roadmap — Quarterly Swimlanes</div>
+<div class="section-sub">Each lane is a delivery workstream. Bars show when STLC groups and their lead Zion components are built. The platform foundation is built first (Q1–Q2) then hardened continuously; STLC groups light up sequentially so each builds on a proven core.</div>
+
+<div class="gantt-wrap">
+<table class="gantt">
+  <!-- Horizon header -->
+  <tr>
+    <th class="lane-lbl" style="background:#f1f5f9;border-left-color:#cbd5e1;">Workstream</th>
+    <th class="hz hz1" colspan="4">HORIZON 1 — Foundation &amp; Quick Wins (Year 1)</th>
+    <th class="hz hz2" colspan="4">HORIZON 2 — Execution &amp; Intelligence (Year 2)</th>
+    <th class="hz hz3" colspan="4">HORIZON 3 — Release, Ops &amp; Scale (Year 3)</th>
+  </tr>
+  <!-- Quarter header -->
+  <tr>
+    <th class="qh" style="text-align:left;">Quarter →</th>
+    <th class="qh">Q1<small>Y1</small></th><th class="qh">Q2<small>Y1</small></th><th class="qh">Q3<small>Y1</small></th><th class="qh">Q4<small>Y1</small></th>
+    <th class="qh">Q5<small>Y2</small></th><th class="qh">Q6<small>Y2</small></th><th class="qh">Q7<small>Y2</small></th><th class="qh">Q8<small>Y2</small></th>
+    <th class="qh">Q9<small>Y3</small></th><th class="qh">Q10<small>Y3</small></th><th class="qh">Q11<small>Y3</small></th><th class="qh">Q12<small>Y3</small></th>
+  </tr>
+
+  <!-- Foundation lane -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#6366f1;">Platform Foundation<small>Backbone · L4 + cross-cutting</small></td>
+    <td class="q" colspan="2"><div class="bar" style="background:linear-gradient(135deg,#6366f1,#818cf8)">Core Build<small>Nexus · Prism shell · Vault/RAG · Bridge CI/CD</small></div></td>
+    <td class="q" colspan="10"><div class="bar light" style="background:linear-gradient(135deg,#6366f1,#818cf8)">Continuous Hardening · ModelOps · IAM/RBAC · Security (Guardian) · Observability</div></td>
+  </tr>
+
+  <!-- Group A -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#3b82f6;">Group A · Pre-Testing<small>P1 Requirements · P2 Planning</small></td>
+    <td class="q"></td>
+    <td class="q" colspan="2"><div class="bar" style="background:linear-gradient(135deg,#3b82f6,#60a5fa)">P1 Req Analysis · P2 Planning<small>IntelliSpec · Compass<span class="ms">◗ MVP gate</span></small></div></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+  </tr>
+
+  <!-- Group B -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#8b5cf6;">Group B · Test Preparation<small>P3 Design · P4 Env Setup</small></td>
+    <td class="q"></td><td class="q"></td>
+    <td class="q" colspan="3"><div class="bar" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa)">P3 Test Design · P4 Env Setup<small>TestGen · DataForge · Envoy<span class="ms">◗ Auto-gen gate</span></small></div></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+  </tr>
+
+  <!-- Group C -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#10b981;">Group C · Test Execution<small>P5 Execution · P6 Defect Mgmt</small></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+    <td class="q" colspan="3"><div class="bar" style="background:linear-gradient(135deg,#10b981,#34d399)">P5 Execution · P6 Defect Mgmt<small>TestBot · Sentinel<span class="ms">◗ Zero-touch run</span></small></div></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+  </tr>
+
+  <!-- Group D -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#0e7490;">Group D · Intelligence &amp; Closure<small>P7 Reporting · P8 Closure</small></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+    <td class="q" colspan="3"><div class="bar" style="background:linear-gradient(135deg,#0e7490,#22d3ee)">P7 Reporting · P8 Closure<small>Beacon · Vault<span class="ms">◗ Predictive QA</span></small></div></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td>
+  </tr>
+
+  <!-- Group E -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#f97316;">Group E · Release &amp; Operations<small>P9 Release · P10 Post-Release</small></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+    <td class="q" colspan="3"><div class="bar" style="background:linear-gradient(135deg,#f97316,#fb923c)">P9 Release · P10 Post-Release<small>Guardian · Pulse<span class="ms">◗ Closed loop</span></small></div></td>
+    <td class="q"></td>
+  </tr>
+
+  <!-- Scale lane -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#7c3aed;">Scale &amp; Closed-Loop<small>Multi-product · Enterprise</small></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+    <td class="q" colspan="2"><div class="bar" style="background:linear-gradient(135deg,#7c3aed,#a855f7)">Enterprise Rollout<small>FlowEngine E2E · NVMe/SATA/eMMC/UFS/uSD/PSSD</small></div></td>
+  </tr>
+</table>
+</div>
+
+<!-- ── HORIZON OBJECTIVE CARDS ── -->
+<div class="section-ttl"><span class="bar"></span>Horizon Objectives &amp; Outcomes</div>
+<div class="hz-cards">
+
+  <div class="hc">
+    <div class="hc-top" style="background:linear-gradient(135deg,#6366f1,#818cf8)">
+      <div class="t">Horizon 1 — Foundation</div>
+      <div class="s">Year 1 · Q1–Q4 · Build the spine + earliest test-authoring wins</div>
+    </div>
+    <div class="hc-body">
+      <div class="hc-row"><div class="hc-k">Objective</div><div class="hc-v">Stand up the 4-layer platform backbone and prove AI value on the front of the lifecycle (requirements → test design) without disrupting current QA operations.</div></div>
+      <div class="hc-row"><div class="hc-k">Key Outcomes</div><div class="hc-v"><ul>
+        <li>Zion.Nexus orchestration + Zion.Prism UI shell + Zion.Vault RAG store live</li>
+        <li>Zion.Bridge integrated with existing CI/CD &amp; lab tooling</li>
+        <li>Requirements Intelligence (IntelliSpec) + Test Planning (Compass) in production for 1–2 pilot programs</li>
+        <li>Auto test-case generation (TestGen) piloted; environment provisioning (Envoy) automated</li>
+      </ul></div></div>
+      <div class="hc-row"><div class="hc-k">Exit Criteria</div><div class="hc-v">RTM auto-generated for pilots; ≥1 product line authoring tests via AI; platform SLOs &amp; RBAC signed off.</div></div>
+      <div class="hc-row"><div class="hc-k">AI Coverage</div><div class="hc-v"><span class="pill" style="background:#ede9fe;color:#6d28d9">≈ 35% by end of H1</span></div></div>
+    </div>
+  </div>
+
+  <div class="hc">
+    <div class="hc-top" style="background:linear-gradient(135deg,#10b981,#34d399)">
+      <div class="t">Horizon 2 — Execution &amp; Intelligence</div>
+      <div class="s">Year 2 · Q5–Q8 · Automate the core execution &amp; analysis loop</div>
+    </div>
+    <div class="hc-body">
+      <div class="hc-row"><div class="hc-k">Objective</div><div class="hc-v">Achieve zero-touch test execution and AI-driven defect &amp; quality intelligence across the heaviest, highest-ROI STLC phases.</div></div>
+      <div class="hc-row"><div class="hc-k">Key Outcomes</div><div class="hc-v"><ul>
+        <li>Zion.TestBot orchestrates execution with self-healing scripts (target 100% exec automation)</li>
+        <li>Zion.Sentinel auto-classifies, de-dupes &amp; root-causes defects</li>
+        <li>Zion.Beacon delivers predictive QA metrics &amp; auto-generated reports</li>
+        <li>Test closure &amp; lessons-learned KB (Vault) feeding the knowledge loop</li>
+      </ul></div></div>
+      <div class="hc-row"><div class="hc-k">Exit Criteria</div><div class="hc-v">Execution &amp; reporting phases at 100% automation; defect triage cycle-time down ≥50%; predictive risk model in use.</div></div>
+      <div class="hc-row"><div class="hc-k">AI Coverage</div><div class="hc-v"><span class="pill" style="background:#dcfce7;color:#166534">≈ 65% by end of H2</span></div></div>
+    </div>
+  </div>
+
+  <div class="hc">
+    <div class="hc-top" style="background:linear-gradient(135deg,#f97316,#fb923c)">
+      <div class="t">Horizon 3 — Release, Ops &amp; Scale</div>
+      <div class="s">Year 3 · Q9–Q12 · Close the loop &amp; scale enterprise-wide</div>
+    </div>
+    <div class="hc-body">
+      <div class="hc-row"><div class="hc-k">Objective</div><div class="hc-v">Automate release gating and production monitoring, close the field-to-requirements loop, and scale across all memory-product lines.</div></div>
+      <div class="hc-row"><div class="hc-k">Key Outcomes</div><div class="hc-v"><ul>
+        <li>Zion.Guardian automates release gates, security &amp; compliance sign-off</li>
+        <li>Zion.Pulse monitors production telemetry, detects anomalies, triages hotfixes</li>
+        <li>Zion.FlowEngine orchestrates the full closed-loop STLC end-to-end</li>
+        <li>Rollout across NVMe / SATA / eMMC / UFS / uSD / PSSD with governed ModelOps</li>
+      </ul></div></div>
+      <div class="hc-row"><div class="hc-k">Exit Criteria</div><div class="hc-v">Field anomalies auto-route to repro &amp; requirements; multi-product live; platform AI coverage ≥84%.</div></div>
+      <div class="hc-row"><div class="hc-k">AI Coverage</div><div class="hc-v"><span class="pill" style="background:#ffedd5;color:#9a3412">≈ 84%+ by end of H3</span></div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── MATURITY RAMP ── -->
+<div class="section-ttl"><span class="bar"></span>Capability Maturity Ramp</div>
+<div class="ramp-wrap">
+  <div class="ramp">
+    <div class="ramp-grid">
+      <div class="ramp-h"></div><div class="ramp-h">End of Horizon 1</div><div class="ramp-h">End of Horizon 2</div><div class="ramp-h">End of Horizon 3</div>
+
+      <div class="ramp-label">AI Automation Coverage</div>
+      <div class="meter"><div class="fill" style="width:35%;background:linear-gradient(90deg,#6366f1,#818cf8)">35%</div></div>
+      <div class="meter"><div class="fill" style="width:65%;background:linear-gradient(90deg,#10b981,#34d399)">65%</div></div>
+      <div class="meter"><div class="fill" style="width:88%;background:linear-gradient(90deg,#f97316,#fb923c)">84%+</div></div>
+
+      <div class="ramp-label">STLC Phases Live</div>
+      <div class="meter"><div class="fill" style="width:40%;background:linear-gradient(90deg,#6366f1,#818cf8)">4 / 10</div></div>
+      <div class="meter"><div class="fill" style="width:80%;background:linear-gradient(90deg,#10b981,#34d399)">8 / 10</div></div>
+      <div class="meter"><div class="fill" style="width:100%;background:linear-gradient(90deg,#f97316,#fb923c)">10 / 10</div></div>
+
+      <div class="ramp-label">Zion Components Deployed</div>
+      <div class="meter"><div class="fill" style="width:47%;background:linear-gradient(90deg,#6366f1,#818cf8)">7 / 15</div></div>
+      <div class="meter"><div class="fill" style="width:80%;background:linear-gradient(90deg,#10b981,#34d399)">12 / 15</div></div>
+      <div class="meter"><div class="fill" style="width:100%;background:linear-gradient(90deg,#f97316,#fb923c)">15 / 15</div></div>
+
+      <div class="ramp-label">Product Lines Onboarded</div>
+      <div class="meter"><div class="fill" style="width:25%;background:linear-gradient(90deg,#6366f1,#818cf8)">1–2</div></div>
+      <div class="meter"><div class="fill" style="width:55%;background:linear-gradient(90deg,#10b981,#34d399)">3–4</div></div>
+      <div class="meter"><div class="fill" style="width:100%;background:linear-gradient(90deg,#f97316,#fb923c)">All 6</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="zq-footer">
+  <span>AI-Powered Software Quality Architecture — Multi-Layer AI Agent System · Zion Platform © 2025</span>
+  <span>3 Horizons · 12 Quarters · 5 STLC Groups · 15 Zion Components</span>
+  <span class="zq-copy">H1: Foundation | H2: Execution &amp; Intelligence | H3: Release, Ops &amp; Scale</span>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zion Quality Platform — Objectives &amp; Outcomes by Phase &amp; Layer (Light · Confluence)</title>
+<style>
+/* ── CONFLUENCE-COMPATIBLE · LIGHT THEME · Self-contained · Static (no JS) ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f0f4f9; color: #1e293b; font-size: 13px; }
+
+/* HEADER */
+.hdr { background: linear-gradient(135deg,#ffffff 0%,#f8faff 100%); border-bottom: 3px solid #e2e8f0; padding: 14px 22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; box-shadow:0 1px 4px rgba(0,0,0,0.07); }
+.brand { display:flex; align-items:center; gap:11px; }
+.bmark { width:40px; height:40px; border-radius:11px; background:linear-gradient(135deg,#4f46e5,#7c3aed,#db2777); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.05rem; color:#fff; box-shadow:0 3px 10px rgba(124,58,237,0.3); }
+.bn { font-size:0.95rem; font-weight:700; color:#1e293b; }
+.bs { font-size:0.6rem; color:#64748b; margin-top:2px; }
+.htitle { font-size:0.88rem; font-weight:700; color:#1e293b; text-align:center; }
+.hsub { font-size:0.62rem; color:#64748b; margin-top:3px; text-align:center; }
+.htags { display:flex; gap:6px; flex-wrap:wrap; }
+.tag { padding:4px 10px; border-radius:20px; font-size:0.6rem; font-weight:600; }
+.t1 { background:#ede9fe; border:1px solid #c4b5fd; color:#6d28d9; }
+.t2 { background:#fef9c3; border:1px solid #fde047; color:#854d0e; }
+.t3 { background:#dcfce7; border:1px solid #86efac; color:#166534; }
+.t4 { background:#e0f2fe; border:1px solid #7dd3fc; color:#0369a1; }
+
+.conf-note { background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:7px 14px; margin:12px 22px 0; font-size:0.63rem; color:#1e40af; display:flex; align-items:center; gap:8px; }
+
+.section-ttl { font-size:0.8rem; font-weight:800; color:#1e293b; margin:20px 22px 8px; display:flex; align-items:center; gap:8px; }
+.section-ttl .bar { width:4px; height:16px; border-radius:2px; background:linear-gradient(180deg,#4f46e5,#db2777); }
+.section-sub { font-size:0.63rem; color:#64748b; margin:0 22px 12px; }
+
+/* PHASE TABLE */
+.tbl-wrap { overflow-x:auto; padding:0 22px 8px; }
+table.po { border-collapse:collapse; width:100%; min-width:1000px; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.06); }
+table.po th, table.po td { border:1px solid #e8edf3; padding:9px 11px; vertical-align:top; text-align:left; }
+table.po thead th { background:#f1f5f9; font-size:0.58rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:#64748b; }
+.phcell { display:flex; align-items:center; gap:8px; }
+.phnum { width:24px; height:24px; border-radius:6px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.62rem; font-weight:800; color:#fff; }
+.phnm { font-size:0.65rem; font-weight:700; color:#1e293b; line-height:1.25; }
+.obj { font-size:0.61rem; color:#374151; line-height:1.5; }
+.outc { font-size:0.6rem; color:#374151; line-height:1.5; }
+.outc li { margin-left:13px; margin-bottom:2px; }
+.tgt { font-size:0.57rem; font-weight:700; padding:3px 8px; border-radius:10px; white-space:nowrap; }
+.h1b { background:#ede9fe; color:#6d28d9; }
+.h2b { background:#dcfce7; color:#166534; }
+.h3b { background:#ffedd5; color:#9a3412; }
+.aip { font-size:0.62rem; font-weight:800; }
+.zc { display:inline-block; font-size:0.5rem; font-weight:700; padding:2px 6px; border-radius:8px; margin:1px 2px 1px 0; font-family:'Courier New',monospace; background:#f8fafc; border:1px solid #e2e8f0; color:#475569; }
+
+/* LAYER CARDS */
+.ly-cards { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; padding:6px 22px 4px; }
+@media (max-width:820px){ .ly-cards{ grid-template-columns:1fr; } }
+.lc { background:#fff; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.lc-top { padding:10px 14px; color:#fff; display:flex; align-items:center; gap:10px; }
+.lc-ico { font-size:1.2rem; }
+.lc-t { font-size:0.74rem; font-weight:800; }
+.lc-s { font-size:0.55rem; opacity:0.92; margin-top:1px; }
+.lc-body { padding:11px 14px; }
+.lc-k { font-size:0.54rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:#94a3b8; margin:8px 0 3px; }
+.lc-v { font-size:0.62rem; color:#374151; line-height:1.5; }
+.mat { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:4px; }
+.mat-col { border-radius:7px; padding:7px 8px; font-size:0.55rem; line-height:1.4; }
+.mat-h { font-weight:800; font-size:0.53rem; margin-bottom:3px; text-transform:uppercase; letter-spacing:0.04em; }
+.lc-z { margin-top:8px; }
+
+.zq-footer { background:#fff; border-top:1px solid #e2e8f0; padding:10px 22px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; font-size:0.6rem; color:#475569; }
+.zq-copy { margin-left:auto; font-size:0.58rem; color:#94a3b8; }
+</style>
+</head>
+<body>
+<div style="max-width:100%;overflow:hidden;border:1px solid #e2e8f0;border-radius:8px;margin:0 auto;">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="brand">
+    <div class="bmark">Z</div>
+    <div><div class="bn">Zion Quality Platform</div><div class="bs">AI-Powered Software Quality Architecture · Multi-Layer AI Agent System</div></div>
+  </div>
+  <div>
+    <div class="htitle">Objectives &amp; Outcomes — by STLC Phase &amp; Architecture Layer</div>
+    <div class="hsub">10 STLC Phases · 4 Architecture Layers · mapped to the 3-Horizon roadmap</div>
+  </div>
+  <div class="htags">
+    <span class="tag t1">Objectives</span>
+    <span class="tag t2">Outcomes</span>
+    <span class="tag t3">Light Theme</span>
+    <span class="tag t4">Confluence Ready</span>
+  </div>
+</div>
+
+<div class="conf-note">ℹ️ <strong>Confluence:</strong> Insert → Other Macros → HTML → paste full file content. Static layout (no scripts). <strong>H1</strong>=Foundation (Yr 1), <strong>H2</strong>=Execution &amp; Intelligence (Yr 2), <strong>H3</strong>=Release, Ops &amp; Scale (Yr 3).</div>
+
+<!-- ── PER-PHASE OBJECTIVES & OUTCOMES ── -->
+<div class="section-ttl"><span class="bar"></span>Part 1 — Objectives &amp; Outcomes per STLC Phase</div>
+<div class="section-sub">For each of the ten testing-lifecycle phases: the platform objective, the measurable outcomes that signal "done", the target delivery window on the roadmap, the AI-automation coverage target, and the lead Zion components.</div>
+
+<div class="tbl-wrap">
+<table class="po">
+  <thead>
+    <tr>
+      <th style="width:175px;">Phase</th>
+      <th style="width:255px;">Objective</th>
+      <th>Key Outcomes</th>
+      <th style="width:88px;">Target</th>
+      <th style="width:60px;">AI</th>
+      <th style="width:130px;">Lead Zion</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><div class="phcell"><div class="phnum" style="background:#3b82f6">1</div><div class="phnm">Requirements<br>Analysis</div></div></td>
+      <td class="obj">Turn raw specs (SRS, NVMe/JEDEC/UFS standards) into structured, testable, traceable requirements automatically.</td>
+      <td class="outc"><ul><li>NLP extracts &amp; classifies requirements</li><li>RTM auto-generated &amp; governed</li><li>Ambiguity / risk flagged pre-design</li></ul></td>
+      <td><span class="tgt h1b">H1 · Y1Q2</span></td>
+      <td class="aip" style="color:#3b82f6">75%</td>
+      <td><span class="zc">IntelliSpec</span><span class="zc">Vault</span><span class="zc">Flow</span></td>
+    </tr>
+    <tr>
+      <td><div class="phcell"><div class="phnum" style="background:#8b5cf6">2</div><div class="phnm">Test<br>Planning</div></div></td>
+      <td class="obj">Generate risk-based test strategies, estimates and resourcing from the RTM and historical data.</td>
+      <td class="outc"><ul><li>AI strategy advisor drafts plans</li><li>ML effort estimation &amp; risk scoring</li><li>Resource &amp; scope auto-proposed</li></ul></td>
+      <td><span class="tgt h1b">H1 · Y1Q2–Q3</span></td>
+      <td class="aip" style="color:#8b5cf6">67%</td>
+      <td><span class="zc">Compass</span><span class="zc">Flow</span></td>
+    </tr>
+    <tr>
+      <td><div class="phcell"><div class="phnum" style="background:#ec4899">3</div><div class="phnm">Test Design<br>&amp; Development</div></div></td>
+      <td class="obj">Author test cases, BDD scripts and synthetic data from requirements with full coverage traceability.</td>
+      <td class="outc"><ul><li>LLM test-case &amp; Gherkin generation</li><li>Synthetic test-data synthesis</li><li>Coverage map auto-maintained</li></ul></td>
+      <td><span class="tgt h1b">H1 · Y1Q3–Q4</span></td>
+      <td class="aip" style="color:#ec4899">88%</td>
+      <td><span class="zc">TestGen</span><span class="zc">DataForge</span></td>
+    </tr>
+    <tr>
+      <td><div class="phcell"><div class="phnum" style="background:#f59e0b">4</div><div class="phnm">Test Environment<br>Setup</div></div></td>
+      <td class="obj">Provision host/OS/device test beds on demand via IaC, validated and drift-free.</td>
+      <td class="outc"><ul><li>IaC provisioning agent live</li><li>Environment validation automated</li><li>Config-drift detection &amp; repair</li></ul></td>
+      <td><span class="tgt h1b">H1→H2 · Y1Q4</span></td>
+      <td class="aip" style="color:#f59e0b">71%</td>
+      <td><span class="zc">Envoy</span><span class="zc">Bridge</span></td>
+    </tr>
+    <tr>
+      <td><div class="phcell"><div class="phnum" style="background:#10b981">5</div><div class="phnm">Test<br>Execution</div></div></td>
+      <td class="obj">Run the full suite zero-touch across all memory products with self-healing automation.</td>
+      <td class="outc"><ul><li>Orchestrated multi-device execution</li><li>Self-healing scripts &amp; visual AI checks</li><li>100% unattended regression runs</li></ul></td>
+      <td><span class="tgt h2b">H2 · Y2Q1–Q2</span></td>
+      <td class="aip" style="color:#10b981">100%</td>
+      <td><span class="zc">TestBot</span><span class="zc">Guardian</span></td>
+    </tr>
+    <tr>
+      <td><div class="phcell"><div class="phnum" style="background:#ef4444">6</div><div class="phnm">Defect<br>Management</div></div></td>
+      <td class="obj">Detect, classify, de-duplicate and root-cause defects with minimal human triage.</td>
+      <td class="outc"><ul><li>AI severity &amp; duplicate detection</li><li>Automated root-cause analysis</li><li>Triage cycle-time cut ≥ 50%</li></ul></td>
+      <td><span class="tgt h2b">H2 · Y2Q2–Q3</span></td>
+      <td class="aip" style="color:#ef4444">88%</td>
+      <td><span class="zc">Sentinel</span></td>
+    </tr>
+    <tr>
+      <td><div class="phcell"><div class="phnum" style="background:#06b6d4">7</div><div class="phnm">Test Reporting<br>&amp; Metrics</div></div></td>
+      <td class="obj">Deliver real-time quality intelligence and predictive QA, with reports written automatically.</td>
+      <td class="outc"><ul><li>Live BI dashboards &amp; KPIs</li><li>Predictive QA / escape-risk model</li><li>Auto-generated stakeholder reports</li></ul></td>
+      <td><span class="tgt h2b">H2 · Y2Q3</span></td>
+      <td class="aip" style="color:#06b6d4">100%</td>
+      <td><span class="zc">Beacon</span></td>
+    </tr>
+    <tr>
+      <td><div class="phcell"><div class="phnum" style="background:#16a34a">8</div><div class="phnm">Test<br>Closure</div></div></td>
+      <td class="obj">Evaluate exit criteria, capture knowledge and archive artifacts with AI assistance.</td>
+      <td class="outc"><ul><li>Exit-criteria evaluator agent</li><li>Lessons-learned KB (RAG) auto-updated</li><li>Versioned artifact archival</li></ul></td>
+      <td><span class="tgt h2b">H2 · Y2Q4</span></td>
+      <td class="aip" style="color:#16a34a">67%</td>
+      <td><span class="zc">Vault</span><span class="zc">Nexus</span></td>
+    </tr>
+    <tr>
+      <td><div class="phcell"><div class="phnum" style="background:#f97316">9</div><div class="phnm">Customer<br>Release</div></div></td>
+      <td class="obj">Automate release gating, security/compliance sign-off and go-live verification.</td>
+      <td class="outc"><ul><li>Release-gate validator agent</li><li>Security &amp; compliance auto-checks</li><li>Deployment &amp; go-live verification</li></ul></td>
+      <td><span class="tgt h3b">H3 · Y3Q1–Q2</span></td>
+      <td class="aip" style="color:#f97316">71%</td>
+      <td><span class="zc">Guardian</span><span class="zc">Bridge</span></td>
+    </tr>
+    <tr>
+      <td><div class="phcell"><div class="phnum" style="background:#7c3aed">10</div><div class="phnm">Post-Release<br>Monitoring</div></div></td>
+      <td class="obj">Monitor field telemetry, detect anomalies, and feed learnings back into requirements (closed loop).</td>
+      <td class="outc"><ul><li>Production anomaly detection</li><li>Customer-feedback analysis &amp; hotfix triage</li><li>Continuous-improvement loop → P1</li></ul></td>
+      <td><span class="tgt h3b">H3 · Y3Q2–Q3</span></td>
+      <td class="aip" style="color:#7c3aed">100%</td>
+      <td><span class="zc">Pulse</span><span class="zc">Nexus</span></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ── PER-LAYER OBJECTIVES & OUTCOMES ── -->
+<div class="section-ttl"><span class="bar"></span>Part 2 — Objectives &amp; Outcomes per Architecture Layer</div>
+<div class="section-sub">For each of the four layers: the platform objective, the headline outcome, the maturity it should reach by the end of each horizon, and the lead Zion components that anchor the layer.</div>
+
+<div class="ly-cards">
+
+  <!-- L1 Work Process -->
+  <div class="lc">
+    <div class="lc-top" style="background:linear-gradient(135deg,#6366f1,#818cf8)"><div class="lc-ico">⬡</div><div><div class="lc-t">L1 · Work Process Layer</div><div class="lc-s">Business Process — workflows, governance, human-in-the-loop</div></div></div>
+    <div class="lc-body">
+      <div class="lc-k">Objective</div>
+      <div class="lc-v">Digitize and govern every QA workflow — intake, approvals, gates, triage cadences — so the AI layers run inside controlled, auditable business processes.</div>
+      <div class="lc-k">Headline Outcome</div>
+      <div class="lc-v">End-to-end orchestrated STLC workflow with quality gates, RBAC and audit trail; humans approve, AI executes.</div>
+      <div class="lc-k">Maturity by Horizon</div>
+      <div class="mat">
+        <div class="mat-col" style="background:#f0f4ff;color:#4338ca"><div class="mat-h">H1</div>Intake, RTM &amp; planning workflows digitized for pilots</div>
+        <div class="mat-col" style="background:#ecfdf5;color:#047857"><div class="mat-h">H2</div>Execution, triage &amp; reporting gates fully governed</div>
+        <div class="mat-col" style="background:#fff7ed;color:#c2410c"><div class="mat-h">H3</div>Closed-loop release &amp; ops process across all products</div>
+      </div>
+      <div class="lc-z"><div class="lc-k">Lead Zion</div><span class="zc">FlowEngine</span><span class="zc">Guardian</span><span class="zc">Prism</span></div>
+    </div>
+  </div>
+
+  <!-- L2 Application -->
+  <div class="lc">
+    <div class="lc-top" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)"><div class="lc-ico">◈</div><div><div class="lc-t">L2 · Application Layer</div><div class="lc-s">Viewer — Web UI, dashboards, chatbot (I/O only)</div></div></div>
+    <div class="lc-body">
+      <div class="lc-k">Objective</div>
+      <div class="lc-v">Provide one unified "single pane of glass" so every role sees, steers and approves AI-driven testing through consistent dashboards and consoles.</div>
+      <div class="lc-k">Headline Outcome</div>
+      <div class="lc-v">Role-based portals for all 10 phases on one design system — no tool-hopping; every agent action is visible and controllable.</div>
+      <div class="lc-k">Maturity by Horizon</div>
+      <div class="mat">
+        <div class="mat-col" style="background:#f0f4ff;color:#4338ca"><div class="mat-h">H1</div>Prism shell + Requirements, Planning &amp; Design consoles</div>
+        <div class="mat-col" style="background:#ecfdf5;color:#047857"><div class="mat-h">H2</div>Execution control centre, defect &amp; metrics dashboards</div>
+        <div class="mat-col" style="background:#fff7ed;color:#c2410c"><div class="mat-h">H3</div>Release &amp; production-monitoring consoles complete</div>
+      </div>
+      <div class="lc-z"><div class="lc-k">Lead Zion</div><span class="zc">Prism</span><span class="zc">Beacon</span></div>
+    </div>
+  </div>
+
+  <!-- L3 Agent -->
+  <div class="lc">
+    <div class="lc-top" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa)"><div class="lc-ico">◐</div><div><div class="lc-t">L3 · Agent Layer</div><div class="lc-s">Controller — AI agents, ML models, heuristics</div></div></div>
+    <div class="lc-body">
+      <div class="lc-k">Objective</div>
+      <div class="lc-v">Implement the core testing logic as orchestrated AI agents and ML models that do the work — generate, execute, analyze, decide.</div>
+      <div class="lc-k">Headline Outcome</div>
+      <div class="lc-v">A library of specialized agents under Nexus orchestration driving 84%+ of lifecycle activity, with governed ModelOps.</div>
+      <div class="lc-k">Maturity by Horizon</div>
+      <div class="mat">
+        <div class="mat-col" style="background:#f0f4ff;color:#4338ca"><div class="mat-h">H1</div>Nexus + requirements, planning, test-gen, env agents</div>
+        <div class="mat-col" style="background:#ecfdf5;color:#047857"><div class="mat-h">H2</div>Execution, defect, analytics &amp; predictive agents live</div>
+        <div class="mat-col" style="background:#fff7ed;color:#c2410c"><div class="mat-h">H3</div>Release-gate &amp; production agents; full closed loop</div>
+      </div>
+      <div class="lc-z"><div class="lc-k">Lead Zion</div><span class="zc">Nexus</span><span class="zc">TestBot</span><span class="zc">Sentinel</span><span class="zc">Pulse</span></div>
+    </div>
+  </div>
+
+  <!-- L4 Data -->
+  <div class="lc">
+    <div class="lc-top" style="background:linear-gradient(135deg,#10b981,#34d399)"><div class="lc-ico">◎</div><div><div class="lc-t">L4 · Data Layer</div><div class="lc-s">Model — DB, RAG, knowledge base, ML registry</div></div></div>
+    <div class="lc-body">
+      <div class="lc-k">Objective</div>
+      <div class="lc-v">Build the unified knowledge and data foundation (RAG + DBs + model registry) that grounds every agent and preserves institutional memory.</div>
+      <div class="lc-k">Headline Outcome</div>
+      <div class="lc-v">A single governed knowledge mesh — specs, tests, defects, telemetry — feeding all agents and the lessons-learned loop.</div>
+      <div class="lc-k">Maturity by Horizon</div>
+      <div class="mat">
+        <div class="mat-col" style="background:#f0f4ff;color:#4338ca"><div class="mat-h">H1</div>Vault RAG + requirements, test &amp; env repositories</div>
+        <div class="mat-col" style="background:#ecfdf5;color:#047857"><div class="mat-h">H2</div>Results, defect &amp; metrics warehouses + RCA graph</div>
+        <div class="mat-col" style="background:#fff7ed;color:#c2410c"><div class="mat-h">H3</div>Production telemetry lake + ML model registry unified</div>
+      </div>
+      <div class="lc-z"><div class="lc-k">Lead Zion</div><span class="zc">Vault</span><span class="zc">DataForge</span><span class="zc">Bridge</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="zq-footer">
+  <span>AI-Powered Software Quality Architecture — Multi-Layer AI Agent System · Zion Platform © 2025</span>
+  <span>10 STLC Phases · 4 Architecture Layers · 15 Zion Components</span>
+  <span class="zq-copy">Aligned to H1 Foundation · H2 Execution &amp; Intelligence · H3 Release, Ops &amp; Scale</span>
+</div>
+
+</div>
+</body>
+</html>

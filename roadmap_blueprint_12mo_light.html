@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zion Quality Platform — 12-Month AI-Accelerated Blueprint (Light · Confluence)</title>
+<style>
+/* ── CONFLUENCE-COMPATIBLE · LIGHT THEME · Self-contained · Static (no JS) ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f0f4f9; color: #1e293b; font-size: 13px; }
+
+/* HEADER */
+.hdr { background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%); border-bottom: 3px solid #e2e8f0; padding: 14px 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.brand { display: flex; align-items: center; gap: 11px; }
+.bmark { width: 40px; height: 40px; border-radius: 11px; background: linear-gradient(135deg, #4f46e5, #7c3aed, #db2777); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.05rem; color: #fff; box-shadow: 0 3px 10px rgba(124,58,237,0.3); }
+.bn { font-size: 0.95rem; font-weight: 700; color: #1e293b; }
+.bs { font-size: 0.6rem; color: #64748b; margin-top: 2px; }
+.htitle { font-size: 0.88rem; font-weight: 700; color: #1e293b; text-align: center; }
+.hsub { font-size: 0.62rem; color: #64748b; margin-top: 3px; text-align: center; }
+.htags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { padding: 4px 10px; border-radius: 20px; font-size: 0.6rem; font-weight: 600; }
+.t1 { background: #ede9fe; border: 1px solid #c4b5fd; color: #6d28d9; }
+.t2 { background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; }
+.t3 { background: #dcfce7; border: 1px solid #86efac; color: #166534; }
+.t4 { background: #e0f2fe; border: 1px solid #7dd3fc; color: #0369a1; }
+
+.conf-note { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 7px 14px; margin: 12px 22px 0; font-size: 0.63rem; color: #1e40af; display: flex; align-items: center; gap: 8px; }
+
+/* WHY-COMPRESSED CALLOUT */
+.why { margin: 12px 22px 0; background: linear-gradient(135deg,#fff7ed,#fffbeb); border: 1px solid #fdba74; border-left: 4px solid #f97316; border-radius: 8px; padding: 11px 15px; }
+.why-t { font-size: 0.7rem; font-weight: 800; color: #9a3412; margin-bottom: 5px; display:flex; align-items:center; gap:7px; }
+.why-v { font-size: 0.62rem; color: #7c2d12; line-height: 1.55; }
+.why-v b { color:#9a3412; }
+.why-chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:7px; }
+.why-chip { font-size:0.55rem; font-weight:700; padding:3px 9px; border-radius:10px; background:#fff; border:1px solid #fdba74; color:#9a3412; }
+
+.section-ttl { font-size: 0.8rem; font-weight: 800; color: #1e293b; margin: 20px 22px 8px; display: flex; align-items: center; gap: 8px; }
+.section-ttl .bar { width: 4px; height: 16px; border-radius: 2px; background: linear-gradient(180deg,#4f46e5,#db2777); }
+.section-sub { font-size: 0.63rem; color: #64748b; margin: 0 22px 12px; }
+
+/* GANTT */
+.gantt-wrap { overflow-x: auto; padding: 4px 22px 8px; }
+table.gantt { border-collapse: collapse; min-width: 1180px; width: 100%; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-radius: 10px; overflow: hidden; background:#fff; }
+table.gantt th, table.gantt td { border: 1px solid #e2e8f0; }
+.hz { padding: 8px; text-align: center; font-size: 0.66rem; font-weight: 800; color:#fff; }
+.hz1 { background: linear-gradient(135deg,#6366f1,#818cf8); }
+.hz2 { background: linear-gradient(135deg,#10b981,#34d399); }
+.hz3 { background: linear-gradient(135deg,#f97316,#fb923c); }
+.qh { padding: 7px 4px; text-align: center; font-size: 0.58rem; font-weight: 700; color: #475569; background: #f1f5f9; white-space: nowrap; }
+.qh small { display:block; font-size:0.5rem; color:#94a3b8; font-weight:600; }
+.lane-lbl { padding: 9px 11px; font-size: 0.62rem; font-weight: 700; color:#1e293b; background:#f8fafc; width: 210px; min-width:210px; border-left: 4px solid #cbd5e1; }
+.lane-lbl small { display:block; font-weight:500; color:#94a3b8; font-size:0.53rem; margin-top:2px; }
+td.q { background:#fcfdfe; height: 44px; }
+.bar { border-radius: 6px; padding: 6px 9px; color:#fff; font-size:0.57rem; font-weight:700; line-height:1.35; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+.bar small { display:block; font-weight:500; opacity:0.92; font-size:0.52rem; margin-top:2px; }
+.bar.light { opacity: 0.55; font-weight:600; }
+.bar.dashed { background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0 6px, transparent 6px 12px); }
+.ms { display:inline-block; font-size:0.48rem; background:rgba(255,255,255,0.28); padding:1px 5px; border-radius:8px; margin-top:3px; }
+
+/* HORIZON CARDS */
+.hz-cards { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; padding: 6px 22px 4px; }
+@media (max-width: 900px){ .hz-cards{ grid-template-columns:1fr; } }
+.hc { background:#fff; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.hc-top { padding:10px 14px; color:#fff; }
+.hc-top .t { font-size:0.74rem; font-weight:800; }
+.hc-top .s { font-size:0.56rem; opacity:0.9; margin-top:2px; }
+.hc-body { padding:11px 14px; }
+.hc-row { margin-bottom:9px; }
+.hc-k { font-size:0.55rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:#94a3b8; margin-bottom:3px; }
+.hc-v { font-size:0.63rem; color:#374151; line-height:1.5; }
+.hc-v li { margin-left:14px; margin-bottom:2px; }
+.pill { display:inline-block; font-size:0.55rem; font-weight:700; padding:2px 8px; border-radius:10px; }
+
+/* MATURITY RAMP */
+.ramp-wrap { padding: 6px 22px 18px; }
+.ramp { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:14px 16px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.ramp-grid { display:grid; grid-template-columns: 160px repeat(3,1fr); gap:8px; align-items:center; }
+.ramp-grid > div { font-size:0.6rem; }
+.ramp-h { font-weight:800; color:#475569; font-size:0.58rem; text-align:center; }
+.ramp-label { font-weight:700; color:#1e293b; }
+.meter { height:22px; border-radius:6px; background:#f1f5f9; position:relative; overflow:hidden; }
+.fill { height:100%; border-radius:6px; display:flex; align-items:center; justify-content:flex-end; padding-right:7px; color:#fff; font-size:0.55rem; font-weight:800; }
+
+/* FOOTER */
+.zq-footer { background: #fff; border-top: 1px solid #e2e8f0; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 0.6rem; color: #475569; }
+.zq-copy { margin-left: auto; font-size: 0.58rem; color: #94a3b8; }
+</style>
+</head>
+<body>
+<div style="max-width:100%;overflow:hidden;border:1px solid #e2e8f0;border-radius:8px;margin:0 auto;">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="brand">
+    <div class="bmark">Z</div>
+    <div><div class="bn">Zion Quality Platform</div><div class="bs">AI-Powered Software Quality Architecture · Multi-Layer AI Agent System</div></div>
+  </div>
+  <div>
+    <div class="htitle">12-Month AI-Accelerated Blueprint &amp; Roadmap</div>
+    <div class="hsub">3 Horizons · 12 Months · MVP by Day 90 · AI coverage ramp 40% → 84%+ · paced by trust &amp; lab integration, not coding</div>
+  </div>
+  <div class="htags">
+    <span class="tag t1">Roadmap v2</span>
+    <span class="tag t2">AI-Accelerated</span>
+    <span class="tag t3">Light Theme</span>
+    <span class="tag t4">Confluence Ready</span>
+  </div>
+</div>
+
+<div class="conf-note">ℹ️ <strong>Confluence:</strong> Insert → Other Macros → HTML → paste full file content. Static layout (no scripts). Scroll horizontally for the full 12-month view.</div>
+
+<!-- WHY-COMPRESSED CALLOUT -->
+<div class="why">
+  <div class="why-t">⚡ Why 12 months, not 3 years</div>
+  <div class="why-v">With Gen-AI agents, MCP and Skills, <b>writing the software is no longer the bottleneck</b> — agents, dashboards, MCP connectors and RAG pipelines are built in days-to-weeks, so an MVP lands by ~Day 90. The remaining timeline is paced by the things AI <b>cannot</b> collapse: integrating physical labs &amp; devices (LaaS, Robotics, NVMe/SATA/eMMC/UFS/uSD/PSSD beds), <b>earning trust</b> (AI gates run in shadow mode behind humans until they prove parity), accumulating validation evidence, and organizational adoption, security &amp; compliance sign-off.</div>
+  <div class="why-chips">
+    <span class="why-chip">Build time → collapses</span>
+    <span class="why-chip">Lab / device integration → fixed</span>
+    <span class="why-chip">Trust &amp; parallel-run → fixed</span>
+    <span class="why-chip">Adoption &amp; compliance → fixed</span>
+  </div>
+</div>
+
+<!-- ── ROADMAP GANTT ── -->
+<div class="section-ttl"><span class="bar"></span>Delivery Roadmap — Monthly Swimlanes</div>
+<div class="section-sub">Build lanes light up fast and overlap (AI-accelerated). The dashed <strong>Trust &amp; Parallel-Run</strong> lane is the critical path to autonomous release gating: AI decisions shadow human gates from Month 5 until they demonstrably match, then go autonomous in Horizon 3.</div>
+
+<div class="gantt-wrap">
+<table class="gantt">
+  <!-- Horizon header -->
+  <tr>
+    <th class="lane-lbl" style="background:#f1f5f9;border-left-color:#cbd5e1;">Workstream</th>
+    <th class="hz hz1" colspan="4">HORIZON 1 — Foundation &amp; First Agents (Mo 1–4)</th>
+    <th class="hz hz2" colspan="4">HORIZON 2 — Execution &amp; Intelligence (Mo 5–8)</th>
+    <th class="hz hz3" colspan="4">HORIZON 3 — Release, Ops &amp; Scale (Mo 9–12)</th>
+  </tr>
+  <!-- Month header -->
+  <tr>
+    <th class="qh" style="text-align:left;">Month →</th>
+    <th class="qh">M1<small>wk 1-4</small></th><th class="qh">M2</th><th class="qh">M3<small>◗ MVP D90</small></th><th class="qh">M4</th>
+    <th class="qh">M5</th><th class="qh">M6</th><th class="qh">M7</th><th class="qh">M8</th>
+    <th class="qh">M9</th><th class="qh">M10</th><th class="qh">M11</th><th class="qh">M12</th>
+  </tr>
+
+  <!-- Foundation lane -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#6366f1;">Platform Foundation<small>Backbone · L4 + cross-cutting</small></td>
+    <td class="q" colspan="2"><div class="bar" style="background:linear-gradient(135deg,#6366f1,#818cf8)">Core Build<small>Nexus · Prism · Vault/RAG · Bridge</small></div></td>
+    <td class="q" colspan="10"><div class="bar light" style="background:linear-gradient(135deg,#6366f1,#818cf8)">Continuous Hardening · ModelOps · IAM/RBAC · Security (Guardian) · Observability</div></td>
+  </tr>
+
+  <!-- Group A -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#3b82f6;">Group A · Pre-Testing<small>P1 Requirements · P2 Planning</small></td>
+    <td class="q"></td>
+    <td class="q" colspan="2"><div class="bar" style="background:linear-gradient(135deg,#3b82f6,#60a5fa)">P1 Req · P2 Planning<small>IntelliSpec · Compass<span class="ms">◗ MVP</span></small></div></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+  </tr>
+
+  <!-- Group B -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#8b5cf6;">Group B · Test Preparation<small>P3 Design · P4 Env Setup</small></td>
+    <td class="q"></td><td class="q"></td>
+    <td class="q" colspan="3"><div class="bar" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa)">P3 Design · P4 Env Setup<small>TestGen · DataForge · Envoy<span class="ms">◗ lab integ.</span></small></div></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+  </tr>
+
+  <!-- Group C -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#10b981;">Group C · Test Execution<small>P5 Execution · P6 Defect Mgmt</small></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+    <td class="q" colspan="3"><div class="bar" style="background:linear-gradient(135deg,#10b981,#34d399)">P5 Execution · P6 Defect<small>TestBot · Sentinel<span class="ms">◗ zero-touch</span></small></div></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+  </tr>
+
+  <!-- Group D -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#0e7490;">Group D · Intelligence &amp; Closure<small>P7 Reporting · P8 Closure</small></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+    <td class="q" colspan="3"><div class="bar" style="background:linear-gradient(135deg,#0e7490,#22d3ee)">P7 Reporting · P8 Closure<small>Beacon · Vault<span class="ms">◗ predictive QA</span></small></div></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+  </tr>
+
+  <!-- Group E -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#f97316;">Group E · Release &amp; Operations<small>P9 Release · P10 Post-Release</small></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+    <td class="q" colspan="4"><div class="bar" style="background:linear-gradient(135deg,#f97316,#fb923c)">P9 Release · P10 Post-Release<small>Guardian · Pulse<span class="ms">◗ closed loop</span></small></div></td>
+    <td class="q"></td>
+  </tr>
+
+  <!-- Trust & Parallel-Run lane (critical path) -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#dc2626;">⚠ Trust &amp; Parallel-Run<small>AI shadows humans → autonomous</small></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+    <td class="q" colspan="7"><div class="bar dashed" style="background:linear-gradient(135deg,#dc2626,#f87171)">Shadow-mode validation → parity proven → autonomous gates<small>AI gate decisions logged beside human gates; promoted only on demonstrated agreement</small></div></td>
+    <td class="q"></td>
+  </tr>
+
+  <!-- Scale lane -->
+  <tr>
+    <td class="lane-lbl" style="border-left-color:#7c3aed;">Scale &amp; Closed-Loop<small>Multi-product · Enterprise</small></td>
+    <td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td><td class="q"></td>
+    <td class="q" colspan="3"><div class="bar" style="background:linear-gradient(135deg,#7c3aed,#a855f7)">Enterprise Rollout<small>FlowEngine E2E · all 6 product lines</small></div></td>
+  </tr>
+</table>
+</div>
+
+<!-- ── HORIZON OBJECTIVE CARDS ── -->
+<div class="section-ttl"><span class="bar"></span>Horizon Objectives &amp; Outcomes</div>
+<div class="hz-cards">
+
+  <div class="hc">
+    <div class="hc-top" style="background:linear-gradient(135deg,#6366f1,#818cf8)">
+      <div class="t">Horizon 1 — Foundation &amp; First Agents</div>
+      <div class="s">Months 1–4 · Build the spine + front-of-lifecycle agents · MVP by Day 90</div>
+    </div>
+    <div class="hc-body">
+      <div class="hc-row"><div class="hc-k">Objective</div><div class="hc-v">Stand up the 4-layer backbone and ship working requirements → test-design agents fast, proving AI value without touching production gates.</div></div>
+      <div class="hc-row"><div class="hc-k">Key Outcomes</div><div class="hc-v"><ul>
+        <li>Nexus orchestration + Prism UI shell + Vault RAG + Bridge CI/CD live (Mo 1–2)</li>
+        <li>IntelliSpec &amp; Compass in pilot use; RTM auto-generated</li>
+        <li>TestGen auto-authoring + Envoy environment provisioning</li>
+        <li><b>MVP demoable at Day 90</b> on 1–2 pilot programs</li>
+      </ul></div></div>
+      <div class="hc-row"><div class="hc-k">Pacing Item</div><div class="hc-v">Connecting to existing lab APIs &amp; CI; data onboarding into Vault.</div></div>
+      <div class="hc-row"><div class="hc-k">AI Coverage</div><div class="hc-v"><span class="pill" style="background:#ede9fe;color:#6d28d9">≈ 40% by Mo 4</span></div></div>
+    </div>
+  </div>
+
+  <div class="hc">
+    <div class="hc-top" style="background:linear-gradient(135deg,#10b981,#34d399)">
+      <div class="t">Horizon 2 — Execution &amp; Intelligence</div>
+      <div class="s">Months 5–8 · Automate the core loop + start trust-building</div>
+    </div>
+    <div class="hc-body">
+      <div class="hc-row"><div class="hc-k">Objective</div><div class="hc-v">Reach zero-touch execution and AI defect/quality intelligence; begin running AI gates in shadow mode beside humans.</div></div>
+      <div class="hc-row"><div class="hc-k">Key Outcomes</div><div class="hc-v"><ul>
+        <li>TestBot zero-touch execution + self-healing scripts</li>
+        <li>Sentinel auto-classify / de-dupe / root-cause defects</li>
+        <li>Beacon predictive QA + auto-generated reports</li>
+        <li><b>Parallel-run begins:</b> AI decisions logged vs human gates</li>
+      </ul></div></div>
+      <div class="hc-row"><div class="hc-k">Pacing Item</div><div class="hc-v">Physical lab / device-fixture integration (Robotics, multi-device); defect-model accuracy on real data.</div></div>
+      <div class="hc-row"><div class="hc-k">AI Coverage</div><div class="hc-v"><span class="pill" style="background:#dcfce7;color:#166534">≈ 70% by Mo 8</span></div></div>
+    </div>
+  </div>
+
+  <div class="hc">
+    <div class="hc-top" style="background:linear-gradient(135deg,#f97316,#fb923c)">
+      <div class="t">Horizon 3 — Release, Ops &amp; Scale</div>
+      <div class="s">Months 9–12 · Autonomous gating, closed loop, multi-product</div>
+    </div>
+    <div class="hc-body">
+      <div class="hc-row"><div class="hc-k">Objective</div><div class="hc-v">Promote AI gates to autonomous (after parity is proven), automate production monitoring, close the field→requirements loop, scale to all products.</div></div>
+      <div class="hc-row"><div class="hc-k">Key Outcomes</div><div class="hc-v"><ul>
+        <li>Guardian autonomous release gating + compliance sign-off</li>
+        <li>Pulse production anomaly detection &amp; hotfix triage</li>
+        <li>FlowEngine drives full closed-loop STLC end-to-end</li>
+        <li>Rollout across NVMe/SATA/eMMC/UFS/uSD/PSSD</li>
+      </ul></div></div>
+      <div class="hc-row"><div class="hc-k">Pacing Item</div><div class="hc-v">Trust parity sign-off; compliance/regulatory approval; org adoption across product lines.</div></div>
+      <div class="hc-row"><div class="hc-k">AI Coverage</div><div class="hc-v"><span class="pill" style="background:#ffedd5;color:#9a3412">≈ 84%+ by Mo 12</span></div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── MATURITY RAMP ── -->
+<div class="section-ttl"><span class="bar"></span>Capability Maturity Ramp</div>
+<div class="ramp-wrap">
+  <div class="ramp">
+    <div class="ramp-grid">
+      <div class="ramp-h"></div><div class="ramp-h">End of Mo 4 (H1)</div><div class="ramp-h">End of Mo 8 (H2)</div><div class="ramp-h">End of Mo 12 (H3)</div>
+
+      <div class="ramp-label">AI Automation Coverage</div>
+      <div class="meter"><div class="fill" style="width:40%;background:linear-gradient(90deg,#6366f1,#818cf8)">40%</div></div>
+      <div class="meter"><div class="fill" style="width:70%;background:linear-gradient(90deg,#10b981,#34d399)">70%</div></div>
+      <div class="meter"><div class="fill" style="width:88%;background:linear-gradient(90deg,#f97316,#fb923c)">84%+</div></div>
+
+      <div class="ramp-label">STLC Phases Live</div>
+      <div class="meter"><div class="fill" style="width:40%;background:linear-gradient(90deg,#6366f1,#818cf8)">4 / 10</div></div>
+      <div class="meter"><div class="fill" style="width:80%;background:linear-gradient(90deg,#10b981,#34d399)">8 / 10</div></div>
+      <div class="meter"><div class="fill" style="width:100%;background:linear-gradient(90deg,#f97316,#fb923c)">10 / 10</div></div>
+
+      <div class="ramp-label">Zion Components Live</div>
+      <div class="meter"><div class="fill" style="width:47%;background:linear-gradient(90deg,#6366f1,#818cf8)">7 / 15</div></div>
+      <div class="meter"><div class="fill" style="width:80%;background:linear-gradient(90deg,#10b981,#34d399)">12 / 15</div></div>
+      <div class="meter"><div class="fill" style="width:100%;background:linear-gradient(90deg,#f97316,#fb923c)">15 / 15</div></div>
+
+      <div class="ramp-label">Release Gate Autonomy</div>
+      <div class="meter"><div class="fill" style="width:12%;background:linear-gradient(90deg,#6366f1,#818cf8)">human</div></div>
+      <div class="meter"><div class="fill" style="width:55%;background:linear-gradient(90deg,#10b981,#34d399)">shadow</div></div>
+      <div class="meter"><div class="fill" style="width:100%;background:linear-gradient(90deg,#f97316,#fb923c)">autonomous</div></div>
+
+      <div class="ramp-label">Product Lines Onboarded</div>
+      <div class="meter"><div class="fill" style="width:25%;background:linear-gradient(90deg,#6366f1,#818cf8)">1–2</div></div>
+      <div class="meter"><div class="fill" style="width:55%;background:linear-gradient(90deg,#10b981,#34d399)">3–4</div></div>
+      <div class="meter"><div class="fill" style="width:100%;background:linear-gradient(90deg,#f97316,#fb923c)">All 6</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="zq-footer">
+  <span>AI-Powered Software Quality Architecture — Multi-Layer AI Agent System · Zion Platform © 2025</span>
+  <span>3 Horizons · 12 Months · MVP Day 90 · 15 Zion Components</span>
+  <span class="zq-copy">H1: Foundation | H2: Execution &amp; Intelligence | H3: Release, Ops &amp; Scale</span>
+</div>
+
+</div>
+</body>
+</html>

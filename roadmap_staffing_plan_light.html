@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zion Quality Platform — 12-Month Staffing Plan (Light · Confluence)</title>
+<style>
+/* ── CONFLUENCE-COMPATIBLE · LIGHT THEME · Self-contained · Static (no JS) ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f0f4f9; color: #1e293b; font-size: 13px; }
+
+/* HEADER */
+.hdr { background: linear-gradient(135deg,#ffffff 0%,#f8faff 100%); border-bottom: 3px solid #e2e8f0; padding: 14px 22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; box-shadow:0 1px 4px rgba(0,0,0,0.07); }
+.brand { display:flex; align-items:center; gap:11px; }
+.bmark { width:40px; height:40px; border-radius:11px; background:linear-gradient(135deg,#4f46e5,#7c3aed,#db2777); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.05rem; color:#fff; box-shadow:0 3px 10px rgba(124,58,237,0.3); }
+.bn { font-size:0.95rem; font-weight:700; color:#1e293b; }
+.bs { font-size:0.6rem; color:#64748b; margin-top:2px; }
+.htitle { font-size:0.88rem; font-weight:700; color:#1e293b; text-align:center; }
+.hsub { font-size:0.62rem; color:#64748b; margin-top:3px; text-align:center; }
+.htags { display:flex; gap:6px; flex-wrap:wrap; }
+.tag { padding:4px 10px; border-radius:20px; font-size:0.6rem; font-weight:600; }
+.t1 { background:#ede9fe; border:1px solid #c4b5fd; color:#6d28d9; }
+.t2 { background:#fef9c3; border:1px solid #fde047; color:#854d0e; }
+.t3 { background:#dcfce7; border:1px solid #86efac; color:#166534; }
+.t4 { background:#e0f2fe; border:1px solid #7dd3fc; color:#0369a1; }
+
+.conf-note { background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:7px 14px; margin:12px 22px 0; font-size:0.63rem; color:#1e40af; display:flex; align-items:center; gap:8px; }
+
+/* KEY INSIGHT */
+.why { margin:12px 22px 0; background:linear-gradient(135deg,#f5f3ff,#faf5ff); border:1px solid #c4b5fd; border-left:4px solid #7c3aed; border-radius:8px; padding:11px 15px; }
+.why-t { font-size:0.7rem; font-weight:800; color:#6d28d9; margin-bottom:5px; display:flex; align-items:center; gap:7px; }
+.why-v { font-size:0.62rem; color:#5b21b6; line-height:1.55; }
+.why-v b { color:#4c1d95; }
+
+/* SUMMARY STAT STRIP */
+.stats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; padding:14px 22px 4px; }
+@media (max-width:760px){ .stats{ grid-template-columns:repeat(2,1fr); } }
+.stat { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:12px 14px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.stat .n { font-size:1.35rem; font-weight:800; line-height:1; }
+.stat .l { font-size:0.56rem; color:#64748b; margin-top:5px; font-weight:600; }
+
+.section-ttl { font-size:0.8rem; font-weight:800; color:#1e293b; margin:20px 22px 8px; display:flex; align-items:center; gap:8px; }
+.section-ttl .bar { width:4px; height:16px; border-radius:2px; background:linear-gradient(180deg,#4f46e5,#db2777); }
+.section-sub { font-size:0.63rem; color:#64748b; margin:0 22px 12px; }
+
+/* ROLE TABLE */
+.tbl-wrap { overflow-x:auto; padding:0 22px 8px; }
+table.team { border-collapse:collapse; width:100%; min-width:980px; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.06); }
+table.team th, table.team td { border:1px solid #e8edf3; padding:9px 11px; vertical-align:top; text-align:left; }
+table.team thead th { background:#f1f5f9; font-size:0.57rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:#64748b; }
+.role { display:flex; align-items:center; gap:8px; }
+.rdot { width:10px; height:34px; border-radius:4px; flex-shrink:0; }
+.rname { font-size:0.65rem; font-weight:700; color:#1e293b; line-height:1.25; }
+.rlayer { font-size:0.53rem; color:#94a3b8; margin-top:2px; }
+.fte { font-size:0.85rem; font-weight:800; color:#1e293b; text-align:center; }
+.skills { font-size:0.59rem; color:#374151; line-height:1.5; }
+.hzb { font-size:0.55rem; font-weight:700; padding:3px 8px; border-radius:10px; white-space:nowrap; }
+.h1b { background:#ede9fe; color:#6d28d9; }
+.h2b { background:#dcfce7; color:#166534; }
+.h3b { background:#ffedd5; color:#9a3412; }
+.hallb { background:#e2e8f0; color:#475569; }
+.totrow td { background:#f8fafc; font-weight:800; font-size:0.63rem; color:#1e293b; }
+
+/* FRACTIONAL */
+.frac { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:4px 22px; }
+@media (max-width:760px){ .frac{ grid-template-columns:1fr; } }
+.fc { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:11px 13px; box-shadow:0 2px 6px rgba(0,0,0,0.04); }
+.fc-t { font-size:0.64rem; font-weight:800; color:#1e293b; }
+.fc-f { font-size:0.55rem; font-weight:700; color:#7c3aed; margin:3px 0 5px; }
+.fc-v { font-size:0.58rem; color:#475569; line-height:1.45; }
+
+/* HORIZON LOADING */
+.load-wrap { padding:4px 22px; }
+.load { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:14px 16px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.load-grid { display:grid; grid-template-columns:170px 1fr 70px; gap:10px; align-items:center; }
+.load-grid > div { font-size:0.6rem; }
+.ld-lbl { font-weight:700; color:#1e293b; }
+.ld-lbl small { display:block; font-weight:500; color:#94a3b8; font-size:0.52rem; margin-top:1px; }
+.meter { height:26px; border-radius:6px; background:#f1f5f9; overflow:hidden; }
+.fill { height:100%; border-radius:6px; display:flex; align-items:center; padding-left:9px; color:#fff; font-size:0.57rem; font-weight:700; }
+.ld-num { font-size:0.95rem; font-weight:800; text-align:right; color:#1e293b; }
+
+/* INTENSITY MATRIX */
+.mx-wrap { overflow-x:auto; padding:0 22px 10px; }
+table.mx { border-collapse:collapse; width:100%; min-width:680px; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.06); }
+table.mx th, table.mx td { border:1px solid #e8edf3; padding:8px 10px; text-align:center; font-size:0.59rem; }
+table.mx thead th { background:#f1f5f9; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:#64748b; font-size:0.55rem; }
+table.mx td.r { text-align:left; font-weight:700; color:#1e293b; font-size:0.6rem; }
+.cell-hi { background:#7c3aed; color:#fff; font-weight:800; }
+.cell-md { background:#ddd6fe; color:#5b21b6; font-weight:700; }
+.cell-lo { background:#f3e8ff; color:#7c3aed; font-weight:600; }
+.cell-no { background:#f8fafc; color:#cbd5e1; }
+.mx-legend { display:flex; gap:12px; flex-wrap:wrap; padding:6px 22px 2px; font-size:0.56rem; color:#475569; align-items:center; }
+.mx-legend .sw { display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:4px; vertical-align:middle; }
+
+/* ASSUMPTIONS */
+.assume { margin:6px 22px 0; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:11px 15px; }
+.assume-t { font-size:0.62rem; font-weight:800; color:#334155; margin-bottom:5px; }
+.assume-v { font-size:0.59rem; color:#475569; line-height:1.6; }
+.assume-v li { margin-left:15px; margin-bottom:3px; }
+
+.zq-footer { background:#fff; border-top:1px solid #e2e8f0; padding:10px 22px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; font-size:0.6rem; color:#475569; margin-top:14px; }
+.zq-copy { margin-left:auto; font-size:0.58rem; color:#94a3b8; }
+</style>
+</head>
+<body>
+<div style="max-width:100%;overflow:hidden;border:1px solid #e2e8f0;border-radius:8px;margin:0 auto;">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="brand">
+    <div class="bmark">Z</div>
+    <div><div class="bn">Zion Quality Platform</div><div class="bs">AI-Powered Software Quality Architecture · Multi-Layer AI Agent System</div></div>
+  </div>
+  <div>
+    <div class="htitle">12-Month Staffing Plan — Team Size &amp; Skills</div>
+    <div class="hsub">Expertise-dense, headcount-light · ~12 FTE core · peak ~13–14 mid-build</div>
+  </div>
+  <div class="htags">
+    <span class="tag t1">Staffing</span>
+    <span class="tag t2">Skills Matrix</span>
+    <span class="tag t3">Light Theme</span>
+    <span class="tag t4">Confluence Ready</span>
+  </div>
+</div>
+
+<div class="conf-note">ℹ️ <strong>Confluence:</strong> Insert → Other Macros → HTML → paste full file content. Static layout (no scripts). Pairs with the 12-Month AI-Accelerated Blueprint.</div>
+
+<!-- KEY INSIGHT -->
+<div class="why">
+  <div class="why-t">⚡ The staffing principle</div>
+  <div class="why-v">Gen-AI agents, MCP and Skills <b>collapse the coding-heavy roles</b> — you need fewer pure developers than a traditional build. What they do <b>not</b> reduce — and what becomes the binding constraint — is the expertise that defines ground truth and earns trust: <b>memory-product QA domain experts, lab / hardware integrators, and the trust-validation owners</b>. So the team is small but senior: fewer, stronger people beat a large junior team when AI does the heavy lifting.</div>
+</div>
+
+<!-- SUMMARY STATS -->
+<div class="stats">
+  <div class="stat"><div class="n" style="color:#6366f1">~12</div><div class="l">FTE CORE TEAM</div></div>
+  <div class="stat"><div class="n" style="color:#10b981">13–14</div><div class="l">PEAK FTE (HORIZON 2)</div></div>
+  <div class="stat"><div class="n" style="color:#f97316">8</div><div class="l">CORE ROLES</div></div>
+  <div class="stat"><div class="n" style="color:#7c3aed">~1.5</div><div class="l">FTE FRACTIONAL SPECIALISTS</div></div>
+</div>
+
+<!-- CORE TEAM TABLE -->
+<div class="section-ttl"><span class="bar"></span>Core Team — Roles, Headcount &amp; Skills</div>
+<div class="section-sub">Eight core roles, ~12 FTE. Colour bar = the architecture layer the role primarily serves (L1 Work Process · L2 Application · L3 Agent · L4 Data · cross-cutting).</div>
+
+<div class="tbl-wrap">
+<table class="team">
+  <thead>
+    <tr><th style="width:215px;">Role</th><th style="width:55px;">FTE</th><th>Key Skills</th><th style="width:115px;">Heaviest Phase</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><div class="role"><div class="rdot" style="background:#4f46e5"></div><div><div class="rname">Platform Architect / Tech Lead</div><div class="rlayer">All layers · Nexus orchestration</div></div></div></td>
+      <td class="fte">1.0</td>
+      <td class="skills">System &amp; agent architecture, MCP design, multi-agent orchestration, technical decision ownership, hands-on prototyping</td>
+      <td><span class="hzb h1b">H1 Foundation</span></td>
+    </tr>
+    <tr>
+      <td><div class="role"><div class="rdot" style="background:#8b5cf6"></div><div><div class="rname">AI / Agent Engineers</div><div class="rlayer">L3 · Agent (Controller)</div></div></div></td>
+      <td class="fte">2–3</td>
+      <td class="skills">LLM agent design, MCP tools, RAG pipelines, prompt engineering, eval / guardrail harnesses, Python</td>
+      <td><span class="hzb h1b">H1–H2</span></td>
+    </tr>
+    <tr>
+      <td><div class="role"><div class="rdot" style="background:#0ea5e9"></div><div><div class="rname">Full-stack / Frontend Engineers</div><div class="rlayer">L2 · Application (Viewer)</div></div></div></td>
+      <td class="fte">2.0</td>
+      <td class="skills">React / TypeScript, dashboards &amp; data-viz, design system (Prism), API integration, UX implementation</td>
+      <td><span class="hzb h1b">H1–H2</span></td>
+    </tr>
+    <tr>
+      <td><div class="role"><div class="rdot" style="background:#6366f1"></div><div><div class="rname">Backend / Platform Engineers</div><div class="rlayer">L1 + cross-cutting backbone</div></div></div></td>
+      <td class="fte">1.5</td>
+      <td class="skills">Microservices, workflow engine (FlowEngine), APIs &amp; auth/RBAC, Bridge CI/CD integration, observability</td>
+      <td><span class="hzb h1b">H1 Foundation</span></td>
+    </tr>
+    <tr>
+      <td><div class="role"><div class="rdot" style="background:#10b981"></div><div><div class="rname">Data / ML Engineer</div><div class="rlayer">L4 · Data (Model)</div></div></div></td>
+      <td class="fte">1.5</td>
+      <td class="skills">Vector DB / RAG (Vault), data pipelines &amp; warehousing, predictive-QA models, ML model registry, MLOps</td>
+      <td><span class="hzb h2b">H2 Execution</span></td>
+    </tr>
+    <tr>
+      <td><div class="role"><div class="rdot" style="background:#dc2626"></div><div><div class="rname">QA Domain SME / Lead SDET</div><div class="rlayer">Cross-cutting · trust anchor</div></div></div></td>
+      <td class="fte">2.0</td>
+      <td class="skills">Memory-product QA (NVMe / SATA / eMMC / UFS / uSD / PSSD), test automation, ground-truth definition &amp; parallel-run validation</td>
+      <td><span class="hzb h3b">H2–H3</span></td>
+    </tr>
+    <tr>
+      <td><div class="role"><div class="rdot" style="background:#f59e0b"></div><div><div class="rname">DevOps / Lab Infra Engineer</div><div class="rlayer">L1/L4 · physical integration</div></div></div></td>
+      <td class="fte">1.0</td>
+      <td class="skills">IaC, lab automation (LaaS), Robotics / device-fixture integration, environment provisioning, observability</td>
+      <td><span class="hzb h2b">H2 Execution</span></td>
+    </tr>
+    <tr>
+      <td><div class="role"><div class="rdot" style="background:#64748b"></div><div><div class="rname">Product Owner / Delivery Lead</div><div class="rlayer">Process · L1 governance</div></div></div></td>
+      <td class="fte">1.0</td>
+      <td class="skills">Product management, stakeholder &amp; adoption management, agile delivery, backlog &amp; prioritization</td>
+      <td><span class="hzb hallb">All horizons</span></td>
+    </tr>
+    <tr class="totrow">
+      <td>Core team total</td><td class="fte">~12</td><td>Senior, cross-functional pod (two-pizza team)</td><td><span class="hzb hallb">12 mo</span></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- FRACTIONAL -->
+<div class="section-ttl"><span class="bar"></span>Fractional / Shared Specialists (~1.5 FTE combined)</div>
+<div class="frac">
+  <div class="fc"><div class="fc-t">Security &amp; Compliance</div><div class="fc-f">≈ 0.5 FTE · peaks H3</div><div class="fc-v">Release-gate security review, regulatory / compliance artifacts, data governance. Heaviest when gates go autonomous.</div></div>
+  <div class="fc"><div class="fc-t">UX Designer</div><div class="fc-f">≈ 0.5 FTE · front-loaded H1</div><div class="fc-v">Prism design system, dashboard &amp; console flows, accessibility. Tapers once the design language is set.</div></div>
+  <div class="fc"><div class="fc-t">Executive Sponsor / Steering</div><div class="fc-f">≈ 0.2–0.3 FTE · all</div><div class="fc-v">Budget, cross-org unblock, adoption mandate. Not a builder — the political air-cover the platform needs.</div></div>
+</div>
+
+<!-- HORIZON LOADING -->
+<div class="section-ttl"><span class="bar"></span>FTE Loading Across the Three Horizons</div>
+<div class="section-sub">Staffing is not flat. Build-heavy at the start, peaks mid-build when construction overlaps lab integration + parallel-run, then tapers as work shifts to QA trust sign-off, compliance and rollout.</div>
+<div class="load-wrap">
+  <div class="load">
+    <div class="load-grid">
+      <div class="ld-lbl">Horizon 1 · Foundation<small>Months 1–4 · build-heavy, MVP by Day 90</small></div>
+      <div class="meter"><div class="fill" style="width:79%;background:linear-gradient(90deg,#6366f1,#818cf8)">Architect · AI · Frontend · Backend · Data lead</div></div>
+      <div class="ld-num" style="color:#6366f1">~11</div>
+
+      <div class="ld-lbl">Horizon 2 · Execution &amp; Intelligence<small>Months 5–8 · PEAK · build + lab + parallel-run overlap</small></div>
+      <div class="meter"><div class="fill" style="width:96%;background:linear-gradient(90deg,#10b981,#34d399)">+ Lab Infra · QA SMEs full · ML · Trust validation</div></div>
+      <div class="ld-num" style="color:#10b981">~13–14</div>
+
+      <div class="ld-lbl">Horizon 3 · Release, Ops &amp; Scale<small>Months 9–12 · build tapers, QA/compliance/rollout lead</small></div>
+      <div class="meter"><div class="fill" style="width:71%;background:linear-gradient(90deg,#f97316,#fb923c)">QA trust sign-off · Security · Product/adoption · Pulse</div></div>
+      <div class="ld-num" style="color:#f97316">~10</div>
+    </div>
+  </div>
+</div>
+
+<!-- INTENSITY MATRIX -->
+<div class="section-ttl"><span class="bar"></span>Role × Horizon Effort Intensity</div>
+<div class="mx-legend">
+  <span><span class="sw" style="background:#7c3aed"></span>High load</span>
+  <span><span class="sw" style="background:#ddd6fe"></span>Medium</span>
+  <span><span class="sw" style="background:#f3e8ff"></span>Ramp / Low</span>
+  <span><span class="sw" style="background:#f8fafc;border:1px solid #e2e8f0"></span>Not yet / rolled off</span>
+</div>
+<div class="mx-wrap">
+<table class="mx">
+  <thead><tr><th style="text-align:left;width:230px;">Role</th><th>H1 · Foundation<br><span style="font-weight:500;">Mo 1–4</span></th><th>H2 · Execution<br><span style="font-weight:500;">Mo 5–8</span></th><th>H3 · Release/Scale<br><span style="font-weight:500;">Mo 9–12</span></th></tr></thead>
+  <tbody>
+    <tr><td class="r">Platform Architect / Tech Lead</td><td class="cell-hi">High</td><td class="cell-md">Med</td><td class="cell-md">Med</td></tr>
+    <tr><td class="r">AI / Agent Engineers</td><td class="cell-hi">High</td><td class="cell-hi">High</td><td class="cell-md">Med</td></tr>
+    <tr><td class="r">Full-stack / Frontend</td><td class="cell-hi">High</td><td class="cell-hi">High</td><td class="cell-lo">Low</td></tr>
+    <tr><td class="r">Backend / Platform</td><td class="cell-hi">High</td><td class="cell-md">Med</td><td class="cell-lo">Low</td></tr>
+    <tr><td class="r">Data / ML Engineer</td><td class="cell-md">Med</td><td class="cell-hi">High</td><td class="cell-md">Med</td></tr>
+    <tr><td class="r">QA Domain SME / Lead SDET</td><td class="cell-lo">Ramp</td><td class="cell-hi">High</td><td class="cell-hi">High</td></tr>
+    <tr><td class="r">DevOps / Lab Infra</td><td class="cell-lo">Ramp</td><td class="cell-hi">High</td><td class="cell-md">Med</td></tr>
+    <tr><td class="r">Product Owner / Delivery</td><td class="cell-md">Med</td><td class="cell-md">Med</td><td class="cell-hi">High</td></tr>
+    <tr><td class="r">Security &amp; Compliance <span style="color:#94a3b8;font-weight:500">(frac.)</span></td><td class="cell-no">—</td><td class="cell-lo">Low</td><td class="cell-hi">High</td></tr>
+    <tr><td class="r">UX Designer <span style="color:#94a3b8;font-weight:500">(frac.)</span></td><td class="cell-hi">High</td><td class="cell-lo">Low</td><td class="cell-no">—</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ASSUMPTIONS -->
+<div class="section-ttl"><span class="bar"></span>Assumptions &amp; Scaling Levers</div>
+<div class="assume">
+  <div class="assume-t">This plan assumes:</div>
+  <div class="assume-v"><ul>
+    <li><b>Senior team.</b> AI acceleration rewards experience — these are mid-to-senior engineers, not a large junior pool.</li>
+    <li><b>Zion lab APIs &amp; historical QA data are reasonably accessible.</b> If lab integration is greenfield or data is messy, add ~1 DevOps/Data engineer in H2.</li>
+    <li><b>One product line piloted first</b>, then scaled — not all six in parallel during the build.</li>
+    <li><b>Single co-located/aligned pod.</b> For the ~6-month aggressive variant, run two parallel pods (~18–20 people) — speed comes from parallelism, not a smaller team.</li>
+  </ul></div>
+</div>
+
+<!-- FOOTER -->
+<div class="zq-footer">
+  <span>AI-Powered Software Quality Architecture — Multi-Layer AI Agent System · Zion Platform © 2025</span>
+  <span>~12 FTE core · peak ~13–14 · 8 core roles + fractional specialists</span>
+  <span class="zq-copy">Pairs with the 12-Month AI-Accelerated Blueprint</span>
+</div>
+
+</div>
+</body>
+</html>
