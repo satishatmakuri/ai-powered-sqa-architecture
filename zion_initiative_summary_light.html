@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zion Quality Platform — AI Initiative Summary (Light · Confluence)</title>
+<style>
+/* ── CONFLUENCE-COMPATIBLE · LIGHT THEME · Self-contained · Static (no JS) ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f0f4f9; color: #1e293b; font-size: 13px; }
+
+/* HEADER */
+.hdr { background: linear-gradient(135deg,#ffffff 0%,#f8faff 100%); border-bottom: 3px solid #e2e8f0; padding: 14px 22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; box-shadow:0 1px 4px rgba(0,0,0,0.07); }
+.brand { display:flex; align-items:center; gap:11px; }
+.bmark { width:40px; height:40px; border-radius:11px; background:linear-gradient(135deg,#4f46e5,#7c3aed,#db2777); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.05rem; color:#fff; box-shadow:0 3px 10px rgba(124,58,237,0.3); }
+.bn { font-size:0.95rem; font-weight:700; color:#1e293b; }
+.bs { font-size:0.6rem; color:#64748b; margin-top:2px; }
+.htitle { font-size:0.88rem; font-weight:700; color:#1e293b; text-align:center; }
+.hsub { font-size:0.62rem; color:#64748b; margin-top:3px; text-align:center; }
+.htags { display:flex; gap:6px; flex-wrap:wrap; }
+.tag { padding:4px 10px; border-radius:20px; font-size:0.6rem; font-weight:600; }
+.t1 { background:#ede9fe; border:1px solid #c4b5fd; color:#6d28d9; }
+.t2 { background:#fef9c3; border:1px solid #fde047; color:#854d0e; }
+.t3 { background:#dcfce7; border:1px solid #86efac; color:#166534; }
+.t4 { background:#e0f2fe; border:1px solid #7dd3fc; color:#0369a1; }
+
+.conf-note { background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:7px 14px; margin:12px 22px 0; font-size:0.63rem; color:#1e40af; display:flex; align-items:center; gap:8px; }
+
+.section-ttl { font-size:0.8rem; font-weight:800; color:#1e293b; margin:18px 22px 8px; display:flex; align-items:center; gap:8px; }
+.section-ttl .bar { width:4px; height:16px; border-radius:2px; background:linear-gradient(180deg,#4f46e5,#db2777); }
+.section-sub { font-size:0.63rem; color:#64748b; margin:0 22px 10px; }
+
+/* INTENT */
+.intent { margin:14px 22px 0; background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:16px 18px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.intent-lead { font-size:0.78rem; font-weight:700; color:#1e293b; margin-bottom:10px; line-height:1.5; }
+.intent-lead em { font-style:normal; color:#6d28d9; }
+.intent-list { display:flex; flex-direction:column; gap:7px; }
+.ii { display:flex; align-items:flex-start; gap:10px; font-size:0.66rem; color:#374151; line-height:1.55; }
+.ii-num { flex-shrink:0; width:22px; height:22px; border-radius:50%; background:linear-gradient(135deg,#4f46e5,#7c3aed); color:#fff; font-size:0.6rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+.ii b { color:#1e293b; }
+
+.todo-note { margin:10px 22px 0; background:#fef9c3; border:1px solid #fde047; border-left:4px solid #ca8a04; border-radius:6px; padding:8px 14px; font-size:0.61rem; color:#713f12; display:flex; align-items:center; gap:8px; }
+.todo-note b { color:#854d0e; }
+
+/* STRATEGIC DIRECTION */
+.sd-intro { margin:10px 22px 0; background:linear-gradient(135deg,#f5f3ff,#fdf2f8); border:1px solid #d8b4fe; border-left:4px solid #a855f7; border-radius:8px; padding:11px 15px; }
+.sd-t { font-size:0.7rem; font-weight:800; color:#6d28d9; margin-bottom:4px; }
+.sd-v { font-size:0.62rem; color:#5b21b6; line-height:1.55; }
+.sd-pills { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+.sd-pill { font-size:0.55rem; font-weight:700; padding:3px 10px; border-radius:10px; }
+.sd-st { background:#ede9fe; color:#6d28d9; }
+.sd-mt { background:#dcfce7; color:#166534; }
+.sd-lt { background:#ffedd5; color:#9a3412; }
+
+/* THEME CARDS */
+.themes { display:grid; grid-template-columns:1fr; gap:12px; padding:4px 22px; }
+.tcard { background:#fff; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+.tcard-top { padding:11px 16px; color:#fff; display:flex; align-items:center; gap:10px; }
+.tcard-ico { width:30px; height:30px; border-radius:7px; background:rgba(255,255,255,0.22); display:flex; align-items:center; justify-content:center; font-size:0.95rem; font-weight:800; flex-shrink:0; }
+.tcard-t { font-size:0.78rem; font-weight:800; }
+.tcard-s { font-size:0.55rem; opacity:0.9; margin-top:1px; }
+.tcard-body { padding:11px 16px 13px; }
+.gline { display:grid; grid-template-columns:100px 1fr; gap:10px; padding:7px 0; border-bottom:1px solid #f1f5f9; align-items:start; }
+.gline:last-child { border-bottom:none; }
+.glabel { font-size:0.55rem; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; padding:3px 8px; border-radius:10px; text-align:center; height:fit-content; margin-top:2px; }
+.gl-st { background:#ede9fe; color:#6d28d9; }
+.gl-mt { background:#dcfce7; color:#166534; }
+.gl-lt { background:#ffedd5; color:#9a3412; }
+.gv { font-size:0.62rem; color:#374151; line-height:1.55; }
+.gv b { color:#1e293b; }
+.gv ul { margin-left:14px; margin-top:3px; }
+.gv li { margin-bottom:2px; }
+.zc { display:inline-block; font-size:0.5rem; font-weight:700; padding:2px 6px; border-radius:8px; margin:1px 2px 1px 0; font-family:'Courier New',monospace; background:#f8fafc; border:1px solid #e2e8f0; color:#475569; }
+.todo-flag { display:inline-block; font-size:0.5rem; font-weight:800; padding:1px 6px; border-radius:8px; background:#fef9c3; border:1px solid #fde047; color:#854d0e; margin-left:4px; vertical-align:middle; }
+
+/* ARCHITECTURE TABLE */
+.arch-wrap { padding:0 22px; }
+table.arch { border-collapse:separate; border-spacing:0; width:100%; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.06); border:1px solid #e2e8f0; }
+table.arch th, table.arch td { padding:11px 14px; vertical-align:top; text-align:left; border-bottom:1px solid #f1f5f9; }
+table.arch tr:last-child td, table.arch tr:last-child th { border-bottom:none; }
+table.arch thead th { background:#f1f5f9; font-size:0.55rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:#64748b; }
+.lyr-cell { display:flex; align-items:center; gap:9px; width:220px; }
+.lyr-ico { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.95rem; color:#fff; font-weight:800; flex-shrink:0; }
+.lyr-nm { font-size:0.66rem; font-weight:800; color:#1e293b; }
+.lyr-sub { font-size:0.53rem; color:#94a3b8; margin-top:1px; }
+.arch-v { font-size:0.61rem; color:#374151; line-height:1.55; }
+.arch-v b { color:#1e293b; }
+.arch-v em { color:#64748b; font-style:normal; }
+
+.zq-footer { background:#fff; border-top:1px solid #e2e8f0; padding:10px 22px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; font-size:0.6rem; color:#475569; margin-top:14px; }
+.zq-copy { margin-left:auto; font-size:0.58rem; color:#94a3b8; }
+</style>
+</head>
+<body>
+<div style="max-width:100%;overflow:hidden;border:1px solid #e2e8f0;border-radius:8px;margin:0 auto;">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="brand">
+    <div class="bmark">Z</div>
+    <div><div class="bn">Zion Quality Platform</div><div class="bs">AI-Powered Software Quality Architecture · Multi-Layer AI Agent System</div></div>
+  </div>
+  <div>
+    <div class="htitle">AI Initiative Summary — Memory Products Quality Engineering</div>
+    <div class="hsub">Intent · Strategic Direction · Productivity &amp; Quality Themes · Architecture Levels</div>
+  </div>
+  <div class="htags">
+    <span class="tag t1">Initiative Summary</span>
+    <span class="tag t2">TODO-flagged</span>
+    <span class="tag t3">Light Theme</span>
+    <span class="tag t4">Confluence Ready</span>
+  </div>
+</div>
+
+<div class="conf-note">ℹ️ <strong>Confluence:</strong> Insert → Other Macros → HTML → paste full file content. Static layout (no scripts). Modeled on the reference initiative-summary structure, populated with this project's context.</div>
+
+<!-- INTENT -->
+<div class="section-ttl"><span class="bar"></span>Intent</div>
+<div class="intent">
+  <div class="intent-lead">I intend to organize the <em>System Architecture for the Software Quality Engineering team's AI Initiative</em> — the <em>Zion Quality Platform</em> — covering every phase of the testing lifecycle for memory products (NVMe · SATA · eMMC · UFS · uSD · PSSD).</div>
+  <div class="intent-list">
+    <div class="ii"><div class="ii-num">1</div><div>I intend to organize a <b>comprehensive map of the AI initiatives</b> being developed across each STLC phase (10 phases in 5 groups: Pre-Testing · Test Preparation · Test Execution · Intelligence &amp; Closure · Release &amp; Operations), in connection with the QA business processes and the existing Zion automation substrate (UTH · LaaS · DSA · Robotics).</div></div>
+    <div class="ii"><div class="ii-num">2</div><div>I intend to organize the <b>Data Catalog</b> produced and utilized by the AI initiatives — Requirements / Spec RAG, Test Repositories, Defect &amp; RCA Knowledge Graphs, Telemetry &amp; Field-data Lakes, ML Model Registry — all anchored in the unified knowledge mesh.</div></div>
+    <div class="ii"><div class="ii-num">3</div><div>The overall structure is organized as a <b>Layered Architecture</b> (Work Process · Application · Agent · Data · Infra) with the Design Pattern based on <b>MVC</b> (Viewer / Controller / Model) plus a <b>Work-Process layer for business governance</b>, ensuring scalability as agents and Zion components evolve.</div></div>
+  </div>
+</div>
+
+<div class="todo-note">※ <b>Yellow boxes / flags</b> indicate TODO items for the next steps (decisions, pilots, vendor selections still to lock).</div>
+
+<!-- STRATEGIC DIRECTION -->
+<div class="section-ttl"><span class="bar"></span>Strategic Direction</div>
+<div class="sd-intro">
+  <div class="sd-t">Goal — Achieve autonomous, predictive software quality for memory products using AI.</div>
+  <div class="sd-v">I intend to establish and pursue short-term, mid-term and long-term strategic directions, anchored on the 12-month build plus the 3-year research horizon.</div>
+  <div class="sd-pills">
+    <span class="sd-pill sd-st">Short-term · ~3 mo (H1 · MVP Day 90)</span>
+    <span class="sd-pill sd-mt">Mid-term · ~12 mo (H1–H3 · Platform live)</span>
+    <span class="sd-pill sd-lt">Long-term · ~3 yr (Innovation Horizon)</span>
+  </div>
+</div>
+
+<!-- PRODUCTIVITY (manual-work reduction) -->
+<div class="themes">
+
+<div class="tcard">
+  <div class="tcard-top" style="background:linear-gradient(135deg,#0e7490,#22d3ee)"><div class="tcard-ico">P</div><div><div class="tcard-t">Productivity — Reduce manual work</div><div class="tcard-s">From the engineer's execution perspective; ensure uninterrupted development → mass-production → customer task flow</div></div></div>
+  <div class="tcard-body">
+
+    <div class="gline">
+      <div class="glabel gl-st">Short-term</div>
+      <div class="gv"><b>(Improving analysis productivity) Automation of defect analysis</b> — reduce items to be analyzed manually.<ul>
+        <li>① <b>Defect screening</b> (duplicates, known issues, pseudo-defects) <span class="zc">Sentinel</span></li>
+        <li>② <b>Similar-issue search</b> over historical defect &amp; RCA graph <span class="zc">Sentinel</span><span class="zc">Vault</span></li>
+      </ul></div>
+    </div>
+
+    <div class="gline">
+      <div class="glabel gl-st">Short-term</div>
+      <div class="gv"><b>Eliminate document-collection tasks</b> (Daily Report, DVR/PVR Chart, exec briefings).<ul>
+        <li>① <b>Auto performance-result generation</b> &amp; release notes <span class="zc">Beacon</span></li>
+        <li>② RTM &amp; coverage report auto-publication <span class="zc">IntelliSpec</span><span class="zc">Prism</span><span class="todo-flag">TODO · format alignment with PE Daily Report template</span></li>
+      </ul></div>
+    </div>
+
+    <div class="gline">
+      <div class="glabel gl-mt">Mid-term</div>
+      <div class="gv"><b>Establish an uninterrupted development / mass-production / customer-task pipeline</b> — workflow that minimizes human intervention.<ul>
+        <li>① <b>(Mass Production) Abnormal-Lot verification &amp; control</b> — anomaly detection on production telemetry <span class="zc">Pulse</span><span class="zc">DSA</span></li>
+        <li>② Self-healing CI + on-demand lab provisioning <span class="zc">Bridge</span><span class="zc">Envoy</span><span class="zc">LaaS</span></li>
+        <li>③ Closed-loop field-to-fix automation <span class="zc">FlowEngine</span><span class="zc">Pulse</span><span class="todo-flag">TODO · pilot product line lock-in</span></li>
+      </ul></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PRODUCTIVITY (engineering work assist) -->
+<div class="tcard">
+  <div class="tcard-top" style="background:linear-gradient(135deg,#6366f1,#818cf8)"><div class="tcard-ico">P</div><div><div class="tcard-t">Productivity — Engineering Work Assistance</div><div class="tcard-s">Increase development productivity by introducing AI technologies that assist engineering work</div></div></div>
+  <div class="tcard-body">
+
+    <div class="gline">
+      <div class="glabel gl-mt">Mid-term</div>
+      <div class="gv"><b>(Automation of requirement analysis and verification vulnerability derivation)</b> — focus on insufficient verification items through Spec-based Test Coverage analysis.<ul>
+        <li>① <b>Spec-based Test Coverage analysis technology</b> (NVMe / JEDEC / UFS spec RAG) <span class="zc">IntelliSpec</span><span class="zc">Vault</span></li>
+        <li>② <b>AI-based TC generation technology</b> from spec clauses &amp; risk profile <span class="zc">TestGen</span><span class="zc">Compass</span></li>
+      </ul></div>
+    </div>
+
+    <div class="gline">
+      <div class="glabel gl-st">Short-term</div>
+      <div class="gv"><b>(Improving TC development productivity)</b> — improve test-case development productivity through external <b>Coding Agents (Claude)</b> integrated into the test-author IDE.<span class="todo-flag">TODO · Claude / Coding-Agent license &amp; access</span></div>
+    </div>
+
+    <div class="gline">
+      <div class="glabel gl-mt">Mid-term</div>
+      <div class="gv"><b>(Improving development productivity)</b> — create methods to reduce repetitive manual tasks (manual evaluation, performance evaluation, etc.).<ul>
+        <li>① <b>Performance prediction tools</b> (IOPS / latency-tail / endurance forecasting) <span class="zc">Beacon</span><span class="zc">DSA</span></li>
+        <li>② <b>Performance result interpretation tools</b> with auto-narrative <span class="zc">Beacon</span><span class="zc">Sentinel</span></li>
+      </ul></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- QUALITY -->
+<div class="tcard">
+  <div class="tcard-top" style="background:linear-gradient(135deg,#16a34a,#4ade80)"><div class="tcard-ico">Q</div><div><div class="tcard-t">Quality — Assetize human know-how, strengthen via AI</div><div class="tcard-s">Capture engineer knowledge / experience / know-how; strengthen quality through AI-based vulnerability derivation</div></div></div>
+  <div class="tcard-body">
+
+    <div class="gline">
+      <div class="glabel gl-st">Short-term</div>
+      <div class="gv"><b>(Automation of requirement analysis and verification vulnerability derivation)</b> — quantitatively identify and monitor Spec-based Test Coverage to discover improvements and vulnerabilities. <em>Linked with DSK, SSIR repositories.</em> <span class="zc">IntelliSpec</span><span class="zc">Beacon</span><span class="todo-flag">TODO · DSK / SSIR connector specification</span></div>
+    </div>
+
+    <div class="gline">
+      <div class="glabel gl-mt">Mid-term</div>
+      <div class="gv"><b>(Automation of requirement analysis and verification vulnerability derivation)</b> — derive related functions linked to multiple requirements (Specs) and derive items / scenarios for verification.<ul>
+        <li>Causal RCA + Knowledge Graph over spec ↔ defect ↔ telemetry <span class="zc">Sentinel</span><span class="zc">Vault</span></li>
+        <li>Cross-spec impact discovery (a change in one spec → derived tests in others) <span class="zc">IntelliSpec</span></li>
+      </ul></div>
+    </div>
+
+    <div class="gline">
+      <div class="glabel gl-lt">Long-term</div>
+      <div class="gv"><b>Autonomous quality with assurance</b> — AI gates promoted to autonomous after parallel-run parity is proven; explainable, governed, monitored.<ul>
+        <li>ModelOps with continuous evaluation, drift detection &amp; guardrails <span class="zc">Nexus</span><span class="zc">Guardian</span></li>
+        <li>Field anomaly → auto-reproduction → fix → validate (closed loop) <span class="zc">Pulse</span><span class="zc">FlowEngine</span><span class="todo-flag">TODO · compliance framework for autonomous gating</span></li>
+      </ul></div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<!-- ARCHITECTURE LEVEL TABLE -->
+<div class="section-ttl"><span class="bar"></span>Architecture Level</div>
+<div class="section-sub">Five layers organize the platform. The first four follow the MVC-derived pattern (Viewer / Controller / Model) with a Work-Process layer for business governance; the Infra layer captures the physical execution environment provided by Zion.</div>
+
+<div class="arch-wrap">
+<table class="arch">
+  <thead><tr><th style="width:236px;">Layer</th><th>Definition &amp; Realization in this Project</th></tr></thead>
+  <tbody>
+
+    <tr>
+      <td><div class="lyr-cell"><div class="lyr-ico" style="background:linear-gradient(135deg,#6366f1,#818cf8)">⬡</div><div><div class="lyr-nm">Work Process Layer</div><div class="lyr-sub">L1 · Biz Process</div></div></div></td>
+      <td class="arch-v"><b>Define user activities linked to the Biz Process.</b><br>To increase alignment with the actual execution of the process, STLC <b>phase activities (P1.A1 … P10.A6)</b> are linked with the AI Initiatives. Governance — quality gates, RBAC, triage cadences, sign-offs &amp; release approvals — runs here. <em>Realized by:</em> <span class="zc">FlowEngine</span><span class="zc">Guardian</span></td>
+    </tr>
+
+    <tr>
+      <td><div class="lyr-cell"><div class="lyr-ico" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)">◈</div><div><div class="lyr-nm">Application Layer (Viewer)</div><div class="lyr-sub">L2</div></div></div></td>
+      <td class="arch-v"><b>Define the user interface services provided to the user.</b><br>Responsible only for input and output (e.g., Web UI, Chatbot, Dashboard). One unified design system across all phases. <em>Realized by:</em> <span class="zc">Prism</span><span class="zc">Beacon</span> dashboards · role-based portals · chatbot interfaces</td>
+    </tr>
+
+    <tr>
+      <td><div class="lyr-cell"><div class="lyr-ico" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa)">◐</div><div><div class="lyr-nm">Agent Layer (Controller)</div><div class="lyr-sub">L3</div></div></div></td>
+      <td class="arch-v"><b>Define the function of implementing core algorithms to perform business process functions.</b><br>Example: logic design using AI-based agents, machine learning, heuristic algorithms. Orchestrated multi-agent system with specialized roles per STLC phase. <em>Realized by:</em> <span class="zc">Nexus</span><span class="zc">IntelliSpec</span><span class="zc">Compass</span><span class="zc">TestGen</span><span class="zc">Envoy</span><span class="zc">TestBot</span><span class="zc">Sentinel</span><span class="zc">Pulse</span></td>
+    </tr>
+
+    <tr>
+      <td><div class="lyr-cell"><div class="lyr-ico" style="background:linear-gradient(135deg,#10b981,#34d399)">◎</div><div><div class="lyr-nm">Data Layer (Model)</div><div class="lyr-sub">L4</div></div></div></td>
+      <td class="arch-v"><b>Define the information and data of the application (e.g., DB, RAG).</b><br>Unified knowledge mesh — Spec RAG, Test Repositories, Defect &amp; RCA graphs, Telemetry lakes, ML Model Registry. <em>Realized by:</em> <span class="zc">Vault</span><span class="zc">DataForge</span><span class="zc">Bridge</span><span class="todo-flag">TODO · Data Catalog publication owner</span></td>
+    </tr>
+
+    <tr>
+      <td><div class="lyr-cell"><div class="lyr-ico" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)">▣</div><div><div class="lyr-nm">Infra Layer</div><div class="lyr-sub">L5</div></div></div></td>
+      <td class="arch-v"><b>Define the HW resources where the implementation deliverables are executed (e.g., server, DB).</b><br>Memory-product test labs, device fixtures and robotics, compute for agents &amp; ML training. Provided by Zion's existing automation substrate. <em>Realized by:</em> <span class="zc">Zion · LaaS</span><span class="zc">Zion · Robotics</span><span class="zc">Zion · UTH</span><span class="zc">Zion · DSA</span><span class="todo-flag">TODO · MCP wrapper specs for each subsystem</span></td>
+    </tr>
+
+  </tbody>
+</table>
+</div>
+
+<!-- FOOTER -->
+<div class="zq-footer">
+  <span>AI-Powered Software Quality Architecture — Multi-Layer AI Agent System · Zion Platform © 2025</span>
+  <span>5 Architecture Layers · 15 AI Components · 10 STLC Phases · 6 Memory Product Lines</span>
+  <span class="zq-copy">Companion to the 12-Month Blueprint · Staffing Plan · Innovation Horizon</span>
+</div>
+
+</div>
+</body>
+</html>
