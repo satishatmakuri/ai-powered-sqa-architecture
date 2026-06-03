@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STLC Process Flow & Activity Tables — Zion Quality Platform (Light)</title>
+<style>
+/* ── CONFLUENCE-COMPATIBLE · LIGHT THEME · Self-contained · No external deps ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f0f4f9; color: #1e293b; font-size: 13px; line-height: 1.5; }
+
+/* HEADER */
+.hdr { background:#fff; border-bottom:3px solid #e2e8f0; padding:14px 22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+.brand { display:flex; align-items:center; gap:12px; }
+.mark { width:40px; height:40px; border-radius:11px; background:linear-gradient(135deg,#4f46e5,#7c3aed,#db2777); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.05rem; color:#fff; box-shadow:0 3px 10px rgba(124,58,237,0.3); }
+.bn { font-size:0.95rem; font-weight:700; color:#1e293b; }
+.bs { font-size:0.6rem; color:#64748b; margin-top:2px; }
+.htitle { font-size:0.88rem; font-weight:700; color:#1e293b; text-align:center; }
+.hsub { font-size:0.62rem; color:#64748b; margin-top:3px; text-align:center; }
+.htags { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+.tg { padding:4px 10px; border-radius:20px; font-size:0.6rem; font-weight:600; }
+.tg-1 { background:#ede9fe; border:1px solid #c4b5fd; color:#6d28d9; }
+.tg-2 { background:#fef9c3; border:1px solid #fde047; color:#854d0e; }
+.tg-3 { background:#dcfce7; border:1px solid #86efac; color:#166534; }
+.tg-4 { background:#e0f2fe; border:1px solid #7dd3fc; color:#0369a1; }
+
+.conf-note { background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:7px 14px; margin:12px 22px 0; font-size:0.63rem; color:#1e40af; display:flex; align-items:center; gap:8px; }
+
+/* PROCESS FLOW CHEVRONS */
+.flow-wrap { padding:14px 22px 6px; }
+.flow-ttl { font-size:0.62rem; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:8px; }
+.flow { display:flex; align-items:stretch; gap:0; overflow-x:auto; padding-bottom:6px; }
+.chev { position:relative; min-width:148px; flex:1; padding:10px 22px 10px 22px; color:#fff; font-weight:700; font-size:0.7rem; line-height:1.25; clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 16px 50%); margin-left:-12px; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.chev:first-child { clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%); margin-left:0; padding-left:14px; }
+.chev:last-child { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 16px 50%); padding-right:14px; }
+.chev-num { display:inline-block; background:rgba(255,255,255,0.28); border-radius:50%; width:18px; height:18px; line-height:18px; font-size:0.6rem; font-weight:800; margin-bottom:3px; }
+.chev-nm { display:block; font-size:0.68rem; line-height:1.2; }
+.chev-ai { display:block; font-size:0.5rem; font-weight:600; opacity:0.95; margin-top:3px; letter-spacing:0.04em; }
+
+/* PHASE NAV (jump) */
+.nav { background:#f8fafc; border-top:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0; padding:7px 22px; display:flex; align-items:center; gap:3px; overflow-x:auto; flex-wrap:wrap; }
+.np { padding:3px 10px; border-radius:5px; font-size:0.58rem; font-weight:600; white-space:nowrap; cursor:pointer; transition: all 0.15s; text-decoration:none; }
+.np:hover { filter:brightness(0.92); }
+.na { color:#cbd5e1; font-size:0.7rem; margin:0 1px; }
+
+/* MAIN */
+.main { padding:14px 22px 20px; }
+
+/* PHASE BLOCK */
+.ph { margin-bottom:22px; background:#fff; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.05); }
+.ph-hdr { padding:11px 14px; display:flex; align-items:center; gap:11px; border-bottom:2px solid; }
+.ph-num { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:800; color:#fff; flex-shrink:0; }
+.ph-info { flex:1; }
+.ph-nm { font-size:0.85rem; font-weight:800; color:#1e293b; line-height:1.2; }
+.ph-meta { display:flex; gap:8px; align-items:center; margin-top:3px; font-size:0.58rem; color:#64748b; flex-wrap:wrap; }
+.ph-grp { padding:2px 7px; border-radius:8px; font-weight:700; }
+.ph-pct { padding:2px 7px; border-radius:8px; font-weight:700; }
+.ph-cnt { padding:2px 7px; border-radius:8px; font-weight:700; background:#f1f5f9; color:#475569; }
+.ph-zions { padding:8px 14px; background:#f8fafc; border-bottom:1px solid #e2e8f0; font-size:0.58rem; color:#64748b; }
+.ph-zions b { color:#475569; font-weight:700; margin-right:6px; }
+
+/* ACTIVITY TABLE */
+.tbl-wrap { overflow-x:auto; }
+table.acts { border-collapse:collapse; width:100%; min-width:1200px; font-size:0.62rem; }
+table.acts thead th { background:#f1f5f9; padding:8px 9px; text-align:left; font-size:0.56rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:#64748b; border-bottom:2px solid #e2e8f0; vertical-align:middle; }
+table.acts tbody td { padding:9px 9px; vertical-align:top; border-bottom:1px solid #f1f5f9; line-height:1.45; color:#374151; }
+table.acts tbody tr:last-child td { border-bottom:none; }
+table.acts tbody tr:hover { background:#fafbff; }
+
+/* Column widths */
+.c-id { width:34px; font-family:'Courier New',monospace; font-size:0.55rem; font-weight:800; color:#94a3b8; text-align:center; }
+.c-act { width:170px; }
+.c-act-nm { font-weight:700; color:#1e293b; font-size:0.65rem; line-height:1.3; }
+.c-act-tag { display:inline-block; margin-top:4px; padding:1px 6px; border-radius:5px; font-size:0.5rem; font-weight:700; letter-spacing:0.05em; }
+.ai-full { background:#dcfce7; border:1px solid #86efac; color:#166534; }
+.ai-partial { background:#fef9c3; border:1px solid #fde047; color:#854d0e; }
+.c-io { width:165px; font-size:0.6rem; }
+.c-aid { width:225px; font-size:0.6rem; }
+.c-user { width:120px; font-size:0.6rem; }
+.c-ben { width:170px; font-size:0.6rem; }
+.c-zion { width:135px; }
+.zc { display:inline-block; font-size:0.5rem; font-weight:700; padding:2px 6px; border-radius:8px; margin:1px 2px 1px 0; font-family:'Courier New',monospace; background:#fff; border:1px solid #e2e8f0; color:#475569; }
+.zc.uth { background:#fef3c7; border-color:#fcd34d; color:#92400e; }
+
+/* FOOTER */
+.foot { background:#fff; border-top:1px solid #e2e8f0; padding:11px 22px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; font-size:0.6rem; color:#475569; }
+.foot-ttl { font-size:0.58rem; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:0.08em; }
+.l-chip { padding:2px 7px; border-radius:4px; font-size:0.54rem; font-weight:700; }
+.foot-copy { margin-left:auto; font-size:0.57rem; color:#94a3b8; }
+</style>
+</head>
+<body>
+<div style="max-width:1600px;margin:0 auto;border-radius:8px;overflow:hidden;border:1px solid #e2e8f0;">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="brand">
+    <div class="mark">Z</div>
+    <div><div class="bn">Zion Quality Platform</div><div class="bs">AI-Powered Software Quality Architecture · Multi-Layer AI Agent System</div></div>
+  </div>
+  <div>
+    <div class="htitle">STLC Process Flow &amp; Per-Phase Activity Tables</div>
+    <div class="hsub">10 Phases · ~87 AUTO/AI+ Activities · Input · Output · What AI Does · User · Benefit · Zion Components</div>
+  </div>
+  <div class="htags">
+    <span class="tg tg-1">Wireframe 4</span>
+    <span class="tg tg-2">Process + Tables</span>
+    <span class="tg tg-3">Light Theme</span>
+    <span class="tg tg-4">Confluence Ready</span>
+  </div>
+</div>
+
+<!-- PROCESS FLOW CHEVRONS -->
+<div class="flow-wrap">
+  <div class="flow-ttl">STLC Phase-wise Process Flow</div>
+  <div class="flow" id="flow"></div>
+</div>
+
+<!-- PHASE NAV -->
+<div class="nav" id="nav"></div>
+
+<!-- CONFLUENCE NOTE -->
+<div class="conf-note">ℹ️ <strong>Confluence:</strong> Insert → Other Macros → HTML → paste full file content. Self-contained. Tables scroll horizontally inside the macro frame. Click a chip in the nav to jump to a phase.</div>
+
+<!-- MAIN -->
+<div class="main" id="main"></div>
+
+<!-- FOOTER -->
+<div class="foot">
+  <span class="foot-ttl">Legend</span>
+  <span><span class="l-chip ai-full">AUTO</span> Fully AI-Automated</span>
+  <span><span class="l-chip ai-partial">AI+</span> AI-Assisted / Partial</span>
+  <span style="margin-left:14px;color:#94a3b8;">Only AUTO &amp; AI+ activities are shown in tables. MAN-only activities are out of scope.</span>
+  <span class="foot-copy">AI-Powered Software Quality Architecture — Zion Platform © 2025</span>
+</div>
+
+</div>
+
+<script>
+/* ───── PHASES (mirrors wf1) + extended fields per sub-activity ───── */
+const PH = [
+  { id:1, name:"Requirements Analysis & Review", color:"#3b82f6", bg:"#eff6ff", pct:"75", grp:"A · Pre-Testing",
+    zions:["IntelliSpec","FlowEngine","Vault","Prism","Nexus"],
+    acts:[
+      {id:"1.1", nm:"Requirements Elicitation & Documentation Review", ai:"partial",
+        inp:"Stakeholder docs, RFPs, NVMe/JEDEC/UFS specs", out:"Structured requirement set, draft RTM",
+        aid:"NLP extracts requirements from PDFs/emails; classifies functional vs non-functional; highlights testability gaps for review.",
+        user:"Business Analyst · Test Lead", ben:"Faster requirement capture in a consistent, traceable format.",
+        zc:["IntelliSpec","Vault"]},
+      {id:"1.2", nm:"NL Requirement Parsing & Classification", ai:"full",
+        inp:"Raw requirement text", out:"Tagged, classified requirement objects",
+        aid:"LLM-based parsing into functional / non-functional / compliance categories with quality tagging.",
+        user:"Test Lead", ben:"Zero-touch requirement classification, consistent taxonomy.",
+        zc:["IntelliSpec"]},
+      {id:"1.3", nm:"Requirement Feasibility & Testability Analysis", ai:"partial",
+        inp:"Requirements list + system & lab constraints", out:"Feasibility report, testability score",
+        aid:"AI maps requirements against constraints; flags untestable items and proposes rewrites.",
+        user:"QA Architect", ben:"Catches untestable requirements early; prevents downstream rework.",
+        zc:["FlowEngine","IntelliSpec"]},
+      {id:"1.4", nm:"Test Basis Identification from Documents", ai:"partial",
+        inp:"Specs, design docs, historical defect data", out:"Indexed test basis with source links",
+        aid:"AI indexes documents into a RAG store; identifies which docs form the basis for which tests.",
+        user:"Test Designer", ben:"Single source of test basis, easy citation back to specs.",
+        zc:["IntelliSpec","Vault"]},
+      {id:"1.5", nm:"RTM (Requirement Traceability Matrix) Creation", ai:"full",
+        inp:"Requirements + existing test artifacts", out:"Live bi-directional RTM",
+        aid:"Auto-links requirements ↔ test cases ↔ defects; maintains coverage map continuously.",
+        user:"Test Manager", ben:"Eliminates manual RTM upkeep; always-current traceability.",
+        zc:["IntelliSpec","Vault"]},
+      {id:"1.6", nm:"Ambiguity, Gap & Inconsistency Detection", ai:"full",
+        inp:"Requirements corpus", out:"Issue list (ambiguous / missing / conflicting)",
+        aid:"LLM contradicts-and-completeness analysis flags weak requirements with explanations.",
+        user:"Business Analyst", ben:"Higher-quality requirements; fewer downstream defects.",
+        zc:["IntelliSpec","Nexus"]},
+      {id:"1.7", nm:"Risk Identification from Requirements", ai:"partial",
+        inp:"Requirements + history of similar features", out:"Risk register with severity & rationale",
+        aid:"ML risk-scoring model rates each requirement on likelihood and impact; suggests mitigations.",
+        user:"QA Architect", ben:"Risk-based prioritisation; focus testing on the right areas.",
+        zc:["IntelliSpec","Nexus"]},
+      {id:"1.8", nm:"Acceptance Criteria Definition", ai:"partial",
+        inp:"User story / requirement", out:"Given / When / Then acceptance criteria",
+        aid:"AI drafts BDD-style acceptance criteria; product owner reviews and approves.",
+        user:"Product Owner", ben:"Sprint-ready stories with built-in test seed.",
+        zc:["IntelliSpec","TestGen"]}
+    ]},
+  { id:2, name:"Test Planning", color:"#8b5cf6", bg:"#f5f3ff", pct:"67", grp:"A · Pre-Testing",
+    zions:["Compass","FlowEngine","Nexus","Vault","Prism"],
+    acts:[
+      {id:"2.1", nm:"Test Strategy Definition", ai:"partial",
+        inp:"Project scope, risk profile, historical data", out:"Test Strategy document",
+        aid:"AI drafts strategy from templates + risk-model output; planner reviews and customises.",
+        user:"Test Manager", ben:"Consistent strategy in hours, not days.",
+        zc:["Compass","FlowEngine"]},
+      {id:"2.2", nm:"Test Scope Determination", ai:"partial",
+        inp:"Requirements + change-impact data", out:"In-scope / out-of-scope matrix",
+        aid:"Change-impact analysis recommends scope; planner adjusts.",
+        user:"Test Manager", ben:"Right-sized scope, avoids gold-plating.",
+        zc:["Compass"]},
+      {id:"2.3", nm:"Resource Planning & Allocation", ai:"partial",
+        inp:"Test backlog + team skill matrix", out:"Resource plan",
+        aid:"ML-based capacity matching suggests assignments by skill, load and history.",
+        user:"Test Manager", ben:"Optimised team utilisation; right person on right task.",
+        zc:["Compass"]},
+      {id:"2.4", nm:"Test Timeline & Schedule Creation", ai:"partial",
+        inp:"Scope, resources, dependencies", out:"Gantt schedule",
+        aid:"Auto-schedules tasks respecting dependencies, leave, holidays.",
+        user:"Test Manager", ben:"Realistic timelines with fewer scheduling errors.",
+        zc:["Compass","FlowEngine"]},
+      {id:"2.5", nm:"Risk Assessment & Mitigation Planning", ai:"full",
+        inp:"Risk register from requirements + historical incident data", out:"Ranked risks + mitigation actions",
+        aid:"ML scores risks; recommends mitigations from a learned playbook.",
+        user:"QA Architect", ben:"Proactive risk control; faster mitigation choices.",
+        zc:["Compass","Sentinel"]},
+      {id:"2.6", nm:"Test Tool Selection & Evaluation", ai:"partial",
+        inp:"Project needs, tool catalogue", out:"Tool recommendation",
+        aid:"Compatibility, cost and skills-fit analysis from the tool knowledge base.",
+        user:"Test Architect", ben:"Objective tool choices.",
+        zc:["Compass","Vault"]},
+      {id:"2.7", nm:"Entry / Exit Criteria Definition", ai:"partial",
+        inp:"Test strategy", out:"Entry / exit checklists",
+        aid:"Drafts criteria from templates aligned to project type and risk.",
+        user:"Test Manager", ben:"Clear gate criteria up-front.",
+        zc:["Compass","FlowEngine"]},
+      {id:"2.8", nm:"Test Effort Estimation (ML Model)", ai:"full",
+        inp:"Backlog + historical actuals", out:"Effort estimate with confidence interval",
+        aid:"ML regression on historical effort vs scope predicts effort and variance.",
+        user:"Test Manager", ben:"Data-driven estimates instead of gut-feel.",
+        zc:["Compass","Nexus"]},
+      {id:"2.9", nm:"Test Plan Document Auto-Generation", ai:"full",
+        inp:"All planning inputs (strategy, scope, schedule, risk)", out:"Final Test Plan document",
+        aid:"LLM compiles a formatted Test Plan from collected inputs.",
+        user:"Test Manager", ben:"Hours of doc-writing saved per release.",
+        zc:["Compass","Prism"]}
+    ]},
+  { id:3, name:"Test Design & Development", color:"#ec4899", bg:"#fdf2f8", pct:"88", grp:"B · Test Preparation",
+    zions:["TestGen","DataForge","Nexus","Vault","Prism"],
+    acts:[
+      {id:"3.1", nm:"Test Scenario Identification", ai:"partial",
+        inp:"Requirements + RTM", out:"Test-scenario list with priority",
+        aid:"LLM analyses requirements and generates candidate scenarios spanning happy, edge, negative paths.",
+        user:"Test Designer", ben:"Broad scenario coverage with minimal effort.",
+        zc:["TestGen","IntelliSpec"]},
+      {id:"3.2", nm:"LLM-based Test Case Generation", ai:"full",
+        inp:"Approved scenarios + spec context", out:"Detailed test cases (steps, data, expected)",
+        aid:"LLM authors complete test cases grounded in the spec RAG.",
+        user:"Test Designer", ben:"10× authoring speed; consistent format.",
+        zc:["TestGen"]},
+      {id:"3.3", nm:"BDD / Gherkin Specification Writing", ai:"full",
+        inp:"User stories + acceptance criteria", out:"Gherkin .feature files",
+        aid:"Auto-writes Given/When/Then scenarios aligned to acceptance criteria.",
+        user:"BDD Writer / PO", ben:"Living specifications shared by business and QA.",
+        zc:["TestGen"]},
+      {id:"3.4", nm:"Synthetic Test Data Generation", ai:"full",
+        inp:"Data schemas + shape constraints", out:"Realistic synthetic datasets",
+        aid:"GAN-style generators produce statistically realistic data without PII.",
+        user:"Test Data Engineer", ben:"Privacy-safe, large-scale test data on demand.",
+        zc:["DataForge"]},
+      {id:"3.5", nm:"Automated Test Script Development", ai:"full",
+        inp:"Test cases + framework templates", out:"Executable test scripts",
+        aid:"LLM coding agent generates scripts in the project's automation framework.",
+        user:"Automation Engineer", ben:"Massive boost in script-development velocity.",
+        zc:["TestGen"]},
+      {id:"3.6", nm:"Test Case Review & Optimization", ai:"partial",
+        inp:"Existing + generated test cases", out:"Optimised test suite",
+        aid:"Detects redundant, overlapping or weak tests; suggests merges & deletions.",
+        user:"QA Reviewer", ben:"Lean, high-signal test suite.",
+        zc:["TestGen","Nexus"]},
+      {id:"3.7", nm:"Traceability Matrix Update & Validation", ai:"full",
+        inp:"New tests + existing RTM", out:"Updated, validated RTM",
+        aid:"Auto-links new tests to requirements; flags orphan items.",
+        user:"Test Lead", ben:"RTM stays accurate without manual upkeep.",
+        zc:["IntelliSpec","Vault"]},
+      {id:"3.8", nm:"Test Coverage Analysis", ai:"full",
+        inp:"Tests vs requirements + code", out:"Coverage scorecard with gaps",
+        aid:"Computes multi-dimensional coverage; recommends tests to close gaps.",
+        user:"Test Lead", ben:"Visible, measurable coverage.",
+        zc:["TestGen","Beacon"]}
+    ]},
+  { id:4, name:"Test Environment Setup", color:"#f59e0b", bg:"#fffbeb", pct:"71", grp:"B · Test Preparation",
+    zions:["Envoy","DataForge","Bridge","Vault","Prism"],
+    acts:[
+      {id:"4.1", nm:"Environment Requirements Definition", ai:"partial",
+        inp:"Test scope + non-functional needs", out:"Environment spec",
+        aid:"Suggests config from past patterns and constraints; planner approves.",
+        user:"DevOps Engineer", ben:"Right-sized environments faster.",
+        zc:["Envoy"]},
+      {id:"4.2", nm:"IaC-based Infrastructure Provisioning", ai:"full",
+        inp:"Environment spec", out:"Provisioned infrastructure",
+        aid:"Auto-executes Terraform/Ansible IaC; self-heals on failures.",
+        user:"DevOps Engineer", ben:"Environments in minutes, not days.",
+        zc:["Envoy","Bridge"]},
+      {id:"4.3", nm:"Test Data Setup, Seeding & Masking", ai:"full",
+        inp:"Data requirements + sources", out:"Seeded + masked test datasets",
+        aid:"Auto-seeds DBs; detects and masks PII via NLP/pattern rules.",
+        user:"Test Data Engineer", ben:"Compliant, ready-to-use test data.",
+        zc:["DataForge"]},
+      {id:"4.4", nm:"CI/CD Pipeline Configuration", ai:"partial",
+        inp:"Codebase + environment", out:"Pipeline definitions",
+        aid:"Auto-generates pipeline YAML/Jenkinsfile from a template + project shape.",
+        user:"DevOps Engineer", ben:"Standardised pipelines with less hand-rolling.",
+        zc:["Bridge","Envoy"]},
+      {id:"4.5", nm:"Test Tools Installation & Configuration", ai:"partial",
+        inp:"Tool list + target environment", out:"Installed and configured toolchain",
+        aid:"Runs idempotent playbooks; AI surfaces version conflicts.",
+        user:"DevOps Engineer", ben:"Repeatable tool setup across environments.",
+        zc:["Envoy"]},
+      {id:"4.6", nm:"Environment Health Verification", ai:"full",
+        inp:"Provisioned environment", out:"Health-check report",
+        aid:"Auto-runs smoke checks; AI diagnoses any failures with suggestions.",
+        user:"DevOps Engineer", ben:"Confidence the env is ready for testing.",
+        zc:["Envoy","Beacon"]},
+      {id:"4.7", nm:"Access Management & Security Configuration", ai:"partial",
+        inp:"User/team list + role catalogue", out:"Access matrix + RBAC config",
+        aid:"Suggests least-privilege roles from organisational RBAC patterns.",
+        user:"Security Admin", ben:"Least-privilege by default; compliance-ready.",
+        zc:["Guardian","Envoy"]}
+    ]},
+  { id:5, name:"Test Execution", color:"#10b981", bg:"#ecfdf5", pct:"100", grp:"C · Test Execution",
+    zions:["TestBot","Guardian","Bridge","Vault","Prism"],
+    acts:[
+      {id:"5.1", nm:"Smoke / Sanity Testing", ai:"full",
+        inp:"Build artefact + environment", out:"Smoke-test verdict",
+        aid:"Auto-runs the critical-path smoke set on every build.",
+        user:"QA Engineer", ben:"Fast build-quality gating.",
+        zc:["TestBot"]},
+      {id:"5.2", nm:"Functional Test Execution", ai:"full",
+        inp:"Functional suite + env", out:"Pass/fail report",
+        aid:"Self-healing test scripts handle minor UI/locator drift.",
+        user:"QA Engineer", ben:"Resilient automation; fewer flaky tests.",
+        zc:["TestBot"]},
+      {id:"5.3", nm:"Regression Test Execution", ai:"full",
+        inp:"Regression suite + change-impact", out:"Targeted regression report",
+        aid:"Risk-based test selection runs only what the change can affect.",
+        user:"QA Engineer", ben:"Cut regression time by 50–70 %.",
+        zc:["TestBot"]},
+      {id:"5.4", nm:"Integration Testing", ai:"full",
+        inp:"Integrated components", out:"Integration result set",
+        aid:"Auto-resolves test-data dependencies and execution order.",
+        user:"Integration Test Engineer", ben:"Stable cross-component coverage.",
+        zc:["TestBot"]},
+      {id:"5.5", nm:"System / End-to-End Testing", ai:"full",
+        inp:"Full system + user journey definitions", out:"E2E test results",
+        aid:"Workflow-aware execution covers real user paths end-to-end.",
+        user:"QA Engineer", ben:"Catches issues only visible in the full flow.",
+        zc:["TestBot"]},
+      {id:"5.6", nm:"Performance / Load / Stress Testing", ai:"full",
+        inp:"Load profile + SLOs", out:"Performance metrics + bottleneck report",
+        aid:"Auto-scales load, detects the performance knee, attributes bottlenecks.",
+        user:"Performance Engineer", ben:"Finds capacity ceilings before customers do.",
+        zc:["TestBot","Beacon"]},
+      {id:"5.7", nm:"Security & Penetration Testing", ai:"full",
+        inp:"App + scope", out:"Security-finding report (CVSS scored)",
+        aid:"Auto-scan + AI-driven fuzz/pentest, attempted-exploit replay.",
+        user:"Security Engineer", ben:"Vulnerabilities caught and triaged early.",
+        zc:["Guardian","TestBot"]},
+      {id:"5.8", nm:"API & Microservices Testing", ai:"full",
+        inp:"OpenAPI / contract specs", out:"API test results + contract diffs",
+        aid:"Auto-generates tests from contracts; flags breaking changes.",
+        user:"API Tester", ben:"Contract verification at every commit.",
+        zc:["TestBot"]},
+      {id:"5.9", nm:"Cross-Browser / Device Testing", ai:"full",
+        inp:"UI test suite", out:"Cross-platform compatibility matrix",
+        aid:"Parallel execution across browser/device grid with smart sharding.",
+        user:"QA Engineer", ben:"Compatibility coverage at speed.",
+        zc:["TestBot"]},
+      {id:"5.10", nm:"Visual / UX Regression Testing", ai:"full",
+        inp:"UI screenshots vs baseline", out:"Visual-diff report",
+        aid:"Computer-vision pixel diff with semantic tolerance ignores noise.",
+        user:"UX / QA Engineer", ben:"Catches visual regressions humans miss.",
+        zc:["TestBot"]},
+      {id:"5.11", nm:"Test Result Recording & Analysis", ai:"full",
+        inp:"All execution outputs", out:"Consolidated results database",
+        aid:"Auto-aggregates, categorises, and links results back to requirements.",
+        user:"Test Manager", ben:"One source of truth for the release.",
+        zc:["TestBot","Vault"]}
+    ]},
+  { id:6, name:"Defect Management", color:"#ef4444", bg:"#fef2f2", pct:"88", grp:"C · Test Execution",
+    zions:["Sentinel","TestBot","Nexus","Vault","Prism"],
+    acts:[
+      {id:"6.1", nm:"Defect Identification & Auto-Logging", ai:"full",
+        inp:"Test failures + logs + screenshots", out:"Auto-created defect tickets",
+        aid:"Detects test-failure patterns, opens tickets with full context attached.",
+        user:"QA Engineer (auto)", ben:"No manual ticket entry; richer context.",
+        zc:["Sentinel"]},
+      {id:"6.2", nm:"Defect Classification & Severity AI", ai:"full",
+        inp:"Defect description + history", out:"Severity, priority, category labels",
+        aid:"ML classifier predicts severity & component from text + signals.",
+        user:"Triage Lead", ben:"Instant, consistent prioritisation.",
+        zc:["Sentinel"]},
+      {id:"6.3", nm:"Duplicate Defect Detection", ai:"full",
+        inp:"New defect + existing defect pool", out:"Duplicate cluster + canonical defect",
+        aid:"Embedding-based similarity finds duplicates across language variations.",
+        user:"Triage Lead", ben:"Drastically reduces triage noise.",
+        zc:["Sentinel"]},
+      {id:"6.4", nm:"Intelligent Defect Assignment & Routing", ai:"full",
+        inp:"Defect + team ownership & skills", out:"Assigned engineer / squad",
+        aid:"ML routing learns who fixes what fastest in which area.",
+        user:"Triage Lead", ben:"Faster mean time to fix.",
+        zc:["Sentinel"]},
+      {id:"6.5", nm:"Root Cause Analysis (AI-assisted)", ai:"partial",
+        inp:"Defect + logs + traces + code diff", out:"RCA report with candidate causes",
+        aid:"Causal graph analysis + commit-bisect; engineer confirms.",
+        user:"Lead Engineer", ben:"RCA in hours, not days.",
+        zc:["Sentinel","Nexus"]},
+      {id:"6.6", nm:"Defect Retesting & Verification", ai:"full",
+        inp:"Fixed build + linked test case", out:"Verification pass/fail + impact set",
+        aid:"Auto re-executes the failing test plus AI-recommended impact tests.",
+        user:"QA Engineer", ben:"Trusted fix verification.",
+        zc:["TestBot","Sentinel"]},
+      {id:"6.7", nm:"Defect Triage Coordination", ai:"partial",
+        inp:"Daily defect backlog", out:"Triage agenda + recommendations",
+        aid:"AI prepares the meeting: clusters, severity changes, suggested decisions.",
+        user:"Triage Lead", ben:"Triage meetings cut in half.",
+        zc:["Sentinel"]},
+      {id:"6.8", nm:"Defect Trend & Pattern Analysis", ai:"full",
+        inp:"Defect history across releases", out:"Trend dashboards + insight notes",
+        aid:"Time-series + clustering surfaces emerging hot-spots.",
+        user:"QA Manager", ben:"Process-level improvements driven by data.",
+        zc:["Beacon","Sentinel"]}
+    ]},
+  { id:7, name:"Test Reporting & Metrics", color:"#06b6d4", bg:"#ecfeff", pct:"100", grp:"D · Test Intelligence & Closure",
+    zions:["Beacon","Nexus","Vault","Prism"],
+    acts:[
+      {id:"7.1", nm:"Real-time Test Execution Dashboard", ai:"full",
+        inp:"Live execution telemetry", out:"Live dashboards (per role)",
+        aid:"Streams and visualises results in real time, role-aware views.",
+        user:"Test Manager", ben:"Always-on visibility of the release state.",
+        zc:["Beacon","Prism"]},
+      {id:"7.2", nm:"Defect Density & Quality Gate Analysis", ai:"full",
+        inp:"Defects + LOC / scope", out:"Density metrics + gate verdicts",
+        aid:"Computes density per area; flags gate breaches automatically.",
+        user:"QA Manager", ben:"Objective quality gates.",
+        zc:["Beacon"]},
+      {id:"7.3", nm:"Test Coverage Completeness Reporting", ai:"full",
+        inp:"Coverage data (req, code, risk)", out:"Coverage reports with gap calls",
+        aid:"Multi-dimensional gap analysis with recommended next tests.",
+        user:"Test Lead", ben:"Coverage that's both visible and actionable.",
+        zc:["Beacon"]},
+      {id:"7.4", nm:"Risk-based Quality Reporting", ai:"full",
+        inp:"Risk register + test outcomes", out:"Risk-vs-coverage matrix",
+        aid:"Correlates open risks with test coverage and defect density.",
+        user:"QA Manager", ben:"Risk-aware release decisions.",
+        zc:["Beacon","Sentinel"]},
+      {id:"7.5", nm:"Predictive Quality Trend Analysis", ai:"full",
+        inp:"Historical quality metrics", out:"Forecasted quality / defect curves",
+        aid:"ML forecasting predicts quality trajectory and gate-miss risk.",
+        user:"QA Director", ben:"See problems coming before they hit.",
+        zc:["Beacon","Nexus"]},
+      {id:"7.6", nm:"Stakeholder Report Auto-Generation", ai:"full",
+        inp:"All collected metrics", out:"Tailored stakeholder reports",
+        aid:"LLM drafts narrative reports per audience (exec, eng, PMO).",
+        user:"Test Manager", ben:"Audience-fit reports in one click.",
+        zc:["Beacon"]},
+      {id:"7.7", nm:"Test Summary Report Compilation", ai:"full",
+        inp:"All phase outputs", out:"Final Test Summary Report",
+        aid:"Auto-compiles a polished summary with exec digest.",
+        user:"Test Manager", ben:"Closing artefact assembled instantly.",
+        zc:["Beacon"]}
+    ]},
+  { id:8, name:"Test Closure", color:"#16a34a", bg:"#f0fdf4", pct:"67", grp:"D · Test Intelligence & Closure",
+    zions:["Vault","Compass","Nexus","Prism"],
+    acts:[
+      {id:"8.1", nm:"Exit Criteria Evaluation", ai:"full",
+        inp:"Test results + defined exit criteria", out:"Exit-criteria scorecard",
+        aid:"Auto-evaluates every criterion against current state; produces verdict.",
+        user:"QA Manager", ben:"Objective, repeatable closure decision.",
+        zc:["Compass","Beacon"]},
+      {id:"8.2", nm:"Test Artifact Archiving & Versioning", ai:"full",
+        inp:"All test artefacts produced in the release", out:"Versioned archive in the knowledge store",
+        aid:"Auto-categorises, tags and versions artefacts in Vault.",
+        user:"Test Lead", ben:"Easy retrieval; no lost artefacts.",
+        zc:["Vault","Bridge"]},
+      {id:"8.3", nm:"Lessons Learned Documentation", ai:"partial",
+        inp:"Project data + retro inputs", out:"Lessons-learned report",
+        aid:"AI drafts from defect patterns, retro notes and metrics; team refines.",
+        user:"PM / QA Lead", ben:"Knowledge captured while it's fresh.",
+        zc:["Vault","Nexus"]},
+      {id:"8.4", nm:"Process Improvement Recommendations", ai:"full",
+        inp:"Project metrics, defects, retros, history", out:"Ranked improvement actions",
+        aid:"Pattern analysis maps gaps to best-practice library; recommends fixes.",
+        user:"QA Director", ben:"Continuous improvement loop closed each release.",
+        zc:["Nexus","Vault"]},
+      {id:"8.5", nm:"Final Quality Sign-off Checklist", ai:"partial",
+        inp:"All release deliverables", out:"Signed-off checklist",
+        aid:"Generates the right checklist per project and pre-checks each item.",
+        user:"QA Director", ben:"Standard, auditable sign-off.",
+        zc:["Vault","Beacon"]},
+      {id:"8.6", nm:"Knowledge Base Update & Transfer", ai:"full",
+        inp:"All project knowledge surfaces", out:"Updated knowledge base, indexed for RAG",
+        aid:"Auto-extracts learnings, indexes them, makes them retrievable for future projects.",
+        user:"KB Owner", ben:"Organisational learning compounds.",
+        zc:["Vault"]}
+    ]},
+  { id:9, name:"Customer Release", color:"#f97316", bg:"#fff7ed", pct:"71", grp:"E · Release & Operations",
+    zions:["Guardian","Bridge","Pulse","Vault","Prism"],
+    acts:[
+      {id:"9.1", nm:"Release Readiness Assessment", ai:"full",
+        inp:"All quality data + risk + ops signals", out:"Go / No-Go recommendation",
+        aid:"ML readiness scoring across multiple factors with explainability.",
+        user:"Release Manager", ben:"Confident, data-backed release decision.",
+        zc:["Guardian","Beacon"]},
+      {id:"9.2", nm:"UAT Coordination & Monitoring", ai:"partial",
+        inp:"UAT schedule + customer feedback streams", out:"UAT status & risk dashboard",
+        aid:"Auto-tracks UAT execution, runs sentiment on feedback, flags risks.",
+        user:"Release Manager", ben:"Real-time UAT visibility.",
+        zc:["Guardian","Pulse"]},
+      {id:"9.3", nm:"Go-live Checklist Validation", ai:"full",
+        inp:"Go-live checklist + system state", out:"Validated checklist with evidence",
+        aid:"Auto-checks each checklist item programmatically; gathers proof.",
+        user:"Release Engineer", ben:"Zero missed go-live steps.",
+        zc:["Guardian","Bridge"]},
+      {id:"9.4", nm:"Production Deployment Verification", ai:"full",
+        inp:"Production environment + monitoring", out:"Deployment-verification report",
+        aid:"Auto-runs prod smoke + canary analysis; recommends progress or rollback.",
+        user:"SRE / DevOps", ben:"Safe, fast deployments.",
+        zc:["Bridge","Guardian"]},
+      {id:"9.5", nm:"Release Notes Auto-Generation", ai:"full",
+        inp:"Commit log + Jira issues + change set", out:"Customer-ready release notes",
+        aid:"LLM compiles user-facing release notes from technical commits.",
+        user:"Product Manager", ben:"Polished, on-time release communication.",
+        zc:["Vault","Beacon"]},
+      {id:"9.6", nm:"Customer Communication Preparation", ai:"partial",
+        inp:"Release notes + customer profiles", out:"Tailored customer communications",
+        aid:"Drafts segment-specific announcements; CS team reviews.",
+        user:"Customer Success", ben:"Targeted, on-brand customer comms.",
+        zc:["Pulse","Vault"]},
+      {id:"9.7", nm:"Rollback Plan Validation", ai:"partial",
+        inp:"Deployment + rollback plan", out:"Validated rollback procedure",
+        aid:"Auto-tests rollback in staging; flags any non-reversible steps.",
+        user:"Release Engineer", ben:"Risk-mitigated releases.",
+        zc:["Guardian","Bridge"]}
+    ]},
+  { id:10, name:"Post-Release & Production Monitoring", color:"#7c3aed", bg:"#f5f3ff", pct:"100", grp:"E · Release & Operations",
+    zions:["Pulse","Sentinel","Nexus","Vault","Prism"],
+    acts:[
+      {id:"10.1", nm:"Production Anomaly Detection & Alerting", ai:"full",
+        inp:"Production telemetry streams", out:"Alerts with root-signal context",
+        aid:"ML anomaly detection on multi-variate signals; intelligent alert grouping.",
+        user:"SRE", ben:"Detect issues before customers report them.",
+        zc:["Pulse"]},
+      {id:"10.2", nm:"Real-time Performance Monitoring", ai:"full",
+        inp:"Latency / throughput / error metrics", out:"Live performance dashboards",
+        aid:"Trend analysis with threshold-aware alerts; SLO drift detection.",
+        user:"SRE", ben:"SLO assurance in real time.",
+        zc:["Pulse","Beacon"]},
+      {id:"10.3", nm:"Customer Feedback Sentiment Analysis", ai:"full",
+        inp:"Reviews, tickets, social, NPS", out:"Sentiment + topic clustering",
+        aid:"NLP sentiment + topic models distill voice of customer.",
+        user:"Customer Success", ben:"Hear the customer at scale.",
+        zc:["Pulse"]},
+      {id:"10.4", nm:"Production Defect Auto-Triage", ai:"full",
+        inp:"Production incident stream", out:"Triaged, routed incident tickets",
+        aid:"ML classifies, deduplicates and routes; suggests known-cause matches.",
+        user:"Support Lead", ben:"Faster MTTR.",
+        zc:["Sentinel","Pulse"]},
+      {id:"10.5", nm:"SLA Compliance Tracking", ai:"full",
+        inp:"SLA targets + observed actuals", out:"SLA dashboard + breach forecasts",
+        aid:"Auto-tracks SLA; ML predicts impending breaches.",
+        user:"Operations Manager", ben:"Avoid SLA penalties.",
+        zc:["Pulse","Beacon"]},
+      {id:"10.6", nm:"Hotfix Testing & Validation", ai:"full",
+        inp:"Hotfix code + targeted test suite", out:"Hotfix validation report",
+        aid:"Auto-runs the change-impact regression for the patch.",
+        user:"QA Engineer", ben:"Fast, safe hotfixes.",
+        zc:["TestBot","Guardian"]},
+      {id:"10.7", nm:"Continuous Improvement Feedback Loop", ai:"full",
+        inp:"Prod data + STLC data + retros", out:"Backlog items + insights for next cycle",
+        aid:"Closed-loop learning: production findings feed Requirements & Planning.",
+        user:"Product / QA Team", ben:"Each release is informed by the last.",
+        zc:["FlowEngine","Nexus"]},
+      {id:"10.8", nm:"AI Model Retraining & Knowledge Update", ai:"full",
+        inp:"New labelled data from prod", out:"Retrained models + updated KB",
+        aid:"Automated MLOps pipeline retrains, evaluates and ships models.",
+        user:"AI / ML Engineer", ben:"AI accuracy improves continuously.",
+        zc:["Nexus","Vault"]}
+    ]}
+];
+
+/* ───── RENDER ───── */
+
+// Process flow chevrons
+const flow = document.getElementById('flow');
+PH.forEach(p=>{
+  const c = document.createElement('div'); c.className='chev';
+  c.style.background = `linear-gradient(135deg, ${p.color}, ${p.color}cc)`;
+  c.innerHTML = `<span class="chev-num">${p.id}</span><span class="chev-nm">${p.name.replace(' & ',' &amp; ')}</span><span class="chev-ai">🤖 ${p.pct}% AI</span>`;
+  flow.appendChild(c);
+});
+
+// Jump-nav pills
+const nav = document.getElementById('nav');
+PH.forEach((p,i)=>{
+  const w = document.createElement('span');
+  w.innerHTML = `<a class="np" href="#ph-${p.id}" style="background:${p.bg};border:1px solid ${p.color}40;color:${p.color}">${p.id}. ${p.name}</a>${i<PH.length-1?'<span class="na">›</span>':''}`;
+  nav.appendChild(w);
+});
+
+// Per-phase tables
+const main = document.getElementById('main');
+PH.forEach(p=>{
+  const cnt = p.acts.length;
+  const full = p.acts.filter(a=>a.ai==='full').length;
+  const part = cnt - full;
+  const zionsLine = p.zions.map(z=>`<span class="zc">Zion.${z}</span>`).join('');
+  const rows = p.acts.map(a=>{
+    const tag = a.ai==='full' ? 'AUTO' : 'AI+';
+    const tagCls = a.ai==='full' ? 'ai-full' : 'ai-partial';
+    const zcs = a.zc.map(z=>`<span class="zc">Zion.${z}</span>`).join('');
+    return `<tr>
+      <td class="c-id">${a.id}</td>
+      <td class="c-act"><div class="c-act-nm">${a.nm}</div><span class="c-act-tag ${tagCls}">${tag}</span></td>
+      <td class="c-io">${a.inp}</td>
+      <td class="c-io">${a.out}</td>
+      <td class="c-aid">${a.aid}</td>
+      <td class="c-user">${a.user}</td>
+      <td class="c-ben">${a.ben}</td>
+      <td class="c-zion">${zcs}</td>
+    </tr>`;
+  }).join('');
+
+  const block = document.createElement('div');
+  block.className = 'ph';
+  block.id = 'ph-'+p.id;
+  block.innerHTML = `
+    <div class="ph-hdr" style="border-bottom-color:${p.color};background:${p.bg}">
+      <div class="ph-num" style="background:${p.color}">${p.id}</div>
+      <div class="ph-info">
+        <div class="ph-nm">${p.name}</div>
+        <div class="ph-meta">
+          <span class="ph-grp" style="background:${p.color}18;border:1px solid ${p.color}40;color:${p.color}">Group ${p.grp}</span>
+          <span class="ph-pct" style="background:#fff;border:1px solid ${p.color}40;color:${p.color}">🤖 ${p.pct}% AI Automation</span>
+          <span class="ph-cnt">${cnt} activities · ${full} AUTO · ${part} AI+</span>
+        </div>
+      </div>
+    </div>
+    <div class="ph-zions"><b>Lead Zion Components:</b> ${zionsLine}</div>
+    <div class="tbl-wrap"><table class="acts">
+      <thead><tr>
+        <th style="width:34px;">#</th>
+        <th style="width:170px;">Sub-Activity</th>
+        <th style="width:165px;">Input</th>
+        <th style="width:165px;">Output</th>
+        <th style="width:225px;">What AI Does (AUTO / AI+)</th>
+        <th style="width:120px;">User</th>
+        <th style="width:170px;">Benefit</th>
+        <th style="width:135px;">Zion Components</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+  `;
+  main.appendChild(block);
+});
+</script>
+</body>
+</html>
