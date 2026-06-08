@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CoverSight — Agentic AI Test Coverage Platform</title>
+<style>
+  :root{
+    --bg:#0e1117; --panel:#161b25; --panel-2:#1d2533; --line:#2a3344;
+    --txt:#e7ecf3; --muted:#93a0b5; --faint:#6b7689;
+    --brand:#5b8cff; --brand-2:#7c5cff; --accent:#00d4b8;
+    --good:#2ec27e; --warn:#f4b740; --bad:#ff5d6c; --partial:#f4b740;
+    --chip:#222b3a; --shadow:0 8px 30px rgba(0,0,0,.35);
+    --topbar-bg:rgba(13,17,23,.6); --side-grad-a:#121620; --side-grad-b:#0f131b;
+    --r:14px;
+  }
+  html[data-theme="light"]{
+    --bg:#eef1f7; --panel:#ffffff; --panel-2:#f4f6fb; --line:#dde3ec;
+    --txt:#1a2230; --muted:#56627a; --faint:#8a93a6;
+    --chip:#eef1f7; --shadow:0 10px 28px rgba(25,40,80,.10);
+    --topbar-bg:rgba(255,255,255,.72); --side-grad-a:#ffffff; --side-grad-b:#f4f6fb;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:'Segoe UI',Inter,system-ui,Arial,sans-serif;
+    background:radial-gradient(1200px 700px at 80% -10%,rgba(124,92,255,.12),transparent),
+               radial-gradient(900px 600px at -10% 10%,rgba(91,140,255,.10),transparent),
+               var(--bg);
+    color:var(--txt); font-size:14px; line-height:1.45;
+  }
+  /* ===== Shell ===== */
+  .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+  .side{
+    background:linear-gradient(180deg,var(--side-grad-a),var(--side-grad-b));
+    border-right:1px solid var(--line);padding:18px 14px;position:sticky;top:0;height:100vh;
+  }
+  .logo{display:flex;align-items:center;gap:10px;padding:6px 8px 18px}
+  .logo .mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand-2));
+    display:grid;place-items:center;font-weight:800;box-shadow:0 6px 18px rgba(91,140,255,.45)}
+  .logo .mark svg{width:20px;height:20px}
+  .logo h1{font-size:16px;margin:0;letter-spacing:.3px}
+  .logo small{display:block;color:var(--faint);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+  .nav{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+  .nav .grp{color:var(--faint);font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin:14px 10px 4px}
+  .nav button{
+    display:flex;align-items:center;gap:11px;width:100%;text-align:left;border:0;cursor:pointer;
+    background:transparent;color:var(--muted);padding:10px 11px;border-radius:10px;font-size:13.5px;font-weight:600;
+  }
+  .nav button .ic{width:22px;height:22px;border-radius:7px;background:var(--chip);display:grid;place-items:center;font-size:12px;color:var(--brand)}
+  .nav button:hover{background:var(--panel-2);color:var(--txt)}
+  .nav button.active{background:linear-gradient(90deg,rgba(91,140,255,.18),rgba(124,92,255,.06));color:#fff;
+    box-shadow:inset 0 0 0 1px rgba(91,140,255,.35)}
+  .nav button.active .ic{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff}
+  .side .footer{position:absolute;bottom:16px;left:14px;right:14px;border-top:1px solid var(--line);padding-top:12px;
+    display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}
+  .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#00d4b8,#5b8cff);display:grid;place-items:center;font-weight:700;color:#08121a}
+
+  /* ===== Main ===== */
+  .main{display:flex;flex-direction:column;min-width:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 26px;border-bottom:1px solid var(--line);
+    background:var(--topbar-bg);backdrop-filter:blur(8px);position:sticky;top:0;z-index:20}
+  .themebtn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--txt);cursor:pointer;display:grid;place-items:center;font-size:16px}
+  .themebtn:hover{background:var(--panel-2)}
+  /* dashboard */
+  .hero{display:flex;align-items:center;justify-content:space-between;gap:18px;background:linear-gradient(120deg,rgba(91,140,255,.16),rgba(124,92,255,.08));border:1px solid var(--line);border-radius:var(--r);padding:22px 24px;margin-bottom:18px}
+  .hero h2{margin:0 0 4px;font-size:22px}.hero p{margin:0;color:var(--muted)}
+  .qcard{cursor:pointer;display:flex;flex-direction:column;gap:8px}
+  .qcard:hover{box-shadow:0 0 0 1px var(--brand),var(--shadow);transform:translateY(-2px);transition:.15s}
+  .qcard .step-no{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;display:grid;place-items:center;font-weight:800}
+  .bars{display:flex;align-items:flex-end;gap:8px;height:120px}
+  .bars .b{flex:1;background:linear-gradient(180deg,var(--brand),var(--accent));border-radius:6px 6px 0 0;position:relative}
+  .bars .b small{position:absolute;bottom:-18px;left:0;right:0;text-align:center;color:var(--faint);font-size:10px}
+  /* workspace switcher */
+  .wswrap{position:relative;margin:2px 4px 6px}
+  .wsswitch{width:100%;display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:9px 11px;cursor:pointer;color:var(--txt)}
+  .wsswitch:hover{box-shadow:inset 0 0 0 1px var(--brand)}
+  .wsswitch .chev{margin-left:auto;color:var(--faint)}
+  .wsswitch small{display:block;color:var(--faint);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+  .wsswitch b{font-size:13px}
+  .specdot{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:10px;font-weight:800;color:#fff;flex:none}
+  .wsmenu{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--panel);border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow);padding:6px;z-index:60;max-height:340px;overflow:auto}
+  .wsmenu.open{display:block}
+  .wsmenu button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;color:var(--txt);padding:8px 9px;border-radius:8px;cursor:pointer;font-size:12.5px}
+  .wsmenu button:hover{background:var(--panel-2)}
+  .wsmenu .mini{margin-left:auto;font-size:11px;font-weight:700;color:var(--muted)}
+  /* spec portfolio grid */
+  .specgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .speccard{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px;cursor:pointer;position:relative;overflow:hidden}
+  .speccard:hover{transform:translateY(-3px);box-shadow:0 0 0 1px var(--brand),var(--shadow);transition:.15s}
+  .speccard .top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .speccard .name{font-weight:800;font-size:14px;line-height:1.1}
+  .speccard .name small{display:block;color:var(--faint);font-weight:600;font-size:10.5px}
+  .speccard .cov{font-size:24px;font-weight:800}
+  .speccard .mbar{height:6px;border-radius:999px;background:var(--panel-2);overflow:hidden;margin:8px 0 10px}
+  .speccard .mbar i{display:block;height:100%;border-radius:999px}
+  .speccard .stats{display:flex;justify-content:space-between;color:var(--muted);font-size:11.5px}
+  .speccard .stats b{color:var(--txt)}
+  /* comparison chart */
+  .cmp{display:flex;flex-direction:column;gap:11px}
+  .cmprow{display:grid;grid-template-columns:96px 1fr 42px;align-items:center;gap:10px;font-size:12px}
+  .cmprow .cbar{height:14px;border-radius:999px;background:var(--panel-2);overflow:hidden}
+  .cmprow .cbar i{display:block;height:100%;border-radius:999px}
+  .cmprow .pct{text-align:right;font-weight:800}
+  .attn{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .attn:last-child{border:0}
+  .attn .specdot{width:26px;height:26px;border-radius:7px;font-size:9px}
+  .crumb{color:var(--faint);font-size:12.5px}
+  .crumb b{color:var(--txt)}
+  .topbar .actions{display:flex;align-items:center;gap:10px}
+  .search{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--muted);min-width:240px}
+  .search input{background:transparent;border:0;outline:0;color:var(--txt);width:100%;font-size:13px}
+  .content{padding:24px 26px 60px;overflow:auto}
+
+  /* ===== Stepper ===== */
+  .stepper{display:flex;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:6px;margin-bottom:22px}
+  .stepper .step{flex:1;display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:10px;cursor:pointer;color:var(--muted);position:relative}
+  .stepper .step:hover{background:var(--panel-2)}
+  .stepper .step.active{background:linear-gradient(90deg,rgba(91,140,255,.20),rgba(124,92,255,.08));color:#fff;box-shadow:inset 0 0 0 1px rgba(91,140,255,.35)}
+  .stepper .step.done .num{background:var(--good);color:#04140c}
+  .stepper .num{width:26px;height:26px;border-radius:50%;background:var(--chip);display:grid;place-items:center;font-weight:800;font-size:12.5px;color:var(--brand);flex:none}
+  .stepper .step.active .num{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff}
+  .stepper .lbl{font-size:12.5px;font-weight:700;line-height:1.2}
+  .stepper .lbl small{display:block;color:var(--faint);font-weight:600;font-size:10.5px}
+  .stepper .step:not(:last-child)::after{content:"›";position:absolute;right:-3px;color:var(--faint);font-size:18px}
+
+  /* ===== Generic ===== */
+  .page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+  .page-head h2{margin:0 0 4px;font-size:21px;letter-spacing:.2px}
+  .page-head p{margin:0;color:var(--muted);max-width:680px}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--chip);color:var(--muted)}
+  .pill.live{color:var(--accent)} .pill.live .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(0,212,184,.18)}
+  .btn{border:0;cursor:pointer;border-radius:10px;padding:10px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:8px}
+  .btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;box-shadow:0 8px 22px rgba(91,140,255,.35)}
+  .btn.ghost{background:var(--panel-2);color:var(--txt);border:1px solid var(--line)}
+  .btn.sm{padding:7px 12px;font-size:12px}
+  .grid{display:grid;gap:18px}
+  .cols-2{grid-template-columns:1.1fr .9fr}
+  .cols-3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+  .card h3{margin:0 0 4px;font-size:14.5px}
+  .card .sub{color:var(--faint);font-size:12px;margin-bottom:14px}
+  .row{display:flex;align-items:center;gap:10px}
+  .between{justify-content:space-between}
+
+  /* upload / dropzone */
+  .drop{border:1.6px dashed #38445a;border-radius:12px;padding:26px;text-align:center;color:var(--muted);background:repeating-linear-gradient(45deg,rgba(255,255,255,.012),rgba(255,255,255,.012) 12px,transparent 12px,transparent 24px)}
+  .drop .big{font-size:30px;margin-bottom:6px}
+  .filelist{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+  .file{display:flex;align-items:center;gap:11px;padding:10px 12px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
+  .file .ft{width:30px;height:30px;border-radius:8px;background:#2b2140;color:#caa9ff;display:grid;place-items:center;font-size:11px;font-weight:800}
+  .file .ft.pdf{background:#3a1e22;color:#ff9aa3}
+  .file .meta{flex:1;min-width:0}
+  .file .meta b{display:block;font-size:12.5px}
+  .file .meta small{color:var(--faint)}
+  .badge{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:999px}
+  .badge.ok{background:rgba(46,194,126,.16);color:#5fe0a3}
+  .badge.run{background:rgba(91,140,255,.16);color:#9bbcff}
+  .badge.idle{background:var(--chip);color:var(--muted)}
+
+  .prog{height:7px;border-radius:999px;background:var(--panel-2);overflow:hidden}
+  .prog > i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--accent));border-radius:999px}
+
+  /* graph canvas */
+  .graphwrap{position:relative;height:280px;border-radius:12px;background:radial-gradient(500px 240px at 50% 40%,rgba(91,140,255,.10),transparent),var(--panel-2);border:1px solid var(--line);overflow:hidden}
+  .node{position:absolute;transform:translate(-50%,-50%);padding:7px 12px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.08)}
+  .node.cmd{background:#1f3a66;color:#bcd3ff} .node.feat{background:#13402f;color:#7be6b6}
+  .node.stat{background:#5a3a12;color:#ffce86} .node.err{background:#5a1c24;color:#ff9aa3}
+
+  /* tables */
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{ text-align:left;color:var(--faint);font-weight:700;font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:9px 10px;border-bottom:1px solid var(--line)}
+  td{padding:10px;border-bottom:1px solid var(--line)}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .reqid{font-family:ui-monospace,Consolas,monospace;color:var(--brand);font-weight:700}
+  .tag{font-size:10.5px;padding:2px 8px;border-radius:6px;background:var(--chip);color:var(--muted)}
+
+  /* matching matrix (step C) */
+  .matrix{display:grid;grid-template-columns:200px 1fr;gap:0}
+  .mlink{display:grid;grid-template-columns:1fr 90px 1fr;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:11px;margin-bottom:10px;background:var(--panel-2)}
+  .mlink .req{font-size:12.5px;font-weight:700}
+  .mlink .req small{display:block;color:var(--faint);font-weight:600}
+  .mlink .tc{font-size:12px;color:var(--muted);text-align:right}
+  .score{justify-self:center;text-align:center}
+  .score .ring{--v:80;width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12.5px;
+    background:conic-gradient(var(--c) calc(var(--v)*1%),#2a3344 0);}
+  .score .ring span{width:38px;height:38px;border-radius:50%;background:var(--panel-2);display:grid;place-items:center}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:4px}
+  .legend i{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:middle}
+
+  .kpi{display:flex;flex-direction:column;gap:3px}
+  .kpi .v{font-size:28px;font-weight:800;letter-spacing:.5px}
+  .kpi .l{color:var(--faint);font-size:12px}
+  .donut{width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--good) 0 72%,var(--partial) 72% 86%,var(--bad) 86% 100%);display:grid;place-items:center}
+  .donut span{width:84px;height:84px;border-radius:50%;background:var(--panel);display:grid;place-items:center;flex-direction:column;text-align:center;font-weight:800}
+
+  .gapcard{border-left:3px solid var(--bad);background:var(--panel-2);border-radius:11px;padding:14px;margin-bottom:12px}
+  .gapcard.partial{border-left-color:var(--warn)}
+  .gapcard h4{margin:0 0 4px;font-size:13.5px}
+  .gapcard p{margin:0;color:var(--muted);font-size:12.5px}
+
+  .codebox{background:#0b0e14;border:1px solid var(--line);border-radius:11px;overflow:hidden;font-family:ui-monospace,Consolas,monospace;font-size:12px}
+  .codebox .bar{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:11.5px}
+  .codebox .bar .dotr{width:10px;height:10px;border-radius:50%}
+  .codebox pre{margin:0;padding:14px 16px;overflow:auto;color:#cdd6e6;line-height:1.6}
+  .codebox .kw{color:#c792ea}.codebox .fn{color:#82aaff}.codebox .str{color:#c3e88d}.codebox .cm{color:#5b6678}.codebox .new{background:rgba(46,194,126,.10);display:block;border-left:2px solid var(--good);padding-left:8px;margin-left:-10px}
+
+  .toggle{display:flex;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:3px}
+  .toggle button{border:0;background:transparent;color:var(--muted);padding:6px 12px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer}
+  .toggle button.on{background:var(--brand);color:#fff}
+
+  .screen{display:none;animation:fade .25s ease}
+  .screen.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .note{font-size:11.5px;color:var(--faint);margin-top:10px}
+  .src{display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;font-size:12px;margin-bottom:8px}
+  .src .gh{width:24px;height:24px;border-radius:6px;background:#0d1117;display:grid;place-items:center}
+  @media(max-width:1000px){.app{grid-template-columns:1fr}.side{display:none}.cols-2,.cols-3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side">
+    <div class="logo">
+      <div class="mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="9" cy="9" r="3"/><circle cx="17" cy="16" r="3"/><path d="M9 12v1a3 3 0 0 0 3 3h2"/><path d="M9 6V5a2 2 0 0 1 2-2h2"/></svg>
+      </div>
+      <div><h1>CoverSight</h1><small>Coverage Intelligence</small></div>
+    </div>
+    <div class="wswrap">
+      <div class="wsswitch" id="wsswitch" onclick="document.getElementById('wsmenu').classList.toggle('open')">
+        <div class="specdot" id="ws-dot" style="background:#3b6cf6">NV</div>
+        <div><small>Active workspace</small><b id="ws-side">NVMe 2.0</b></div>
+        <span class="chev">▾</span>
+      </div>
+      <div class="wsmenu" id="wsmenu"></div>
+    </div>
+    <nav class="nav">
+      <div class="grp">Portfolio</div>
+      <button data-screen="home" class="active"><span class="ic">▥</span> Master Dashboard</button>
+      <button><span class="ic">⌗</span> All Workspaces</button>
+      <button><span class="ic">⚙</span> Settings</button>
+      <div class="grp">Workflow · <span id="ws-grp">NVMe 2.0</span></div>
+      <button data-screen="A"><span class="ic">A</span> Spec Knowledge Graph</button>
+      <button data-screen="B"><span class="ic">B</span> Test Script Graph</button>
+      <button data-screen="C"><span class="ic">C</span> Coverage Mapping</button>
+      <button data-screen="D"><span class="ic">D</span> Gap Remediation</button>
+    </nav>
+    <div class="footer">
+      <div class="avatar">SA</div>
+      <div><b style="color:var(--txt)">SQE Team</b><br/>Memory &amp; Protocol QA</div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb">Workspaces / <b id="ws-crumb">NVMe 2.0</b> / <b id="crumb">Master Dashboard</b></div>
+      <div class="actions">
+        <div class="search">🔎<input placeholder="Search requirements, TCs, scenarios…"/></div>
+        <span class="pill live"><span class="dot"></span> 4 agents online</span>
+        <button class="themebtn" id="themebtn" title="Toggle light / dark">🌙</button>
+        <button class="btn ghost sm">Export Report</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- ===== Stepper ===== -->
+      <div class="stepper" id="stepper">
+        <div class="step active" data-screen="A"><div class="num">A</div><div class="lbl">Spec → Requirements<small>KG-RAG extraction</small></div></div>
+        <div class="step" data-screen="B"><div class="num">B</div><div class="lbl">Scripts → Scenarios<small>VCS ingest + extract</small></div></div>
+        <div class="step" data-screen="C"><div class="num">C</div><div class="lbl">Coverage Mapping<small>Match scoring</small></div></div>
+        <div class="step" data-screen="D"><div class="num">D</div><div class="lbl">Gap Remediation<small>AI TC generation</small></div></div>
+      </div>
+
+      <!-- ====================================================== MASTER DASHBOARD -->
+      <section class="screen show" id="screen-home">
+        <div class="hero">
+          <div>
+            <h2>Coverage Command Center</h2>
+            <p>One view across every memory &amp; protocol specification. Pick a workspace to run the CoverSight A–D pipeline, or review portfolio-wide coverage health.</p>
+          </div>
+          <button class="btn primary" onclick="document.getElementById('wsmenu').classList.add('open')">+ New Spec Workspace</button>
+        </div>
+
+        <div class="grid cols-3" style="margin-bottom:18px">
+          <div class="card row" style="gap:16px"><div class="donut" style="background:conic-gradient(var(--good) 0 76%,var(--partial) 76% 90%,var(--bad) 90% 100%)"><span><div style="font-size:20px">76%</div><small style="color:var(--faint);font-weight:600">avg coverage</small></span></div>
+            <div class="kpi"><div class="v">8</div><div class="l">Active spec workspaces</div></div></div>
+          <div class="card"><div class="kpi"><div class="v" style="color:var(--accent)">416</div><div class="l">Requirements tracked</div></div>
+            <div class="prog" style="margin-top:14px"><i style="width:76%"></i></div><div class="note">10,940 test cases analysed across all repos</div></div>
+          <div class="card"><div class="kpi"><div class="v" style="color:var(--bad)">48</div><div class="l">Open coverage gaps</div></div>
+            <div class="row" style="margin-top:14px;gap:8px"><span class="badge run">19 generating</span><span class="badge idle">29 queued</span></div></div>
+        </div>
+
+        <div class="card" style="margin-bottom:18px">
+          <div class="row between"><div><h3>Specification Workspaces</h3><div class="sub">Each workspace runs the same A–D pipeline · click to enter</div></div>
+            <div class="row"><span class="legend" style="margin:0"><span><i style="background:var(--good)"></i>≥85%</span><span><i style="background:var(--warn)"></i>70–85%</span><span><i style="background:var(--bad)"></i>&lt;70%</span></span></div></div>
+          <div class="specgrid" id="specgrid" style="margin-top:14px"></div>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Coverage by Specification</h3><div class="sub">% requirements fully mapped to test cases</div>
+            <div class="cmp" id="cmpchart" style="margin-top:14px"></div>
+          </div>
+          <div class="card">
+            <h3>Needs Attention</h3><div class="sub">Lowest-coverage workspaces &amp; open gaps</div>
+            <div style="margin-top:6px" id="attnlist"></div>
+            <div class="row between" style="margin-top:14px">
+              <span class="note" style="margin:0">Portfolio agent fleet</span>
+              <span class="pill live"><span class="dot"></span> 4 agent types · 11 jobs running</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================== SCREEN A -->
+      <section class="screen" id="screen-A">
+        <div class="page-head">
+          <div>
+            <h2>Build Spec Knowledge Graph &amp; Extract Test Requirements</h2>
+            <p>Upload requirement specification documents. CoverSight builds a Graph-RAG over the spec, then the <b>Requirement Agent</b> extracts atomic functional test requirements.</p>
+          </div>
+          <button class="btn primary" onclick="go('B')">Run Extraction →</button>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>1 · Upload Specification Documents</h3>
+            <div class="sub">Supported: PDF, DOCX, MD · NVMe / SATA / firmware specs</div>
+            <div class="drop"><div class="big">⬆</div><b>Drag &amp; drop spec files</b><br/><small>or click to browse — section-aware chunking applied automatically</small></div>
+            <div class="filelist">
+              <div class="file"><div class="ft pdf">PDF</div><div class="meta"><b>NVMe_Base_Spec_2.0c.pdf</b><small>Sec. 4 Commands · Sec. 5 Power States · Sec. 6 Error Handling</small></div><span class="badge ok">Indexed</span></div>
+              <div class="file"><div class="ft pdf">PDF</div><div class="meta"><b>NVMe_NVM_Command_Set_1.0.pdf</b><small>312 pages · 1,204 chunks</small></div><span class="badge ok">Indexed</span></div>
+              <div class="file"><div class="ft">DOC</div><div class="meta"><b>Internal_FW_Requirements_v3.docx</b><small>Embedding in progress…</small></div><span class="badge run">68%</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="row between"><h3>2 · Knowledge Graph (Graph-RAG)</h3>
+              <div class="toggle"><button class="on">Graph RAG</button><button>Naïve RAG</button></div>
+            </div>
+            <div class="sub">Entities &amp; relationships extracted from spec sections</div>
+            <div class="graphwrap">
+              <svg style="position:absolute;inset:0;width:100%;height:100%" stroke="#3a4660" stroke-width="1.4">
+                <line x1="50%" y1="32%" x2="26%" y2="62%"/><line x1="50%" y1="32%" x2="74%" y2="60%"/>
+                <line x1="26%" y1="62%" x2="50%" y2="82%"/><line x1="74%" y1="60%" x2="50%" y2="82%"/>
+                <line x1="50%" y1="32%" x2="50%" y2="82%" stroke-dasharray="4 4"/>
+              </svg>
+              <div class="node cmd" style="left:50%;top:32%">Command</div>
+              <div class="node feat" style="left:26%;top:62%">Feature</div>
+              <div class="node stat" style="left:74%;top:60%">Status / Power State</div>
+              <div class="node err" style="left:50%;top:82%">Invalid Field / Error</div>
+              <div class="node cmd" style="left:16%;top:30%;background:#27314a;color:#9bbcff">Read Cmd</div>
+              <div class="node cmd" style="left:84%;top:28%;background:#27314a;color:#9bbcff">Power Transition</div>
+            </div>
+            <div class="legend">
+              <span><i style="background:#1f3a66"></i>Command</span>
+              <span><i style="background:#13402f"></i>Feature</span>
+              <span><i style="background:#5a3a12"></i>State</span>
+              <span><i style="background:#5a1c24"></i>Error</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px">
+          <div class="row between">
+            <div><h3>3 · Extracted Functional Test Requirements</h3><div class="sub">Requirement Agent · grounded with section citations</div></div>
+            <span class="pill"><b style="color:var(--txt)">47</b>&nbsp;requirements</span>
+          </div>
+          <table>
+            <thead><tr><th>Req ID</th><th>Functional Requirement</th><th>Source</th><th>Type</th><th>Priority</th></tr></thead>
+            <tbody>
+              <tr><td class="reqid">REQ-001</td><td>Read Command shall return data for valid LBA ranges within QoS latency.</td><td><span class="tag">§4.3 Read</span></td><td><span class="tag">Functional</span></td><td><span class="badge ok">High</span></td></tr>
+              <tr><td class="reqid">REQ-002</td><td>Write Command shall reject access to read-only namespaces with status 0x82.</td><td><span class="tag">§4.4 Write</span></td><td><span class="tag">Negative</span></td><td><span class="badge ok">High</span></td></tr>
+              <tr><td class="reqid">REQ-003</td><td>Controller shall transition PS0→PS3 within autonomous power-state thresholds.</td><td><span class="tag">§5.2 Power</span></td><td><span class="tag">Functional</span></td><td><span class="badge run">Med</span></td></tr>
+              <tr><td class="reqid">REQ-004</td><td>Commands to an Invalid Namespace shall complete with status 0x0B.</td><td><span class="tag">§6.1 Error</span></td><td><span class="tag">Negative</span></td><td><span class="badge ok">High</span></td></tr>
+              <tr><td class="reqid">REQ-005</td><td>Create I/O Submission Queue shall validate queue size against CAP.MQES.</td><td><span class="tag">§4.1 Admin</span></td><td><span class="tag">Boundary</span></td><td><span class="badge run">Med</span></td></tr>
+            </tbody>
+          </table>
+          <div class="note">Showing 5 of 47 · Each requirement is traceable to spec chunks via the knowledge graph.</div>
+        </div>
+      </section>
+
+      <!-- ====================================================== SCREEN B -->
+      <section class="screen" id="screen-B">
+        <div class="page-head">
+          <div>
+            <h2>Ingest Automated Test Scripts &amp; Extract TC Scenarios</h2>
+            <p>Connect a Bitbucket / GitHub repository. CoverSight builds a Graph-RAG over the test code, then the <b>Scenario Agent</b> infers each TC's purpose and scenario.</p>
+          </div>
+          <button class="btn primary" onclick="go('C')">Run Mapping →</button>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>1 · Connect Version Control Source</h3>
+            <div class="sub">OAuth — read-only access to test repositories</div>
+            <div class="src"><div class="gh"><svg width="14" height="14" viewBox="0 0 16 16" fill="#fff"><path d="M8 0C3.6 0 0 3.6 0 8a8 8 0 0 0 5.5 7.6c.4.1.5-.2.5-.4v-1.4c-2 .4-2.5-.5-2.7-1 0-.1-.5-.9-.8-1-.3-.2-.7-.6 0-.6.6 0 1 .6 1.2.8.7 1.2 1.9.9 2.3.7.1-.5.3-.9.5-1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1 0-.2-.3-1 .1-2 0 0 .7-.2 2.2.8a7 7 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1 .1 1.8.1 2 .5.5.8 1.2.8 2.1 0 3-1.8 3.7-3.6 4 .3.2.5.7.5 1.4v2.2c0 .2.2.5.5.4A8 8 0 0 0 16 8c0-4.4-3.6-8-8-8Z"/></svg></div>
+              <div style="flex:1"><b>github.com/memorytech/nvme-fw-qa</b><br/><small style="color:var(--faint)">branch: main · 1,842 Python TCs</small></div><span class="badge ok">Connected</span></div>
+            <div class="src"><div class="gh" style="background:#1b3a6b"><b style="font-size:9px;color:#fff">B</b></div>
+              <div style="flex:1"><b>bitbucket.org/memorytech/regression</b><br/><small style="color:var(--faint)">branch: release/2.0 · 640 TCs</small></div><span class="badge run">Syncing 41%</span></div>
+            <button class="btn ghost sm" style="margin-top:6px">+ Add repository</button>
+            <div class="note">Auto-discovers <b>*.py</b> test files · re-indexes on each merge to tracked branches.</div>
+          </div>
+
+          <div class="card">
+            <h3>2 · TC Code Graph &amp; Embedding</h3>
+            <div class="sub">Chunk → embed → graph-link by shared fixtures &amp; APIs</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div class="row between"><span>Chunking &amp; embedding</span><span class="badge ok">Done</span></div>
+              <div class="prog"><i style="width:100%"></i></div>
+              <div class="row between"><span>Scenario / purpose inference</span><span class="badge run">Running</span></div>
+              <div class="prog"><i style="width:74%"></i></div>
+            </div>
+            <div class="codebox" style="margin-top:14px">
+              <div class="bar"><span class="dotr" style="background:#ff5d6c"></span><span class="dotr" style="background:#f4b740"></span><span class="dotr" style="background:#2ec27e"></span>&nbsp; tc_read_command.py</div>
+              <pre><span class="cm"># TC002 — Read Command</span>
+<span class="kw">def</span> <span class="fn">test_read_valid_lba</span>(ctrl):
+    q = ctrl.<span class="fn">create_io_queue</span>(size=<span class="str">64</span>)
+    r = ctrl.<span class="fn">read</span>(nsid=<span class="str">1</span>, lba=<span class="str">0x100</span>, blocks=<span class="str">8</span>)
+    <span class="kw">assert</span> r.status == <span class="str">0x0</span></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px">
+          <div class="row between">
+            <div><h3>3 · Extracted Test Scenarios / TC Purpose</h3><div class="sub">Scenario Agent · inferred from code + docstrings</div></div>
+            <span class="pill"><b style="color:var(--txt)">2,482</b>&nbsp;TCs analysed</span>
+          </div>
+          <table>
+            <thead><tr><th>TC ID</th><th>Inferred Purpose / Scenario</th><th>Type</th><th>File</th><th>Confidence</th></tr></thead>
+            <tbody>
+              <tr><td class="reqid">TC002</td><td>Verify Read Command returns correct data for a valid LBA range.</td><td><span class="tag">Functional</span></td><td><span class="tag">tc_read_command.py</span></td><td><span class="badge ok">0.96</span></td></tr>
+              <tr><td class="reqid">TC001</td><td>Create I/O Submission Queue with valid size and QID.</td><td><span class="tag">Setup</span></td><td><span class="tag">tc_io_queue.py</span></td><td><span class="badge ok">0.94</span></td></tr>
+              <tr><td class="reqid">TC003</td><td>Trigger autonomous power state transition PS0→PS3 and verify.</td><td><span class="tag">Functional</span></td><td><span class="tag">tc_power_state.py</span></td><td><span class="badge run">0.81</span></td></tr>
+              <tr><td class="reqid">TC004</td><td>Issue command to invalid namespace; expect status 0x0B.</td><td><span class="tag">Negative</span></td><td><span class="tag">tc_invalid_ns.py</span></td><td><span class="badge ok">0.92</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====================================================== SCREEN C -->
+      <section class="screen" id="screen-C">
+        <div class="page-head">
+          <div>
+            <h2>Coverage Mapping — Requirements vs. Test Scenarios</h2>
+            <p>The <b>Mapping Agent</b> links each requirement to candidate TCs and computes a semantic <b>match score</b>. Review, accept, or flag gaps.</p>
+          </div>
+          <button class="btn primary" onclick="go('D')">Resolve Gaps →</button>
+        </div>
+
+        <div class="grid cols-3" style="margin-bottom:18px">
+          <div class="card row" style="gap:16px"><div class="donut"><span><div style="font-size:20px">72%</div><small style="color:var(--faint);font-weight:600">covered</small></span></div>
+            <div><div class="kpi"><div class="v" style="color:var(--good)">34</div><div class="l">Fully mapped</div></div></div></div>
+          <div class="card"><div class="kpi"><div class="v" style="color:var(--warn)">7</div><div class="l">Partially covered</div></div>
+            <div class="prog" style="margin-top:12px"><i style="width:60%;background:var(--warn)"></i></div>
+            <div class="note">Weak / low-confidence matches needing review</div></div>
+          <div class="card"><div class="kpi"><div class="v" style="color:var(--bad)">6</div><div class="l">Uncovered gaps</div></div>
+            <div class="prog" style="margin-top:12px"><i style="width:13%;background:var(--bad)"></i></div>
+            <div class="note">No matching TC found above threshold</div></div>
+        </div>
+
+        <div class="card">
+          <div class="row between">
+            <h3>Requirement ↔ Test Case Matching</h3>
+            <div class="row"><span class="legend" style="margin:0"><span><i style="background:var(--good)"></i>≥0.85 strong</span><span><i style="background:var(--warn)"></i>0.6–0.85 partial</span><span><i style="background:var(--bad)"></i>&lt;0.6 gap</span></span></div>
+          </div>
+          <div style="margin-top:14px">
+            <div class="mlink">
+              <div class="req">REQ-001 · Read valid LBA<small>§4.3 Read Command</small></div>
+              <div class="score"><div class="ring" style="--v:96;--c:var(--good)"><span>0.96</span></div></div>
+              <div class="tc">→ <b style="color:var(--txt)">TC002</b><br/><small>Read valid LBA range</small></div>
+            </div>
+            <div class="mlink">
+              <div class="req">REQ-004 · Invalid namespace<small>§6.1 Error Handling</small></div>
+              <div class="score"><div class="ring" style="--v:91;--c:var(--good)"><span>0.91</span></div></div>
+              <div class="tc">→ <b style="color:var(--txt)">TC004</b><br/><small>Invalid NS → 0x0B</small></div>
+            </div>
+            <div class="mlink" style="border-color:rgba(244,183,64,.4)">
+              <div class="req">REQ-003 · Power transition<small>§5.2 Power States</small></div>
+              <div class="score"><div class="ring" style="--v:68;--c:var(--warn)"><span>0.68</span></div></div>
+              <div class="tc">→ <b style="color:var(--txt)">TC003</b> <span class="badge run">partial</span><br/><small>Only PS0→PS3 covered, PS3→PS4 missing</small></div>
+            </div>
+            <div class="mlink" style="border-color:rgba(255,93,108,.4)">
+              <div class="req">REQ-002 · Write to read-only NS<small>§4.4 Write Command</small></div>
+              <div class="score"><div class="ring" style="--v:32;--c:var(--bad)"><span>0.31</span></div></div>
+              <div class="tc">⚠ <b style="color:var(--bad)">No matching TC</b><br/><small>Coverage gap — send to Step D</small></div>
+            </div>
+            <div class="mlink" style="border-color:rgba(255,93,108,.4)">
+              <div class="req">REQ-005 · Queue size vs CAP.MQES<small>§4.1 Admin</small></div>
+              <div class="score"><div class="ring" style="--v:24;--c:var(--bad)"><span>0.24</span></div></div>
+              <div class="tc">⚠ <b style="color:var(--bad)">No boundary TC</b><br/><small>Coverage gap — send to Step D</small></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================== SCREEN D -->
+      <section class="screen" id="screen-D">
+        <div class="page-head">
+          <div>
+            <h2>Gap Remediation — AI-Generated Scenarios &amp; Scripts</h2>
+            <p>For each uncovered or partial requirement, the <b>Generation Agent</b> drafts a test scenario and a runnable test script. Review, edit, and push to your repo as a PR.</p>
+          </div>
+          <button class="btn primary">⤴ Create Pull Request (3)</button>
+        </div>
+
+        <div class="grid cols-2">
+          <div>
+            <div class="gapcard">
+              <div class="row between"><h4>⚠ REQ-002 — Write to read-only namespace</h4><span class="badge run">Generating</span></div>
+              <p>Gap: no TC asserts status <b>0x82</b> when writing to a read-only namespace. Suggested negative test below.</p>
+            </div>
+            <div class="gapcard">
+              <div class="row between"><h4>⚠ REQ-005 — Queue size vs CAP.MQES</h4><span class="badge idle">Queued</span></div>
+              <p>Gap: boundary case (queue size = MQES+1) untested. Generation Agent will draft a boundary scenario.</p>
+            </div>
+            <div class="gapcard partial">
+              <div class="row between"><h4>◐ REQ-003 — Power state PS3→PS4</h4><span class="badge idle">Queued</span></div>
+              <p>Partial: extend existing TC003 to cover the missing PS3→PS4 autonomous transition.</p>
+            </div>
+            <div class="card" style="margin-top:4px">
+              <h3>Generation Settings</h3>
+              <div class="row between" style="margin-top:10px"><span>Target framework</span><span class="tag">pytest · nvme-cli harness</span></div>
+              <div class="row between" style="margin-top:10px"><span>Style guide</span><span class="tag">team_qa_conventions.md</span></div>
+              <div class="row between" style="margin-top:10px"><span>Output</span><span class="tag">Scenario + Script + Traceability</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="row between"><h3>Generated Test — REQ-002</h3><div class="toggle"><button class="on">Script</button><button>Scenario</button></div></div>
+            <div class="sub">AI draft · linked to REQ-002 · review before merge</div>
+            <div class="codebox">
+              <div class="bar"><span class="dotr" style="background:#ff5d6c"></span><span class="dotr" style="background:#f4b740"></span><span class="dotr" style="background:#2ec27e"></span>&nbsp; tc_write_readonly_ns.py &nbsp;<span class="badge ok" style="margin-left:auto">+ new file</span></div>
+              <pre><span class="cm"># TC512 — REQ-002 Write to read-only namespace</span>
+<span class="kw">import</span> pytest
+
+<span class="new"><span class="kw">def</span> <span class="fn">test_write_readonly_ns_rejected</span>(ctrl):</span>
+<span class="new">    <span class="cm">"""Writing to a read-only NS must fail with 0x82."""</span></span>
+<span class="new">    ns = ctrl.<span class="fn">get_namespace</span>(nsid=<span class="str">2</span>, readonly=<span class="kw">True</span>)</span>
+<span class="new">    r = ctrl.<span class="fn">write</span>(nsid=ns.id, lba=<span class="str">0x0</span>, data=<span class="str">b"x"</span>)</span>
+<span class="new">    <span class="kw">assert</span> r.status == <span class="str">0x82</span>  <span class="cm"># Namespace is write protected</span></span></pre>
+            </div>
+            <div class="row" style="margin-top:14px;gap:10px">
+              <button class="btn primary sm">✓ Accept &amp; add to PR</button>
+              <button class="btn ghost sm">✎ Edit</button>
+              <button class="btn ghost sm">↻ Regenerate</button>
+            </div>
+            <div class="note">Traceability auto-updated: REQ-002 → TC512. Re-runs Step C mapping on merge to confirm coverage closes.</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== Spec workspaces (portfolio) =====
+  var WS=[
+    {key:"nvme",ab:"NV",name:"NVMe 2.0",cat:"Storage interface",color:"#3b6cf6",cov:72,req:47,tc:2482,gaps:6},
+    {key:"sata",ab:"SA",name:"SATA 3.5",cat:"Storage interface",color:"#00a3a3",cov:88,req:38,tc:1640,gaps:3},
+    {key:"emmc",ab:"eM",name:"eMMC 5.1",cat:"Embedded storage",color:"#8b5cf6",cov:81,req:52,tc:1920,gaps:5},
+    {key:"ufs", ab:"UF",name:"UFS 4.0", cat:"Embedded storage",color:"#e0529c",cov:76,req:64,tc:2105,gaps:8},
+    {key:"spdm",ab:"SP",name:"SPDM 1.3",cat:"Security / attestation",color:"#f4801a",cov:69,req:41,tc:980, gaps:9},
+    {key:"ocp", ab:"OC",name:"OCP", cat:"Datacenter / Open Compute",color:"#5b8c2a",cov:64,req:29,tc:610, gaps:7},
+    {key:"pldm",ab:"PL",name:"PLDM", cat:"Platform management",color:"#c2410c",cov:79,req:33,tc:740, gaps:4},
+    {key:"mfnd",ab:"MF",name:"MFND", cat:"Management firmware",color:"#6366f1",cov:58,req:22,tc:463, gaps:6}
+  ];
+  function covColor(c){return c>=85?'var(--good)':c>=70?'var(--warn)':'var(--bad)';}
+  function covBadge(c){return c>=85?'ok':c>=70?'run':'idle';}
+
+  function renderPortfolio(){
+    // spec cards
+    document.getElementById('specgrid').innerHTML=WS.map(function(w){
+      return '<div class="speccard" onclick="enterWS(\''+w.key+'\')">'
+        +'<div class="top"><div class="specdot" style="background:'+w.color+'">'+w.ab+'</div>'
+        +'<div class="name">'+w.name+'<small>'+w.cat+'</small></div></div>'
+        +'<div class="row between"><span class="cov" style="color:'+covColor(w.cov)+'">'+w.cov+'%</span>'
+        +'<span class="badge '+covBadge(w.cov)+'">'+w.gaps+' gaps</span></div>'
+        +'<div class="mbar"><i style="width:'+w.cov+'%;background:'+covColor(w.cov)+'"></i></div>'
+        +'<div class="stats"><span><b>'+w.req+'</b> reqs</span><span><b>'+w.tc.toLocaleString()+'</b> TCs</span></div></div>';
+    }).join('');
+    // comparison chart (sorted desc)
+    document.getElementById('cmpchart').innerHTML=WS.slice().sort(function(a,b){return b.cov-a.cov;}).map(function(w){
+      return '<div class="cmprow"><span style="color:var(--muted)">'+w.name+'</span>'
+        +'<div class="cbar"><i style="width:'+w.cov+'%;background:'+covColor(w.cov)+'"></i></div>'
+        +'<span class="pct" style="color:'+covColor(w.cov)+'">'+w.cov+'%</span></div>';
+    }).join('');
+    // attention list (lowest coverage 4)
+    document.getElementById('attnlist').innerHTML=WS.slice().sort(function(a,b){return a.cov-b.cov;}).slice(0,4).map(function(w){
+      return '<div class="attn"><div class="specdot" style="background:'+w.color+'">'+w.ab+'</div>'
+        +'<div style="flex:1"><b style="font-size:12.5px">'+w.name+'</b><br/><small style="color:var(--faint)">'+w.gaps+' open gaps · '+w.cov+'% covered</small></div>'
+        +'<button class="btn ghost sm" onclick="event.stopPropagation();enterWS(\''+w.key+'\')">Open</button></div>';
+    }).join('');
+    // switcher menu
+    document.getElementById('wsmenu').innerHTML=WS.map(function(w){
+      return '<button onclick="enterWS(\''+w.key+'\',true)"><div class="specdot" style="width:22px;height:22px;border-radius:6px;font-size:8px;background:'+w.color+'">'+w.ab+'</div>'+w.name+'<span class="mini" style="color:'+covColor(w.cov)+'">'+w.cov+'%</span></button>';
+    }).join('');
+  }
+  var activeWS=WS[0];
+  function setActive(w){
+    activeWS=w;
+    document.getElementById('ws-dot').textContent=w.ab;
+    document.getElementById('ws-dot').style.background=w.color;
+    document.getElementById('ws-side').textContent=w.name;
+    document.getElementById('ws-grp').textContent=w.name;
+    document.getElementById('ws-crumb').textContent=w.name;
+  }
+  // enter a workspace: set active, close menu, jump to Step A (stayHome=true keeps dashboard)
+  function enterWS(key,stayHome){
+    var w=WS.filter(function(x){return x.key===key;})[0]; if(!w)return;
+    setActive(w);
+    document.getElementById('wsmenu').classList.remove('open');
+    if(!stayHome) go('A');
+  }
+  document.addEventListener('click',function(e){
+    var sw=document.getElementById('wsswitch'),m=document.getElementById('wsmenu');
+    if(!sw.contains(e.target)&&!m.contains(e.target))m.classList.remove('open');
+  });
+
+  var titles={home:"Master Dashboard",A:"Step A — Spec Knowledge Graph",B:"Step B — Test Script Graph",C:"Step C — Coverage Mapping",D:"Step D — Gap Remediation"};
+  function go(s){
+    document.querySelectorAll('.screen').forEach(function(e){e.classList.remove('show')});
+    document.getElementById('screen-'+s).classList.add('show');
+    document.querySelectorAll('.nav button[data-screen]').forEach(function(b){b.classList.toggle('active',b.dataset.screen===s)});
+    document.getElementById('stepper').style.display = (s==='home') ? 'none' : 'flex';
+    var order=['A','B','C','D'],idx=order.indexOf(s);
+    document.querySelectorAll('#stepper .step').forEach(function(st){
+      var i=order.indexOf(st.dataset.screen);
+      st.classList.toggle('active',i===idx);
+      st.classList.toggle('done',i<idx);
+    });
+    document.getElementById('crumb').textContent=titles[s];
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  // theme toggle
+  var tb=document.getElementById('themebtn');
+  tb.addEventListener('click',function(){
+    var light=document.documentElement.getAttribute('data-theme')==='light';
+    document.documentElement.setAttribute('data-theme',light?'dark':'light');
+    tb.textContent=light?'🌙':'☀️';
+  });
+  document.querySelectorAll('[data-screen]').forEach(function(el){
+    el.addEventListener('click',function(){go(el.dataset.screen)});
+  });
+  // toggle buttons (visual only)
+  document.querySelectorAll('.toggle').forEach(function(t){
+    t.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click',function(){t.querySelectorAll('button').forEach(function(x){x.classList.remove('on')});b.classList.add('on')});
+    });
+  });
+  renderPortfolio();
+  setActive(WS[0]);
+  go('home'); // land on master dashboard, hide stepper
+</script>
+</body>
+</html>
