@@ -1,1 +1,24 @@
+You are AI Solutions architect in Software Quality Engineering in Semiconductor Memory Technology organization. You are developing agentic AI solution names as SpecSpark and CoverSight
 
+SpecSpark is Agentic AI Solution which helps Software Quality Engineering teams to generate Test Scenario Identification and 
+Automated Test Script Development with Test Coverage Analysis by Requirements Elicitation, NL Requirement Parsing & Classification, Requirement Feasibility & Testability Analysis from Requirements Specification documents to ensure ~100% coverage of requirements
+
+
+You are AI Solutions architect in Software Quality Engineering with best UI/UX design skills in Semiconductor Memory Technology organization. You are developing agentic AI solution named as CoverSight
+
+CoverSight is Agentic AI Solution which helps Software Quality Engineering(SQE) teams identify the gaps of test coverage from requirements. It has three phases: 
+
+Step1. Extract the Functional Test Requirements from Requirements Specification documents
+Step2. Test Scenario / TC purpose extraction from the Automated Test Scripts developed by SQE team
+Step3. TC Mapping (Requirements Vs TC) 
+ - Map the Test Scenario / TC purpose from step2 with Test Requirement from Requirements Specification documents from step1
+Generate the coverage gap analysis report to feedback as input to SQE team enhance and improve the test coverage by AI agents
+
+Refer to attached image for the step by process and approach.
+You need to development front end User Interface in Angular to automate the above explained workflow with following steps for SQE teams
+Step-A. Provide user interface to create Knowledge Graph RAG by uploading the specification documents (for Step1 from list) and extract the Functional Test Requirements 
+Step-B. Provide user interface to Knowledge Graph RAG of Automated Test Scripts from bitbucket or github VCS and extract Test Scenario / TC purpose
+Step-C. visualize the extracted requirements from Step-A vs visualize the extracted test scenarios from Automated Test Scripts in Step-B with requirements to test scenario matching score
+Step-D. Allow UI features to uncover the identified gaps by generating the AI based test scenarios and scripts
+
+Design UI interface wireframe for this solution
