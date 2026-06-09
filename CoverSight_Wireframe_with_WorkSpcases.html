@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CoverSight — Agentic AI Test Coverage Platform</title>
+<style>
+  :root{
+    --bg:#0e1117; --panel:#161b25; --panel-2:#1d2533; --line:#2a3344;
+    --txt:#e7ecf3; --muted:#93a0b5; --faint:#6b7689;
+    --brand:#5b8cff; --brand-2:#7c5cff; --accent:#00d4b8;
+    --good:#2ec27e; --warn:#f4b740; --bad:#ff5d6c; --partial:#f4b740;
+    --chip:#222b3a; --shadow:0 8px 30px rgba(0,0,0,.35);
+    --topbar-bg:rgba(13,17,23,.6); --side-grad-a:#121620; --side-grad-b:#0f131b;
+    --r:14px;
+  }
+  html[data-theme="light"]{
+    --bg:#eef1f7; --panel:#ffffff; --panel-2:#f4f6fb; --line:#dde3ec;
+    --txt:#1a2230; --muted:#56627a; --faint:#8a93a6;
+    --chip:#eef1f7; --shadow:0 10px 28px rgba(25,40,80,.10);
+    --topbar-bg:rgba(255,255,255,.72); --side-grad-a:#ffffff; --side-grad-b:#f4f6fb;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:'Segoe UI',Inter,system-ui,Arial,sans-serif;
+    background:radial-gradient(1200px 700px at 80% -10%,rgba(124,92,255,.12),transparent),
+               radial-gradient(900px 600px at -10% 10%,rgba(91,140,255,.10),transparent),
+               var(--bg);
+    color:var(--txt); font-size:14px; line-height:1.45;
+  }
+  /* ===== Shell ===== */
+  .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+  .side{
+    background:linear-gradient(180deg,var(--side-grad-a),var(--side-grad-b));
+    border-right:1px solid var(--line);padding:18px 14px;position:sticky;top:0;height:100vh;
+  }
+  .logo{display:flex;align-items:center;gap:10px;padding:6px 8px 18px}
+  .logo .mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand-2));
+    display:grid;place-items:center;font-weight:800;box-shadow:0 6px 18px rgba(91,140,255,.45)}
+  .logo .mark svg{width:20px;height:20px}
+  .logo h1{font-size:16px;margin:0;letter-spacing:.3px}
+  .logo small{display:block;color:var(--faint);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+  .nav{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+  .nav .grp{color:var(--faint);font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin:14px 10px 4px}
+  .nav button{
+    display:flex;align-items:center;gap:11px;width:100%;text-align:left;border:0;cursor:pointer;
+    background:transparent;color:var(--muted);padding:10px 11px;border-radius:10px;font-size:13.5px;font-weight:600;
+  }
+  .nav button .ic{width:22px;height:22px;border-radius:7px;background:var(--chip);display:grid;place-items:center;font-size:12px;color:var(--brand)}
+  .nav button:hover{background:var(--panel-2);color:var(--txt)}
+  .nav button.active{background:linear-gradient(90deg,rgba(91,140,255,.18),rgba(124,92,255,.06));color:#fff;
+    box-shadow:inset 0 0 0 1px rgba(91,140,255,.35)}
+  .nav button.active .ic{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff}
+  .side .footer{position:absolute;bottom:16px;left:14px;right:14px;border-top:1px solid var(--line);padding-top:12px;
+    display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}
+  .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#00d4b8,#5b8cff);display:grid;place-items:center;font-weight:700;color:#08121a}
+
+  /* ===== Main ===== */
+  .main{display:flex;flex-direction:column;min-width:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 26px;border-bottom:1px solid var(--line);
+    background:var(--topbar-bg);backdrop-filter:blur(8px);position:sticky;top:0;z-index:20}
+  .themebtn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--txt);cursor:pointer;display:grid;place-items:center;font-size:16px}
+  .themebtn:hover{background:var(--panel-2)}
+  /* dashboard */
+  .hero{display:flex;align-items:center;justify-content:space-between;gap:18px;background:linear-gradient(120deg,rgba(91,140,255,.16),rgba(124,92,255,.08));border:1px solid var(--line);border-radius:var(--r);padding:22px 24px;margin-bottom:18px}
+  .hero h2{margin:0 0 4px;font-size:22px}.hero p{margin:0;color:var(--muted)}
+  .qcard{cursor:pointer;display:flex;flex-direction:column;gap:8px}
+  .qcard:hover{box-shadow:0 0 0 1px var(--brand),var(--shadow);transform:translateY(-2px);transition:.15s}
+  .qcard .step-no{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;display:grid;place-items:center;font-weight:800}
+  .bars{display:flex;align-items:flex-end;gap:8px;height:120px}
+  .bars .b{flex:1;background:linear-gradient(180deg,var(--brand),var(--accent));border-radius:6px 6px 0 0;position:relative}
+  .bars .b small{position:absolute;bottom:-18px;left:0;right:0;text-align:center;color:var(--faint);font-size:10px}
+  /* workspace switcher */
+  .wswrap{position:relative;margin:2px 4px 6px}
+  .wsswitch{width:100%;display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:9px 11px;cursor:pointer;color:var(--txt)}
+  .wsswitch:hover{box-shadow:inset 0 0 0 1px var(--brand)}
+  .wsswitch .chev{margin-left:auto;color:var(--faint)}
+  .wsswitch small{display:block;color:var(--faint);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+  .wsswitch b{font-size:13px}
+  .specdot{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:10px;font-weight:800;color:#fff;flex:none}
+  .wsmenu{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--panel);border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow);padding:6px;z-index:60;max-height:340px;overflow:auto}
+  .wsmenu.open{display:block}
+  .wsmenu button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;color:var(--txt);padding:8px 9px;border-radius:8px;cursor:pointer;font-size:12.5px}
+  .wsmenu button:hover{background:var(--panel-2)}
+  .wsmenu .mini{margin-left:auto;font-size:11px;font-weight:700;color:var(--muted)}
+  /* spec portfolio grid */
+  .specgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .speccard{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px;cursor:pointer;position:relative;overflow:hidden}
+  .speccard:hover{transform:translateY(-3px);box-shadow:0 0 0 1px var(--brand),var(--shadow);transition:.15s}
+  .speccard .top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .speccard .name{font-weight:800;font-size:14px;line-height:1.1}
+  .speccard .name small{display:block;color:var(--faint);font-weight:600;font-size:10.5px}
+  .speccard .cov{font-size:24px;font-weight:800}
+  .speccard .mbar{height:6px;border-radius:999px;background:var(--panel-2);overflow:hidden;margin:8px 0 10px}
+  .speccard .mbar i{display:block;height:100%;border-radius:999px}
+  .speccard .stats{display:flex;justify-content:space-between;color:var(--muted);font-size:11.5px}
+  .speccard .stats b{color:var(--txt)}
+  /* comparison chart */
+  .cmp{display:flex;flex-direction:column;gap:11px}
+  .cmprow{display:grid;grid-template-columns:96px 1fr 42px;align-items:center;gap:10px;font-size:12px}
+  .cmprow .cbar{height:14px;border-radius:999px;background:var(--panel-2);overflow:hidden}
+  .cmprow .cbar i{display:block;height:100%;border-radius:999px}
+  .cmprow .pct{text-align:right;font-weight:800}
+  .attn{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .attn:last-child{border:0}
+  .attn .specdot{width:26px;height:26px;border-radius:7px;font-size:9px}
+  /* forms / settings */
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+  .field input,.field select,.field textarea{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--txt);font-size:13px;font-family:inherit;outline:none}
+  .field input:focus,.field select:focus,.field textarea:focus{box-shadow:inset 0 0 0 1px var(--brand)}
+  .field .hint{font-size:11px;color:var(--faint);margin-top:5px}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .swatches{display:flex;gap:8px;flex-wrap:wrap}
+  .swatch{width:26px;height:26px;border-radius:8px;cursor:pointer;border:2px solid transparent}
+  .swatch.on{border-color:#fff;box-shadow:0 0 0 2px var(--brand)}
+  /* modal */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(4,7,12,.62);backdrop-filter:blur(3px);z-index:100;align-items:flex-start;justify-content:center;padding:48px 16px;overflow:auto}
+  .overlay.open{display:flex}
+  .modal{width:640px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:fade .2s ease}
+  .modal .mhead{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line)}
+  .modal .mhead h3{margin:0;font-size:16px}
+  .modal .mhead .x{cursor:pointer;color:var(--faint);font-size:20px;background:none;border:0}
+  .modal .mbody{padding:20px 22px;max-height:64vh;overflow:auto}
+  .modal .mfoot{display:flex;justify-content:flex-end;gap:10px;padding:16px 22px;border-top:1px solid var(--line)}
+  .mstep{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--brand);margin:4px 0 10px}
+  .crumb{color:var(--faint);font-size:12.5px}
+  .crumb b{color:var(--txt)}
+  .topbar .actions{display:flex;align-items:center;gap:10px}
+  .search{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--muted);min-width:240px}
+  .search input{background:transparent;border:0;outline:0;color:var(--txt);width:100%;font-size:13px}
+  .content{padding:24px 26px 60px;overflow:auto}
+
+  /* ===== Stepper ===== */
+  .stepper{display:flex;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:6px;margin-bottom:22px}
+  .stepper .step{flex:1;display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:10px;cursor:pointer;color:var(--muted);position:relative}
+  .stepper .step:hover{background:var(--panel-2)}
+  .stepper .step.active{background:linear-gradient(90deg,rgba(91,140,255,.20),rgba(124,92,255,.08));color:#fff;box-shadow:inset 0 0 0 1px rgba(91,140,255,.35)}
+  .stepper .step.done .num{background:var(--good);color:#04140c}
+  .stepper .num{width:26px;height:26px;border-radius:50%;background:var(--chip);display:grid;place-items:center;font-weight:800;font-size:12.5px;color:var(--brand);flex:none}
+  .stepper .step.active .num{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff}
+  .stepper .lbl{font-size:12.5px;font-weight:700;line-height:1.2}
+  .stepper .lbl small{display:block;color:var(--faint);font-weight:600;font-size:10.5px}
+  .stepper .step:not(:last-child)::after{content:"›";position:absolute;right:-3px;color:var(--faint);font-size:18px}
+
+  /* ===== Generic ===== */
+  .page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+  .page-head h2{margin:0 0 4px;font-size:21px;letter-spacing:.2px}
+  .page-head p{margin:0;color:var(--muted);max-width:680px}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--chip);color:var(--muted)}
+  .pill.live{color:var(--accent)} .pill.live .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(0,212,184,.18)}
+  .btn{border:0;cursor:pointer;border-radius:10px;padding:10px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:8px}
+  .btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;box-shadow:0 8px 22px rgba(91,140,255,.35)}
+  .btn.ghost{background:var(--panel-2);color:var(--txt);border:1px solid var(--line)}
+  .btn.sm{padding:7px 12px;font-size:12px}
+  .grid{display:grid;gap:18px}
+  .cols-2{grid-template-columns:1.1fr .9fr}
+  .cols-3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+  .card h3{margin:0 0 4px;font-size:14.5px}
+  .card .sub{color:var(--faint);font-size:12px;margin-bottom:14px}
+  .row{display:flex;align-items:center;gap:10px}
+  .between{justify-content:space-between}
+
+  /* upload / dropzone */
+  .drop{border:1.6px dashed #38445a;border-radius:12px;padding:26px;text-align:center;color:var(--muted);background:repeating-linear-gradient(45deg,rgba(255,255,255,.012),rgba(255,255,255,.012) 12px,transparent 12px,transparent 24px)}
+  .drop .big{font-size:30px;margin-bottom:6px}
+  .filelist{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+  .file{display:flex;align-items:center;gap:11px;padding:10px 12px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
+  .file .ft{width:30px;height:30px;border-radius:8px;background:#2b2140;color:#caa9ff;display:grid;place-items:center;font-size:11px;font-weight:800}
+  .file .ft.pdf{background:#3a1e22;color:#ff9aa3}
+  .file .meta{flex:1;min-width:0}
+  .file .meta b{display:block;font-size:12.5px}
+  .file .meta small{color:var(--faint)}
+  .badge{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:999px}
+  .badge.ok{background:rgba(46,194,126,.16);color:#5fe0a3}
+  .badge.run{background:rgba(91,140,255,.16);color:#9bbcff}
+  .badge.idle{background:var(--chip);color:var(--muted)}
+
+  .prog{height:7px;border-radius:999px;background:var(--panel-2);overflow:hidden}
+  .prog > i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--accent));border-radius:999px}
+
+  /* graph canvas */
+  .graphwrap{position:relative;height:280px;border-radius:12px;background:radial-gradient(500px 240px at 50% 40%,rgba(91,140,255,.10),transparent),var(--panel-2);border:1px solid var(--line);overflow:hidden}
+  .node{position:absolute;transform:translate(-50%,-50%);padding:7px 12px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.08)}
+  .node.cmd{background:#1f3a66;color:#bcd3ff} .node.feat{background:#13402f;color:#7be6b6}
+  .node.stat{background:#5a3a12;color:#ffce86} .node.err{background:#5a1c24;color:#ff9aa3}
+
+  /* tables */
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{ text-align:left;color:var(--faint);font-weight:700;font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:9px 10px;border-bottom:1px solid var(--line)}
+  td{padding:10px;border-bottom:1px solid var(--line)}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .reqid{font-family:ui-monospace,Consolas,monospace;color:var(--brand);font-weight:700}
+  .tag{font-size:10.5px;padding:2px 8px;border-radius:6px;background:var(--chip);color:var(--muted)}
+
+  /* matching matrix (step C) */
+  .matrix{display:grid;grid-template-columns:200px 1fr;gap:0}
+  .mlink{display:grid;grid-template-columns:1fr 90px 1fr;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:11px;margin-bottom:10px;background:var(--panel-2)}
+  .mlink .req{font-size:12.5px;font-weight:700}
+  .mlink .req small{display:block;color:var(--faint);font-weight:600}
+  .mlink .tc{font-size:12px;color:var(--muted);text-align:right}
+  .score{justify-self:center;text-align:center}
+  .score .ring{--v:80;width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12.5px;
+    background:conic-gradient(var(--c) calc(var(--v)*1%),#2a3344 0);}
+  .score .ring span{width:38px;height:38px;border-radius:50%;background:var(--panel-2);display:grid;place-items:center}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:4px}
+  .legend i{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:middle}
+
+  .kpi{display:flex;flex-direction:column;gap:3px}
+  .kpi .v{font-size:28px;font-weight:800;letter-spacing:.5px}
+  .kpi .l{color:var(--faint);font-size:12px}
+  .donut{width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--good) 0 72%,var(--partial) 72% 86%,var(--bad) 86% 100%);display:grid;place-items:center}
+  .donut span{width:84px;height:84px;border-radius:50%;background:var(--panel);display:grid;place-items:center;flex-direction:column;text-align:center;font-weight:800}
+
+  .gapcard{border-left:3px solid var(--bad);background:var(--panel-2);border-radius:11px;padding:14px;margin-bottom:12px}
+  .gapcard.partial{border-left-color:var(--warn)}
+  .gapcard h4{margin:0 0 4px;font-size:13.5px}
+  .gapcard p{margin:0;color:var(--muted);font-size:12.5px}
+
+  .codebox{background:#0b0e14;border:1px solid var(--line);border-radius:11px;overflow:hidden;font-family:ui-monospace,Consolas,monospace;font-size:12px}
+  .codebox .bar{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);color:var(--muted);font-size:11.5px}
+  .codebox .bar .dotr{width:10px;height:10px;border-radius:50%}
+  .codebox pre{margin:0;padding:14px 16px;overflow:auto;color:#cdd6e6;line-height:1.6}
+  .codebox .kw{color:#c792ea}.codebox .fn{color:#82aaff}.codebox .str{color:#c3e88d}.codebox .cm{color:#5b6678}.codebox .new{background:rgba(46,194,126,.10);display:block;border-left:2px solid var(--good);padding-left:8px;margin-left:-10px}
+
+  .toggle{display:flex;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:3px}
+  .toggle button{border:0;background:transparent;color:var(--muted);padding:6px 12px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer}
+  .toggle button.on{background:var(--brand);color:#fff}
+
+  .screen{display:none;animation:fade .25s ease}
+  .screen.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .note{font-size:11.5px;color:var(--faint);margin-top:10px}
+  .src{display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;font-size:12px;margin-bottom:8px}
+  .src .gh{width:24px;height:24px;border-radius:6px;background:#0d1117;display:grid;place-items:center}
+  @media(max-width:1000px){.app{grid-template-columns:1fr}.side{display:none}.cols-2,.cols-3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side">
+    <div class="logo">
+      <div class="mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="9" cy="9" r="3"/><circle cx="17" cy="16" r="3"/><path d="M9 12v1a3 3 0 0 0 3 3h2"/><path d="M9 6V5a2 2 0 0 1 2-2h2"/></svg>
+      </div>
+      <div><h1>CoverSight</h1><small>Coverage Intelligence</small></div>
+    </div>
+    <div class="wswrap">
+      <div class="wsswitch" id="wsswitch" onclick="document.getElementById('wsmenu').classList.toggle('open')">
+        <div class="specdot" id="ws-dot" style="background:#3b6cf6">NV</div>
+        <div><small>Active workspace</small><b id="ws-side">NVMe 2.0</b></div>
+        <span class="chev">▾</span>
+      </div>
+      <div class="wsmenu" id="wsmenu"></div>
+    </div>
+    <nav class="nav">
+      <div class="grp">Portfolio</div>
+      <button data-screen="home" class="active"><span class="ic">▥</span> Master Dashboard</button>
+      <button data-screen="home"><span class="ic">⌗</span> All Workspaces</button>
+      <button data-screen="settings"><span class="ic">⚙</span> Settings</button>
+      <div class="grp">Workflow · <span id="ws-grp">NVMe 2.0</span></div>
+      <button data-screen="A"><span class="ic">A</span> Spec Knowledge Graph</button>
+      <button data-screen="B"><span class="ic">B</span> Test Script Graph</button>
+      <button data-screen="C"><span class="ic">C</span> Coverage Mapping</button>
+      <button data-screen="D"><span class="ic">D</span> Gap Remediation</button>
+    </nav>
+    <div class="footer">
+      <div class="avatar">SA</div>
+      <div><b style="color:var(--txt)">SQE Team</b><br/>Memory &amp; Protocol QA</div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb">Workspaces / <b id="ws-crumb">NVMe 2.0</b> / <b id="crumb">Master Dashboard</b></div>
+      <div class="actions">
+        <div class="search">🔎<input placeholder="Search requirements, TCs, scenarios…"/></div>
+        <span class="pill live"><span class="dot"></span> 4 agents online</span>
+        <button class="themebtn" id="themebtn" title="Toggle light / dark">🌙</button>
+        <button class="btn ghost sm">Export Report</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- ===== Stepper ===== -->
+      <div class="stepper" id="stepper">
+        <div class="step active" data-screen="A"><div class="num">A</div><div class="lbl">Spec → Requirements<small>KG-RAG extraction</small></div></div>
+        <div class="step" data-screen="B"><div class="num">B</div><div class="lbl">Scripts → Scenarios<small>VCS ingest + extract</small></div></div>
+        <div class="step" data-screen="C"><div class="num">C</div><div class="lbl">Coverage Mapping<small>Match scoring</small></div></div>
+        <div class="step" data-screen="D"><div class="num">D</div><div class="lbl">Gap Remediation<small>AI TC generation</small></div></div>
+      </div>
+
+      <!-- ====================================================== MASTER DASHBOARD -->
+      <section class="screen show" id="screen-home">
+        <div class="hero">
+          <div>
+            <h2>Coverage Command Center</h2>
+            <p>One view across every memory &amp; protocol specification. Pick a workspace to run the CoverSight A–D pipeline, or review portfolio-wide coverage health.</p>
+          </div>
+          <button class="btn primary" onclick="openNW()">+ New Spec Workspace</button>
+        </div>
+
+        <div class="grid cols-3" style="margin-bottom:18px">
+          <div class="card row" style="gap:16px"><div class="donut" style="background:conic-gradient(var(--good) 0 76%,var(--partial) 76% 90%,var(--bad) 90% 100%)"><span><div style="font-size:20px">76%</div><small style="color:var(--faint);font-weight:600">avg coverage</small></span></div>
+            <div class="kpi"><div class="v">8</div><div class="l">Active spec workspaces</div></div></div>
+          <div class="card"><div class="kpi"><div class="v" style="color:var(--accent)">416</div><div class="l">Requirements tracked</div></div>
+            <div class="prog" style="margin-top:14px"><i style="width:76%"></i></div><div class="note">10,940 test cases analysed across all repos</div></div>
+          <div class="card"><div class="kpi"><div class="v" style="color:var(--bad)">48</div><div class="l">Open coverage gaps</div></div>
+            <div class="row" style="margin-top:14px;gap:8px"><span class="badge run">19 generating</span><span class="badge idle">29 queued</span></div></div>
+        </div>
+
+        <div class="card" style="margin-bottom:18px">
+          <div class="row between"><div><h3>Specification Workspaces</h3><div class="sub">Each workspace runs the same A–D pipeline · click to enter</div></div>
+            <div class="row"><span class="legend" style="margin:0"><span><i style="background:var(--good)"></i>≥85%</span><span><i style="background:var(--warn)"></i>70–85%</span><span><i style="background:var(--bad)"></i>&lt;70%</span></span></div></div>
+          <div class="specgrid" id="specgrid" style="margin-top:14px"></div>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Coverage by Specification</h3><div class="sub">% requirements fully mapped to test cases</div>
+            <div class="cmp" id="cmpchart" style="margin-top:14px"></div>
+          </div>
+          <div class="card">
+            <h3>Needs Attention</h3><div class="sub">Lowest-coverage workspaces &amp; open gaps</div>
+            <div style="margin-top:6px" id="attnlist"></div>
+            <div class="row between" style="margin-top:14px">
+              <span class="note" style="margin:0">Portfolio agent fleet</span>
+              <span class="pill live"><span class="dot"></span> 4 agent types · 11 jobs running</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================== SCREEN A -->
+      <section class="screen" id="screen-A">
+        <div class="page-head">
+          <div>
+            <h2>Build Spec Knowledge Graph &amp; Extract Test Requirements</h2>
+            <p>Upload requirement specification documents. CoverSight builds a Graph-RAG over the spec, then the <b>Requirement Agent</b> extracts atomic functional test requirements.</p>
+          </div>
+          <button class="btn primary" onclick="go('B')">Run Extraction →</button>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>1 · Upload Specification Documents</h3>
+            <div class="sub">Supported: PDF, DOCX, MD · NVMe / SATA / firmware specs</div>
+            <div class="drop"><div class="big">⬆</div><b>Drag &amp; drop spec files</b><br/><small>or click to browse — section-aware chunking applied automatically</small></div>
+            <div class="filelist" id="A-files"></div>
+          </div>
+
+          <div class="card">
+            <div class="row between"><h3>2 · Knowledge Graph (Graph-RAG)</h3>
+              <div class="toggle"><button class="on">Graph RAG</button><button>Naïve RAG</button></div>
+            </div>
+            <div class="sub">Entities &amp; relationships extracted from spec sections</div>
+            <div class="graphwrap">
+              <svg style="position:absolute;inset:0;width:100%;height:100%" stroke="#3a4660" stroke-width="1.4">
+                <line x1="50%" y1="32%" x2="26%" y2="62%"/><line x1="50%" y1="32%" x2="74%" y2="60%"/>
+                <line x1="26%" y1="62%" x2="50%" y2="82%"/><line x1="74%" y1="60%" x2="50%" y2="82%"/>
+                <line x1="50%" y1="32%" x2="50%" y2="82%" stroke-dasharray="4 4"/>
+              </svg>
+              <div id="A-graph"></div>
+            </div>
+            <div class="legend">
+              <span><i style="background:#1f3a66"></i>Command</span>
+              <span><i style="background:#13402f"></i>Feature</span>
+              <span><i style="background:#5a3a12"></i>State</span>
+              <span><i style="background:#5a1c24"></i>Error</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px">
+          <div class="row between">
+            <div><h3>3 · Extracted Functional Test Requirements</h3><div class="sub">Requirement Agent · grounded with section citations</div></div>
+            <span class="pill"><b style="color:var(--txt)" id="A-reqcount">47</b>&nbsp;requirements</span>
+          </div>
+          <table>
+            <thead><tr><th>Req ID</th><th>Functional Requirement</th><th>Source</th><th>Type</th><th>Priority</th></tr></thead>
+            <tbody id="A-reqs"></tbody>
+          </table>
+          <div class="note" id="A-note"></div>
+        </div>
+      </section>
+
+      <!-- ====================================================== SCREEN B -->
+      <section class="screen" id="screen-B">
+        <div class="page-head">
+          <div>
+            <h2>Ingest Automated Test Scripts &amp; Extract TC Scenarios</h2>
+            <p>Connect a Bitbucket / GitHub repository. CoverSight builds a Graph-RAG over the test code, then the <b>Scenario Agent</b> infers each TC's purpose and scenario.</p>
+          </div>
+          <button class="btn primary" onclick="go('C')">Run Mapping →</button>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>1 · Connect Version Control Source</h3>
+            <div class="sub">OAuth — read-only access to test repositories</div>
+            <div id="B-repos"></div>
+            <button class="btn ghost sm" style="margin-top:6px">+ Add repository</button>
+            <div class="note">Auto-discovers <b>*.py</b> test files · re-indexes on each merge to tracked branches.</div>
+          </div>
+
+          <div class="card">
+            <h3>2 · TC Code Graph &amp; Embedding</h3>
+            <div class="sub">Chunk → embed → graph-link by shared fixtures &amp; APIs</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div class="row between"><span>Chunking &amp; embedding</span><span class="badge ok">Done</span></div>
+              <div class="prog"><i style="width:100%"></i></div>
+              <div class="row between"><span>Scenario / purpose inference</span><span class="badge run">Running</span></div>
+              <div class="prog"><i style="width:74%"></i></div>
+            </div>
+            <div class="codebox" style="margin-top:14px">
+              <div class="bar"><span class="dotr" style="background:#ff5d6c"></span><span class="dotr" style="background:#f4b740"></span><span class="dotr" style="background:#2ec27e"></span>&nbsp; <span id="B-codefile">tc_read_command.py</span></div>
+              <pre id="B-code"></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px">
+          <div class="row between">
+            <div><h3>3 · Extracted Test Scenarios / TC Purpose</h3><div class="sub">Scenario Agent · inferred from code + docstrings</div></div>
+            <span class="pill"><b style="color:var(--txt)" id="B-tccount">2,482</b>&nbsp;TCs analysed</span>
+          </div>
+          <table>
+            <thead><tr><th>TC ID</th><th>Inferred Purpose / Scenario</th><th>Type</th><th>File</th><th>Confidence</th></tr></thead>
+            <tbody id="B-scen"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====================================================== SCREEN C -->
+      <section class="screen" id="screen-C">
+        <div class="page-head">
+          <div>
+            <h2>Coverage Mapping — Requirements vs. Test Scenarios</h2>
+            <p>The <b>Mapping Agent</b> links each requirement to candidate TCs and computes a semantic <b>match score</b>. Review, accept, or flag gaps.</p>
+          </div>
+          <button class="btn primary" onclick="go('D')">Resolve Gaps →</button>
+        </div>
+
+        <div class="grid cols-3" style="margin-bottom:18px">
+          <div class="card row" style="gap:16px"><div class="donut" id="C-donut"><span><div style="font-size:20px" id="C-cov">72%</div><small style="color:var(--faint);font-weight:600">covered</small></span></div>
+            <div><div class="kpi"><div class="v" style="color:var(--good)" id="C-mapped">34</div><div class="l">Fully mapped</div></div></div></div>
+          <div class="card"><div class="kpi"><div class="v" style="color:var(--warn)" id="C-partial">7</div><div class="l">Partially covered</div></div>
+            <div class="prog" style="margin-top:12px"><i style="width:60%;background:var(--warn)"></i></div>
+            <div class="note">Weak / low-confidence matches needing review</div></div>
+          <div class="card"><div class="kpi"><div class="v" style="color:var(--bad)" id="C-gaps">6</div><div class="l">Uncovered gaps</div></div>
+            <div class="prog" style="margin-top:12px"><i style="width:13%;background:var(--bad)"></i></div>
+            <div class="note">No matching TC found above threshold</div></div>
+        </div>
+
+        <div class="card">
+          <div class="row between">
+            <h3>Requirement ↔ Test Case Matching</h3>
+            <div class="row"><span class="legend" style="margin:0"><span><i style="background:var(--good)"></i>≥0.85 strong</span><span><i style="background:var(--warn)"></i>0.6–0.85 partial</span><span><i style="background:var(--bad)"></i>&lt;0.6 gap</span></span></div>
+          </div>
+          <div style="margin-top:14px" id="C-links"></div>
+        </div>
+      </section>
+
+      <!-- ====================================================== SCREEN D -->
+      <section class="screen" id="screen-D">
+        <div class="page-head">
+          <div>
+            <h2>Gap Remediation — AI-Generated Scenarios &amp; Scripts</h2>
+            <p>For each uncovered or partial requirement, the <b>Generation Agent</b> drafts a test scenario and a runnable test script. Review, edit, and push to your repo as a PR.</p>
+          </div>
+          <button class="btn primary" id="D-prbtn">⤴ Create Pull Request (3)</button>
+        </div>
+
+        <div class="grid cols-2">
+          <div>
+            <div id="D-gaps"></div>
+            <div class="card" style="margin-top:4px">
+              <h3>Generation Settings</h3>
+              <div class="row between" style="margin-top:10px"><span>Target framework</span><span class="tag" id="D-fw">pytest · nvme-cli harness</span></div>
+              <div class="row between" style="margin-top:10px"><span>Style guide</span><span class="tag">team_qa_conventions.md</span></div>
+              <div class="row between" style="margin-top:10px"><span>Output</span><span class="tag">Scenario + Script + Traceability</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="row between"><h3>Generated Test — <span id="D-genreq">REQ-002</span></h3><div class="toggle"><button class="on">Script</button><button>Scenario</button></div></div>
+            <div class="sub" id="D-gensub">AI draft · review before merge</div>
+            <div class="codebox">
+              <div class="bar"><span class="dotr" style="background:#ff5d6c"></span><span class="dotr" style="background:#f4b740"></span><span class="dotr" style="background:#2ec27e"></span>&nbsp; <span id="D-genfile">tc_write_readonly_ns.py</span> &nbsp;<span class="badge ok" style="margin-left:auto">+ new file</span></div>
+              <pre id="D-gencode"></pre>
+            </div>
+            <div class="row" style="margin-top:14px;gap:10px">
+              <button class="btn primary sm">✓ Accept &amp; add to PR</button>
+              <button class="btn ghost sm">✎ Edit</button>
+              <button class="btn ghost sm">↻ Regenerate</button>
+            </div>
+            <div class="note" id="D-gennote">Traceability auto-updated. Re-runs Step C mapping on merge to confirm coverage closes.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================== SETTINGS -->
+      <section class="screen" id="screen-settings">
+        <div class="page-head">
+          <div>
+            <h2>Workspace Settings — <span id="set-name">NVMe 2.0</span></h2>
+            <p>Connect this workspace's specification source and test repositories, and tune the CoverSight agents. Each spec workspace keeps its own connections.</p>
+          </div>
+          <button class="btn primary" onclick="alert('Settings saved for this workspace (demo).')">Save Changes</button>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>📄 Specification Source</h3>
+            <div class="sub">Where requirement spec documents are pulled from for Step A</div>
+            <div class="field"><label>Document source</label>
+              <select><option>Upload / managed folder</option><option>Confluence space</option><option>SharePoint library</option><option>Git repo (Markdown specs)</option></select></div>
+            <div class="field"><label>Spec repository / path</label><input id="set-specrepo" value="specs/nvme/" /></div>
+            <div class="field"><label>Chunking strategy</label>
+              <select><option>Section-aware (recommended)</option><option>Fixed 1k tokens</option><option>Semantic windows</option></select>
+              <div class="hint">Graph-RAG entities are extracted per spec section.</div></div>
+          </div>
+
+          <div class="card">
+            <h3>🔗 Test Repositories (VCS)</h3>
+            <div class="sub">Source of automated test scripts for Step B</div>
+            <div id="set-repos" style="margin-bottom:8px"></div>
+            <div class="frow">
+              <div class="field"><label>Provider</label><select><option>GitHub</option><option>Bitbucket</option><option>GitLab</option></select></div>
+              <div class="field"><label>Default branch</label><input value="main" /></div>
+            </div>
+            <div class="field"><label>Add repository URL</label><input placeholder="github.com/org/repo" /></div>
+            <button class="btn ghost sm">+ Connect repository</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px">
+          <h3>🤖 Agent Configuration</h3>
+          <div class="sub">Applies to this workspace's A–D pipeline</div>
+          <div class="frow" style="margin-top:6px">
+            <div class="field"><label>Embedding model</label><select><option>text-embedding-3-large</option><option>e5-mistral-7b</option><option>bge-large-en</option></select></div>
+            <div class="field"><label>Test framework</label><input id="set-fw" value="pytest · nvme-cli harness" /></div>
+          </div>
+          <div class="frow">
+            <div class="field"><label>Match score threshold (gap if below)</label><input value="0.60" /><div class="hint">Below this, a requirement is flagged as an uncovered gap.</div></div>
+            <div class="field"><label>Partial-coverage band</label><input value="0.60 – 0.85" /></div>
+          </div>
+          <div class="field"><label>Generation style guide</label><input value="team_qa_conventions.md" /></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================== NEW WORKSPACE MODAL -->
+<div class="overlay" id="nwOverlay">
+  <div class="modal">
+    <div class="mhead"><h3>＋ New Spec Workspace</h3><button class="x" onclick="closeNW()">✕</button></div>
+    <div class="mbody">
+      <div class="mstep">1 · Workspace identity</div>
+      <div class="frow">
+        <div class="field"><label>Workspace name *</label><input id="nw-name" placeholder="e.g. NVMe 2.1, SD 9.0, CXL 3.0" /></div>
+        <div class="field"><label>Short code (2 letters)</label><input id="nw-ab" maxlength="2" placeholder="NV" /></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Specification family *</label>
+          <select id="nw-cat">
+            <option>Storage interface</option><option>Embedded storage</option>
+            <option>Security / attestation</option><option>Platform management</option>
+            <option>Datacenter / Open Compute</option><option>Management firmware</option><option>Other</option>
+          </select></div>
+        <div class="field"><label>Spec version</label><input id="nw-ver" placeholder="e.g. 2.1c" /></div>
+      </div>
+      <div class="field"><label>Accent color</label><div class="swatches" id="nw-swatches"></div></div>
+
+      <div class="mstep" style="margin-top:18px">2 · Specification source (Step A)</div>
+      <div class="field"><label>Upload spec documents</label>
+        <div class="drop" style="padding:18px"><div class="big" style="font-size:22px">⬆</div><b>Drag &amp; drop PDF / DOCX specs</b><br/><small>section-aware chunking will be applied</small></div></div>
+
+      <div class="mstep" style="margin-top:18px">3 · Test repository (Step B)</div>
+      <div class="frow">
+        <div class="field"><label>VCS provider</label><select id="nw-vcs"><option>GitHub</option><option>Bitbucket</option><option>GitLab</option></select></div>
+        <div class="field"><label>Branch</label><input id="nw-branch" value="main" /></div>
+      </div>
+      <div class="field"><label>Repository URL</label><input id="nw-repo" placeholder="github.com/org/test-repo" /></div>
+      <div class="field"><label>Test framework</label><input id="nw-fw" placeholder="pytest · <harness>" /></div>
+      <div class="hint" id="nw-err" style="color:var(--bad);display:none">Workspace name is required.</div>
+    </div>
+    <div class="mfoot">
+      <button class="btn ghost" onclick="closeNW()">Cancel</button>
+      <button class="btn primary" onclick="createNW()">Create &amp; Run Step A →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== Spec workspaces (portfolio) =====
+  var WS=[
+    {key:"nvme",ab:"NV",name:"NVMe 2.0",cat:"Storage interface",color:"#3b6cf6",cov:72,req:47,tc:2482,gaps:6,partial:7,
+     docs:[["NVMe_Base_Spec_2.0c.pdf","pdf","Sec.4 Commands · Sec.5 Power · Sec.6 Error","ok","Indexed"],["NVMe_NVM_Command_Set_1.0.pdf","pdf","312 pages · 1,204 chunks","ok","Indexed"],["Internal_FW_Requirements_v3.docx","doc","Embedding in progress…","run","68%"]],
+     nodes:[["Command","cmd"],["Feature","feat"],["Power State","stat"],["Invalid Field","err"],["Read Cmd","cmd"],["Namespace","feat"]],
+     reqs:[["REQ-001","Read Command shall return data for valid LBA ranges within QoS latency.","§4.3 Read","Functional","High"],["REQ-002","Write Command shall reject access to read-only namespaces with status 0x82.","§4.4 Write","Negative","High"],["REQ-003","Controller shall transition PS0→PS3 within autonomous power-state thresholds.","§5.2 Power","Functional","Med"],["REQ-004","Commands to an Invalid Namespace shall complete with status 0x0B.","§6.1 Error","Negative","High"]],
+     repos:[["github.com/memorytech/nvme-fw-qa","main","1,842","gh","ok","Connected"],["bitbucket.org/memorytech/regression","release/2.0","640","bb","run","Syncing 41%"]],
+     code:'<span class="cm"># TC002 — Read Command</span>\n<span class="kw">def</span> <span class="fn">test_read_valid_lba</span>(ctrl):\n    q = ctrl.<span class="fn">create_io_queue</span>(size=<span class="str">64</span>)\n    r = ctrl.<span class="fn">read</span>(nsid=<span class="str">1</span>, lba=<span class="str">0x100</span>, blocks=<span class="str">8</span>)\n    <span class="kw">assert</span> r.status == <span class="str">0x0</span>',codefile:"tc_read_command.py",
+     scen:[["TC002","Verify Read Command returns correct data for a valid LBA range.","Functional","tc_read_command.py","0.96","ok"],["TC001","Create I/O Submission Queue with valid size and QID.","Setup","tc_io_queue.py","0.94","ok"],["TC003","Trigger autonomous power state transition PS0→PS3 and verify.","Functional","tc_power_state.py","0.81","run"],["TC004","Issue command to invalid namespace; expect status 0x0B.","Negative","tc_invalid_ns.py","0.92","ok"]],
+     map:[["REQ-001 · Read valid LBA","§4.3 Read Command","TC002","Read valid LBA range",96],["REQ-004 · Invalid namespace","§6.1 Error Handling","TC004","Invalid NS → 0x0B",91],["REQ-003 · Power transition","§5.2 Power States","TC003","Partial — PS3→PS4 missing",68],["REQ-002 · Write to read-only NS","§4.4 Write Command","","No matching TC — coverage gap",31]],
+     gc:[["bad","⚠ REQ-002 — Write to read-only namespace",'Gap: no TC asserts status <b>0x82</b> when writing to a read-only namespace.',"run","Generating"],["partial","◐ REQ-003 — Power state PS3→PS4","Partial: extend TC003 to cover the missing PS3→PS4 autonomous transition.","idle","Queued"],["bad","⚠ REQ-005 — Queue size vs CAP.MQES","Gap: boundary case (queue size = MQES+1) untested.","idle","Queued"]],
+     fw:"pytest · nvme-cli harness",
+     gen:["tc_write_readonly_ns.py","REQ-002","Write to read-only NS",'<span class="cm"># TC512 — REQ-002 Write to read-only namespace</span>\n<span class="kw">import</span> pytest\n\n<span class="new"><span class="kw">def</span> <span class="fn">test_write_readonly_ns_rejected</span>(ctrl):</span>\n<span class="new">    ns = ctrl.<span class="fn">get_namespace</span>(nsid=<span class="str">2</span>, readonly=<span class="kw">True</span>)</span>\n<span class="new">    r = ctrl.<span class="fn">write</span>(nsid=ns.id, lba=<span class="str">0x0</span>, data=<span class="str">b"x"</span>)</span>\n<span class="new">    <span class="kw">assert</span> r.status == <span class="str">0x82</span></span>']},
+
+    {key:"sata",ab:"SA",name:"SATA 3.5",cat:"Storage interface",color:"#00a3a3",cov:88,req:38,tc:1640,gaps:3,partial:2,
+     docs:[["SATA_3.5_Specification.pdf","pdf","Cmd · NCQ · Power Mgmt","ok","Indexed"],["ATA_ACS-5_Command_Set.pdf","pdf","298 pages · 980 chunks","ok","Indexed"],["SATA_FW_Reqs.docx","doc","Embedding…","run","52%"]],
+     nodes:[["ATA Command","cmd"],["NCQ","feat"],["Power Mgmt","stat"],["SMART","feat"],["Abort/Error","err"],["DMA","cmd"]],
+     reqs:[["SA-001","READ DMA EXT shall return data for valid LBA within timeout.","§7.21 Read","Functional","High"],["SA-002","Device shall queue up to 32 NCQ commands and complete in order.","§13 NCQ","Functional","High"],["SA-003","Device shall enter Partial/Slumber power states on PMREQ.","§8 Power","Functional","Med"],["SA-004","SMART RETURN STATUS shall report threshold-exceeded condition.","§7.52 SMART","Functional","Med"]],
+     repos:[["github.com/memorytech/sata-qa","main","1,240","gh","ok","Connected"],["bitbucket.org/memorytech/ata-regr","release/3.5","400","bb","ok","Connected"]],
+     code:'<span class="cm"># TC114 — READ FPDMA QUEUED (NCQ)</span>\n<span class="kw">def</span> <span class="fn">test_ncq_read</span>(dev):\n    dev.<span class="fn">set_feature</span>(<span class="str">"NCQ"</span>, <span class="kw">True</span>)\n    r = dev.<span class="fn">read_fpdma</span>(lba=<span class="str">0x2000</span>, count=<span class="str">16</span>, tag=<span class="str">5</span>)\n    <span class="kw">assert</span> r.error == <span class="str">0x00</span>',codefile:"tc_ncq.py",
+     scen:[["TC131","READ DMA EXT for valid LBA returns data.","Functional","tc_read_dma.py","0.97","ok"],["TC114","NCQ READ FPDMA QUEUED completes in order.","Functional","tc_ncq.py","0.95","ok"],["TC120","Enter Slumber state on PMREQ_P.","Functional","tc_power.py","0.90","ok"],["TC140","SMART threshold-exceeded reported.","Functional","tc_smart.py","0.88","ok"]],
+     map:[["SA-001 · READ DMA EXT","§7.21 Read","TC131","Read DMA EXT valid LBA",97],["SA-004 · SMART status","§7.52 SMART","TC140","SMART threshold report",88],["SA-002 · NCQ 32 cmds","§13 NCQ","TC114","Partial — only depth 16 tested",72],["SA-003 · Partial power state","§8 Power","","No TC enters Partial via PMREQ_P",41]],
+     gc:[["bad","⚠ SA-003 — Partial power state",'Gap: no TC enters the <b>Partial</b> power state via PMREQ_P.',"run","Generating"],["partial","◐ SA-002 — NCQ depth = 32","Partial: only NCQ depth 16 exercised; full 32-depth untested.","idle","Queued"]],
+     fw:"pytest · libata harness",
+     gen:["tc_partial_power.py","SA-003","Partial power state",'<span class="cm"># TC318 — SA-003 Enter Partial power state</span>\n<span class="kw">def</span> <span class="fn">test_enter_partial_state</span>(dev):\n<span class="new">    dev.<span class="fn">issue_pmreq</span>(<span class="str">"PMREQ_P"</span>)</span>\n<span class="new">    <span class="kw">assert</span> dev.<span class="fn">power_state</span>() == <span class="str">"Partial"</span></span>\n<span class="new">    <span class="kw">assert</span> dev.<span class="fn">wake</span>().error == <span class="str">0x00</span></span>']},
+
+    {key:"emmc",ab:"eM",name:"eMMC 5.1",cat:"Embedded storage",color:"#8b5cf6",cov:81,req:52,tc:1920,gaps:5,partial:4,
+     docs:[["JESD84-B51_eMMC_5.1.pdf","pdf","Bus · Boot · RPMB","ok","Indexed"],["eMMC_FW_Reqs.docx","doc","Embedding…","run","61%"]],
+     nodes:[["CMD","cmd"],["Partition","feat"],["HS400","stat"],["RPMB","feat"],["Error","err"]],
+     reqs:[["EM-001","CMD6 SWITCH shall change bus to HS400 and verify timing.","§6.6 Bus","Functional","High"],["EM-002","Boot partition access shall honor BOOT_PARTITION_ENABLE.","§7.4 Boot","Functional","High"],["EM-003","CMD5 SLEEP shall transition card to Sleep state.","§6.10 Power","Functional","Med"],["EM-004","RPMB write shall fail on invalid MAC with result 0x01.","§6.6.22 RPMB","Negative","High"]],
+     repos:[["github.com/memorytech/emmc-qa","main","1,510","gh","ok","Connected"],["bitbucket.org/memorytech/emmc-regr","release/5.1","410","bb","run","Syncing 55%"]],
+     code:'<span class="cm"># TC207 — HS400 mode switch (CMD6)</span>\n<span class="kw">def</span> <span class="fn">test_switch_hs400</span>(card):\n    card.<span class="fn">cmd6</span>(index=<span class="str">185</span>, value=<span class="str">0x3</span>)  <span class="cm"># HS_TIMING</span>\n    <span class="kw">assert</span> card.<span class="fn">bus_mode</span>() == <span class="str">"HS400"</span>',codefile:"tc_hs400.py",
+     scen:[["TC207","HS400 mode switch via CMD6.","Functional","tc_hs400.py","0.94","ok"],["TC210","Boot partition read honored.","Functional","tc_boot.py","0.90","ok"],["TC215","RPMB invalid MAC rejected.","Negative","tc_rpmb.py","0.91","ok"],["TC220","CMD5 SLEEP enters Sleep state.","Functional","tc_sleep.py","0.80","run"]],
+     map:[["EM-001 · HS400 switch","§6.6 Bus","TC207","HS400 via CMD6",94],["EM-004 · RPMB MAC","§6.6.22 RPMB","TC215","Invalid MAC rejected",91],["EM-003 · CMD5 Sleep","§6.10 Power","TC220","Partial — wake untested",70],["EM-002 · Boot partition disable","§7.4 Boot","","BOOT_PARTITION_ENABLE=0 untested",44]],
+     gc:[["bad","⚠ EM-002 — Boot partition disable",'Gap: no TC for <b>BOOT_PARTITION_ENABLE=0</b> access behavior.',"run","Generating"],["partial","◐ EM-003 — CMD5 wake","Partial: sleep entry covered; wake-from-sleep untested.","idle","Queued"]],
+     fw:"pytest · mmc-utils harness",
+     gen:["tc_boot_partition_disable.py","EM-002","Boot partition disable",'<span class="cm"># TC410 — EM-002 Boot partition disabled</span>\n<span class="kw">def</span> <span class="fn">test_boot_partition_disabled</span>(card):\n<span class="new">    card.<span class="fn">set_ext_csd</span>(<span class="str">"BOOT_PARTITION_ENABLE"</span>, <span class="str">0</span>)</span>\n<span class="new">    r = card.<span class="fn">read_boot</span>(part=<span class="str">1</span>)</span>\n<span class="new">    <span class="kw">assert</span> r.status == <span class="str">"NO_BOOT"</span></span>']},
+
+    {key:"ufs",ab:"UF",name:"UFS 4.0",cat:"Embedded storage",color:"#e0529c",cov:76,req:64,tc:2105,gaps:8,partial:6,
+     docs:[["JESD220F_UFS_4.0.pdf","pdf","UTP · Power · RPMB","ok","Indexed"],["UFS_UniPro_Spec.pdf","pdf","Link layer · Hibern8","ok","Indexed"],["UFS_FW_Reqs.docx","doc","Embedding…","run","48%"]],
+     nodes:[["UPIU","cmd"],["UTP","feat"],["Hibern8","stat"],["Provisioning","feat"],["RPMB","feat"],["Error","err"]],
+     reqs:[["UF-001","SCSI READ(10) via UTP shall return data for valid LUN/LBA.","§10 UTP","Functional","High"],["UF-002","Link shall enter Hibern8 and resume without data loss.","§7 Power","Functional","High"],["UF-003","Device shall enforce write-protect on provisioned LUN.","§11 Prov","Negative","Med"],["UF-004","RPMB authenticated read shall verify nonce.","§12 RPMB","Functional","High"]],
+     repos:[["github.com/memorytech/ufs-qa","main","1,705","gh","ok","Connected"],["bitbucket.org/memorytech/ufs-regr","release/4.0","400","bb","ok","Connected"]],
+     code:'<span class="cm"># TC318 — Hibern8 power mode</span>\n<span class="kw">def</span> <span class="fn">test_enter_hibern8</span>(ufs):\n    ufs.<span class="fn">uic</span>(<span class="str">"DME_HIBERNATE_ENTER"</span>)\n    <span class="kw">assert</span> ufs.<span class="fn">link_state</span>() == <span class="str">"Hibern8"</span>',codefile:"tc_hibern8.py",
+     scen:[["TC322","SCSI READ(10) for valid LUN returns data.","Functional","tc_read10.py","0.96","ok"],["TC318","Enter Hibern8 power mode.","Functional","tc_hibern8.py","0.93","ok"],["TC330","RPMB authenticated read verifies nonce.","Functional","tc_rpmb.py","0.89","ok"],["TC340","Write-protect on provisioned LUN.","Negative","tc_wp.py","0.85","ok"]],
+     map:[["UF-001 · READ(10)","§10 UTP","TC322","Read valid LUN/LBA",96],["UF-004 · RPMB nonce","§12 RPMB","TC330","Nonce verified",89],["UF-002 · Hibern8","§7 Power","TC318","Partial — resume integrity untested",74],["UF-003 · WP provisioned LUN","§11 Prov","","No negative write-protect TC",39]],
+     gc:[["bad","⚠ UF-003 — Provisioned LUN write-protect",'Gap: no negative TC validates write-protect enforcement.',"run","Generating"],["partial","◐ UF-002 — Hibern8 resume","Partial: entry tested; data-integrity-on-resume untested.","idle","Queued"]],
+     fw:"pytest · ufs-utils harness",
+     gen:["tc_wp_lun.py","UF-003","Provisioned LUN write-protect",'<span class="cm"># TC512 — UF-003 Write-protect provisioned LUN</span>\n<span class="kw">def</span> <span class="fn">test_wp_lun_rejected</span>(ufs):\n<span class="new">    ufs.<span class="fn">provision</span>(lun=<span class="str">3</span>, write_protect=<span class="kw">True</span>)</span>\n<span class="new">    r = ufs.<span class="fn">write</span>(lun=<span class="str">3</span>, lba=<span class="str">0x10</span>, data=<span class="str">b"x"</span>)</span>\n<span class="new">    <span class="kw">assert</span> r.sense == <span class="str">"DATA_PROTECT"</span></span>']},
+
+    {key:"spdm",ab:"SP",name:"SPDM 1.3",cat:"Security / attestation",color:"#f4801a",cov:69,req:41,tc:980,gaps:9,partial:8,
+     docs:[["DSP0274_SPDM_1.3.pdf","pdf","Versioning · Auth · Measurements","ok","Indexed"],["DSP0277_Secured_Messages.pdf","pdf","Session · Key exchange","ok","Indexed"],["SPDM_FW_Reqs.docx","doc","Embedding…","run","37%"]],
+     nodes:[["Request","cmd"],["Certificate","feat"],["Measurement","stat"],["Session/Key","feat"],["Challenge","cmd"],["Error","err"]],
+     reqs:[["SP-001","GET_VERSION shall return supported SPDM versions.","§10.1 Ver","Functional","High"],["SP-002","CHALLENGE_AUTH signature shall verify against slot cert.","§10.9 Auth","Functional","High"],["SP-003","GET_MEASUREMENTS shall return signed measurement block.","§10.11 Meas","Functional","High"],["SP-004","Responder shall reject KEY_EXCHANGE with invalid cert chain.","§11 Session","Negative","High"]],
+     repos:[["github.com/memorytech/spdm-qa","main","720","gh","ok","Connected"],["bitbucket.org/memorytech/security-regr","release/1.3","260","bb","run","Syncing 33%"]],
+     code:'<span class="cm"># TC402 — CHALLENGE_AUTH verification</span>\n<span class="kw">def</span> <span class="fn">test_challenge_auth</span>(dev):\n    r = dev.<span class="fn">challenge</span>(slot=<span class="str">0</span>, measure=<span class="kw">True</span>)\n    <span class="kw">assert</span> dev.<span class="fn">verify_sig</span>(r) <span class="kw">is</span> <span class="kw">True</span>',codefile:"tc_challenge.py",
+     scen:[["TC405","GET_VERSION negotiation succeeds.","Functional","tc_version.py","0.95","ok"],["TC402","CHALLENGE_AUTH signature verifies.","Functional","tc_challenge.py","0.92","ok"],["TC410","GET_MEASUREMENTS returns signed block.","Functional","tc_measure.py","0.83","run"],["TC420","KEY_EXCHANGE with valid cert.","Functional","tc_keyex.py","0.80","run"]],
+     map:[["SP-001 · GET_VERSION","§10.1 Ver","TC405","Version negotiation",95],["SP-002 · CHALLENGE_AUTH","§10.9 Auth","TC402","Signature verified",92],["SP-003 · Measurements","§10.11 Meas","TC410","Partial — tamper case missing",66],["SP-004 · Invalid cert chain","§11 Session","","No negative KEY_EXCHANGE TC",28]],
+     gc:[["bad","⚠ SP-004 — Invalid cert chain",'Gap: no negative TC rejects KEY_EXCHANGE with a bad cert chain.',"run","Generating"],["partial","◐ SP-003 — Measurement tamper","Partial: happy path only; tampered-signature case missing.","idle","Queued"]],
+     fw:"pytest · libspdm harness",
+     gen:["tc_keyex_invalid_cert.py","SP-004","Invalid cert chain",'<span class="cm"># TC520 — SP-004 Reject invalid cert chain</span>\n<span class="kw">def</span> <span class="fn">test_keyex_invalid_cert</span>(dev):\n<span class="new">    dev.<span class="fn">load_cert</span>(slot=<span class="str">1</span>, chain=<span class="str">"corrupted"</span>)</span>\n<span class="new">    r = dev.<span class="fn">key_exchange</span>(slot=<span class="str">1</span>)</span>\n<span class="new">    <span class="kw">assert</span> r.error == <span class="str">"INVALID_REQUEST"</span></span>']},
+
+    {key:"ocp",ab:"OC",name:"OCP",cat:"Datacenter / Open Compute",color:"#5b8c2a",cov:64,req:29,tc:610,gaps:7,partial:5,
+     docs:[["OCP_Datacenter_NVMe_SSD_2.5.pdf","pdf","SMART · Telemetry · PLP","ok","Indexed"],["OCP_Telemetry_Spec.pdf","pdf","Log pages · counters","ok","Indexed"],["OCP_FW_Reqs.docx","doc","Embedding…","run","44%"]],
+     nodes:[["SMART Log","cmd"],["Telemetry","feat"],["Latency Mon","stat"],["Error Log","err"],["Health","feat"]],
+     reqs:[["OC-001","SMART/Health log (0xC0) shall report physical media units.","§3 SMART","Functional","High"],["OC-002","Latency Monitor shall track bucket counters per OCP.","§4 Latency","Functional","Med"],["OC-003","Device shall expose Error Recovery telemetry log.","§5 Telemetry","Functional","Med"],["OC-004","Power loss shall preserve persistent event log.","§6 PLP","Functional","High"]],
+     repos:[["github.com/memorytech/ocp-qa","main","610","gh","ok","Connected"]],
+     code:'<span class="cm"># TC511 — OCP SMART / telemetry log</span>\n<span class="kw">def</span> <span class="fn">test_smart_telemetry</span>(ssd):\n    log = ssd.<span class="fn">get_log_page</span>(<span class="str">0xC0</span>)\n    <span class="kw">assert</span> log.<span class="fn">field</span>(<span class="str">"phy_media_units"</span>) > <span class="str">0</span>',codefile:"tc_smart.py",
+     scen:[["TC511","OCP SMART/health log reports media units.","Functional","tc_smart.py","0.90","ok"],["TC520","Error recovery telemetry log pull.","Functional","tc_telemetry.py","0.82","run"],["TC514","Latency monitor bucket counters.","Functional","tc_latency.py","0.78","run"]],
+     map:[["OC-001 · SMART 0xC0","§3 SMART","TC511","Media units reported",90],["OC-003 · Telemetry log","§5 Telemetry","TC520","Telemetry pulled",82],["OC-002 · Latency monitor","§4 Latency","TC514","Partial — bucket boundaries untested",64],["OC-004 · PLP event log","§6 PLP","","No TC validates log after power loss",33]],
+     gc:[["bad","⚠ OC-004 — Power-loss persistent log",'Gap: no TC validates the persistent event log after a power-loss event.',"run","Generating"],["partial","◐ OC-002 — Latency buckets","Partial: bucket boundary values untested.","idle","Queued"]],
+     fw:"pytest · nvme-cli + ocp plugin",
+     gen:["tc_plp_event_log.py","OC-004","Power-loss event log",'<span class="cm"># TC604 — OC-004 Persistent log after PLP</span>\n<span class="kw">def</span> <span class="fn">test_plp_event_log</span>(ssd):\n<span class="new">    ssd.<span class="fn">write</span>(lba=<span class="str">0x0</span>, data=<span class="str">b"x"</span>)</span>\n<span class="new">    ssd.<span class="fn">simulate_power_loss</span>()</span>\n<span class="new">    <span class="kw">assert</span> ssd.<span class="fn">get_log_page</span>(<span class="str">0xC1</span>).count > <span class="str">0</span></span>']},
+
+    {key:"pldm",ab:"PL",name:"PLDM",cat:"Platform management",color:"#c2410c",cov:79,req:33,tc:740,gaps:4,partial:3,
+     docs:[["DSP0240_PLDM_Base.pdf","pdf","Types · messaging","ok","Indexed"],["DSP0248_Platform_Monitoring.pdf","pdf","Sensors · events · FRU","ok","Indexed"],["PLDM_FW_Reqs.docx","doc","Embedding…","run","59%"]],
+     nodes:[["PLDM Type","cmd"],["Sensor","feat"],["FRU","feat"],["Event","stat"],["Error","err"]],
+     reqs:[["PL-001","GetPLDMTypes shall enumerate supported types.","§5 Base","Functional","High"],["PL-002","GetSensorReading shall return current state.","§6 Monitor","Functional","High"],["PL-003","GetFRURecordTable shall return FRU data.","§7 FRU","Functional","Med"],["PL-004","PlatformEventMessage shall deliver async events.","§6 Event","Functional","Med"]],
+     repos:[["github.com/memorytech/pldm-qa","main","640","gh","ok","Connected"],["bitbucket.org/memorytech/mgmt-regr","release/1.1","100","bb","ok","Connected"]],
+     code:'<span class="cm"># TC604 — PLDM GetSensorReading</span>\n<span class="kw">def</span> <span class="fn">test_get_sensor</span>(mc):\n    r = mc.<span class="fn">pldm</span>(<span class="str">"GetSensorReading"</span>, id=<span class="str">3</span>)\n    <span class="kw">assert</span> r.<span class="fn">state</span> == <span class="str">"Normal"</span>',codefile:"tc_sensor.py",
+     scen:[["TC607","GetPLDMTypes enumerates supported types.","Functional","tc_types.py","0.95","ok"],["TC604","GetSensorReading returns current state.","Functional","tc_sensor.py","0.93","ok"],["TC612","GetFRURecordTable returns FRU data.","Functional","tc_fru.py","0.84","ok"]],
+     map:[["PL-001 · GetPLDMTypes","§5 Base","TC607","Types enumerated",95],["PL-002 · GetSensorReading","§6 Monitor","TC604","Sensor state read",93],["PL-003 · FRU table","§7 FRU","TC612","Partial — multi-record untested",71],["PL-004 · Async event","§6 Event","","No TC validates async delivery",42]],
+     gc:[["bad","⚠ PL-004 — PlatformEventMessage",'Gap: no TC validates asynchronous event delivery.',"run","Generating"],["partial","◐ PL-003 — FRU multi-record","Partial: single FRU record only; multi-record untested.","idle","Queued"]],
+     fw:"pytest · libpldm harness",
+     gen:["tc_platform_event.py","PL-004","Async event delivery",'<span class="cm"># TC701 — PL-004 PlatformEventMessage</span>\n<span class="kw">def</span> <span class="fn">test_async_event</span>(mc):\n<span class="new">    mc.<span class="fn">trigger_threshold</span>(sensor=<span class="str">3</span>)</span>\n<span class="new">    evt = mc.<span class="fn">await_event</span>(timeout=<span class="str">2</span>)</span>\n<span class="new">    <span class="kw">assert</span> evt.type == <span class="str">"sensorEvent"</span></span>']},
+
+    {key:"mfnd",ab:"MF",name:"MFND",cat:"Management firmware",color:"#6366f1",cov:58,req:22,tc:463,gaps:6,partial:5,
+     docs:[["Management_FW_NAND_Spec_v1.pdf","pdf","Discovery · health · config","ok","Indexed"],["MFND_Interface.pdf","pdf","Async events","ok","Indexed"],["MFND_FW_Reqs.docx","doc","Embedding…","run","40%"]],
+     nodes:[["Discovery","cmd"],["Device","feat"],["Async Event","stat"],["Config","feat"],["Error","err"]],
+     reqs:[["MF-001","Device discovery shall enumerate managed NAND devices.","§3 Disc","Functional","High"],["MF-002","Health polling shall report wear-level metrics.","§4 Health","Functional","Med"],["MF-003","Async event shall notify on threshold breach.","§5 Event","Functional","High"],["MF-004","Config write shall persist across reset.","§6 Config","Functional","Med"]],
+     repos:[["github.com/memorytech/mfnd-qa","main","463","gh","run","Syncing 40%"]],
+     code:'<span class="cm"># TC702 — Management FW device discovery</span>\n<span class="kw">def</span> <span class="fn">test_device_discovery</span>(mfnd):\n    devs = mfnd.<span class="fn">discover</span>()\n    <span class="kw">assert</span> <span class="fn">len</span>(devs) >= <span class="str">1</span>',codefile:"tc_discovery.py",
+     scen:[["TC702","Device discovery enumerates managed NAND.","Functional","tc_discovery.py","0.90","ok"],["TC705","Health polling reports wear-level.","Functional","tc_health.py","0.79","run"]],
+     map:[["MF-001 · Discovery","§3 Disc","TC702","Devices enumerated",90],["MF-002 · Health poll","§4 Health","TC705","Partial — metrics subset",68],["MF-003 · Async threshold event","§5 Event","","No TC for threshold notification",30],["MF-004 · Config persistence","§6 Config","","No TC for persist-across-reset",26]],
+     gc:[["bad","⚠ MF-003 — Threshold async event",'Gap: no TC validates async notification on threshold breach.',"run","Generating"],["bad","⚠ MF-004 — Config persistence","Gap: no TC validates config persistence across reset.","idle","Queued"]],
+     fw:"pytest · mfnd-cli harness",
+     gen:["tc_async_threshold.py","MF-003","Threshold async event",'<span class="cm"># TC801 — MF-003 Threshold async event</span>\n<span class="kw">def</span> <span class="fn">test_threshold_event</span>(mfnd):\n<span class="new">    mfnd.<span class="fn">set_threshold</span>(<span class="str">"wear"</span>, <span class="str">90</span>)</span>\n<span class="new">    mfnd.<span class="fn">force_wear</span>(<span class="str">95</span>)</span>\n<span class="new">    <span class="kw">assert</span> mfnd.<span class="fn">await_event</span>().kind == <span class="str">"threshold"</span></span>']}
+  ];
+  function covColor(c){return c>=85?'var(--good)':c>=70?'var(--warn)':'var(--bad)';}
+  function covBadge(c){return c>=85?'ok':c>=70?'run':'idle';}
+
+  function renderPortfolio(){
+    // spec cards
+    document.getElementById('specgrid').innerHTML=WS.map(function(w){
+      return '<div class="speccard" onclick="enterWS(\''+w.key+'\')">'
+        +'<div class="top"><div class="specdot" style="background:'+w.color+'">'+w.ab+'</div>'
+        +'<div class="name">'+w.name+'<small>'+w.cat+'</small></div></div>'
+        +'<div class="row between"><span class="cov" style="color:'+covColor(w.cov)+'">'+w.cov+'%</span>'
+        +'<span class="badge '+covBadge(w.cov)+'">'+w.gaps+' gaps</span></div>'
+        +'<div class="mbar"><i style="width:'+w.cov+'%;background:'+covColor(w.cov)+'"></i></div>'
+        +'<div class="stats"><span><b>'+w.req+'</b> reqs</span><span><b>'+w.tc.toLocaleString()+'</b> TCs</span></div></div>';
+    }).join('');
+    // comparison chart (sorted desc)
+    document.getElementById('cmpchart').innerHTML=WS.slice().sort(function(a,b){return b.cov-a.cov;}).map(function(w){
+      return '<div class="cmprow"><span style="color:var(--muted)">'+w.name+'</span>'
+        +'<div class="cbar"><i style="width:'+w.cov+'%;background:'+covColor(w.cov)+'"></i></div>'
+        +'<span class="pct" style="color:'+covColor(w.cov)+'">'+w.cov+'%</span></div>';
+    }).join('');
+    // attention list (lowest coverage 4)
+    document.getElementById('attnlist').innerHTML=WS.slice().sort(function(a,b){return a.cov-b.cov;}).slice(0,4).map(function(w){
+      return '<div class="attn"><div class="specdot" style="background:'+w.color+'">'+w.ab+'</div>'
+        +'<div style="flex:1"><b style="font-size:12.5px">'+w.name+'</b><br/><small style="color:var(--faint)">'+w.gaps+' open gaps · '+w.cov+'% covered</small></div>'
+        +'<button class="btn ghost sm" onclick="event.stopPropagation();enterWS(\''+w.key+'\')">Open</button></div>';
+    }).join('');
+    // switcher menu
+    document.getElementById('wsmenu').innerHTML=WS.map(function(w){
+      return '<button onclick="enterWS(\''+w.key+'\',true)"><div class="specdot" style="width:22px;height:22px;border-radius:6px;font-size:8px;background:'+w.color+'">'+w.ab+'</div>'+w.name+'<span class="mini" style="color:'+covColor(w.cov)+'">'+w.cov+'%</span></button>';
+    }).join('');
+  }
+  var activeWS=WS[0];
+  function setActive(w){
+    activeWS=w;
+    document.getElementById('ws-dot').textContent=w.ab;
+    document.getElementById('ws-dot').style.background=w.color;
+    document.getElementById('ws-side').textContent=w.name;
+    document.getElementById('ws-grp').textContent=w.name;
+    document.getElementById('ws-crumb').textContent=w.name;
+    renderWorkspace(w);
+  }
+  function scoreColor(s){return s>=85?'var(--good)':s>=60?'var(--warn)':'var(--bad)';}
+  var GSLOT=[{l:50,t:32},{l:26,t:62},{l:74,t:60},{l:50,t:82},{l:16,t:30},{l:84,t:28}];
+  function renderWorkspace(w){
+    // ---- Step A ----
+    document.getElementById('A-files').innerHTML=w.docs.map(function(d){
+      return '<div class="file"><div class="ft '+(d[1]==='pdf'?'pdf':'')+'">'+(d[1]==='pdf'?'PDF':'DOC')+'</div>'
+        +'<div class="meta"><b>'+d[0]+'</b><small>'+d[2]+'</small></div><span class="badge '+d[3]+'">'+d[4]+'</span></div>';
+    }).join('');
+    document.getElementById('A-graph').innerHTML=w.nodes.map(function(n,i){
+      var s=GSLOT[i]||{l:50,t:50};
+      return '<div class="node '+n[1]+'" style="left:'+s.l+'%;top:'+s.t+'%">'+n[0]+'</div>';
+    }).join('');
+    document.getElementById('A-reqcount').textContent=w.req;
+    document.getElementById('A-reqs').innerHTML=w.reqs.map(function(r){
+      return '<tr><td class="reqid">'+r[0]+'</td><td>'+r[1]+'</td><td><span class="tag">'+r[2]+'</span></td>'
+        +'<td><span class="tag">'+r[3]+'</span></td><td><span class="badge '+(r[4]==='High'?'ok':'run')+'">'+r[4]+'</span></td></tr>';
+    }).join('');
+    document.getElementById('A-note').textContent='Showing '+w.reqs.length+' of '+w.req+' · each requirement is traceable to spec chunks via the knowledge graph.';
+    // ---- Step B ----
+    document.getElementById('B-repos').innerHTML=w.repos.map(function(r){
+      var icon=r[3]==='gh'
+        ? '<div class="gh"><svg width="14" height="14" viewBox="0 0 16 16" fill="#fff"><path d="M8 0C3.6 0 0 3.6 0 8a8 8 0 0 0 5.5 7.6c.4.1.5-.2.5-.4v-1.4c-2 .4-2.5-.5-2.7-1 0-.1-.5-.9-.8-1-.3-.2-.7-.6 0-.6.6 0 1 .6 1.2.8.7 1.2 1.9.9 2.3.7.1-.5.3-.9.5-1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1 0-.2-.3-1 .1-2 0 0 .7-.2 2.2.8a7 7 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1 .1 1.8.1 2 .5.5.8 1.2.8 2.1 0 3-1.8 3.7-3.6 4 .3.2.5.7.5 1.4v2.2c0 .2.2.5.5.4A8 8 0 0 0 16 8c0-4.4-3.6-8-8-8Z"/></svg></div>'
+        : '<div class="gh" style="background:#1b3a6b"><b style="font-size:9px;color:#fff">B</b></div>';
+      return '<div class="src">'+icon+'<div style="flex:1"><b>'+r[0]+'</b><br/><small style="color:var(--faint)">branch: '+r[1]+' · '+r[2]+' TCs</small></div><span class="badge '+r[4]+'">'+r[5]+'</span></div>';
+    }).join('');
+    document.getElementById('B-codefile').textContent=w.codefile;
+    document.getElementById('B-code').innerHTML=w.code;
+    document.getElementById('B-tccount').textContent=w.tc.toLocaleString();
+    document.getElementById('B-scen').innerHTML=w.scen.map(function(s){
+      return '<tr><td class="reqid">'+s[0]+'</td><td>'+s[1]+'</td><td><span class="tag">'+s[2]+'</span></td>'
+        +'<td><span class="tag">'+s[3]+'</span></td><td><span class="badge '+s[5]+'">'+s[4]+'</span></td></tr>';
+    }).join('');
+    // ---- Step C ----
+    var pEnd=Math.min(100,w.cov+Math.round(w.partial/w.req*100));
+    document.getElementById('C-donut').style.background='conic-gradient(var(--good) 0 '+w.cov+'%,var(--partial) '+w.cov+'% '+pEnd+'%,var(--bad) '+pEnd+'% 100%)';
+    document.getElementById('C-cov').textContent=w.cov+'%';
+    document.getElementById('C-mapped').textContent=Math.round(w.req*w.cov/100);
+    document.getElementById('C-partial').textContent=w.partial;
+    document.getElementById('C-gaps').textContent=w.gaps;
+    document.getElementById('C-links').innerHTML=w.map.map(function(m){
+      var c=scoreColor(m[4]),gap=(m[2]==='');
+      var border=m[4]>=85?'':' style="border-color:'+(m[4]>=60?'rgba(244,183,64,.4)':'rgba(255,93,108,.4)')+'"';
+      var right=gap
+        ? '<div class="tc">⚠ <b style="color:var(--bad)">No matching TC</b><br/><small>'+m[3]+'</small></div>'
+        : '<div class="tc">→ <b style="color:var(--txt)">'+m[2]+'</b>'+(m[4]<85&&m[4]>=60?' <span class="badge run">partial</span>':'')+'<br/><small>'+m[3]+'</small></div>';
+      return '<div class="mlink"'+border+'><div class="req">'+m[0]+'<small>'+m[1]+'</small></div>'
+        +'<div class="score"><div class="ring" style="--v:'+m[4]+';--c:'+c+'"><span>'+(m[4]/100).toFixed(2)+'</span></div></div>'
+        +right+'</div>';
+    }).join('');
+    // ---- Step D ----
+    document.getElementById('D-gaps').innerHTML=w.gc.map(function(g){
+      return '<div class="gapcard'+(g[0]==='partial'?' partial':'')+'"><div class="row between"><h4>'+g[1]+'</h4>'
+        +'<span class="badge '+g[3]+'">'+g[4]+'</span></div><p>'+g[2]+'</p></div>';
+    }).join('');
+    document.getElementById('D-fw').textContent=w.fw;
+    document.getElementById('D-prbtn').textContent='⤴ Create Pull Request ('+w.gc.length+')';
+    document.getElementById('D-genreq').textContent=w.gen[1];
+    document.getElementById('D-gensub').textContent='AI draft · linked to '+w.gen[1]+' · review before merge';
+    document.getElementById('D-genfile').textContent=w.gen[0];
+    document.getElementById('D-gencode').innerHTML=w.gen[3];
+    document.getElementById('D-gennote').textContent='Traceability auto-updated: '+w.gen[1]+' → new TC. Re-runs Step C mapping on merge to confirm coverage closes.';
+    // ---- Settings ----
+    document.getElementById('set-name').textContent=w.name;
+    document.getElementById('set-specrepo').value='specs/'+w.key+'/';
+    document.getElementById('set-fw').value=w.fw;
+    document.getElementById('set-repos').innerHTML=w.repos.map(function(r){
+      return '<div class="src" style="margin-bottom:8px"><div class="specdot" style="width:22px;height:22px;border-radius:6px;font-size:8px;background:'+w.color+'">'+(r[3]==='gh'?'GH':'BB')+'</div>'
+        +'<div style="flex:1"><b>'+r[0]+'</b><br/><small style="color:var(--faint)">'+r[1]+' · '+r[2]+' TCs</small></div><span class="badge '+r[4]+'">'+r[5]+'</span></div>';
+    }).join('');
+  }
+  // ---- New Workspace modal ----
+  var SWATCH=["#3b6cf6","#00a3a3","#8b5cf6","#e0529c","#f4801a","#5b8c2a","#c2410c","#6366f1","#0ea5e9","#d4a017"];
+  var nwColor=SWATCH[0];
+  function renderSwatches(){
+    document.getElementById('nw-swatches').innerHTML=SWATCH.map(function(c,i){
+      return '<div class="swatch'+(i===0?' on':'')+'" style="background:'+c+'" onclick="pickColor(this,\''+c+'\')"></div>';
+    }).join('');
+  }
+  function pickColor(el,c){nwColor=c;document.querySelectorAll('#nw-swatches .swatch').forEach(function(s){s.classList.remove('on')});el.classList.add('on');}
+  function openNW(){document.getElementById('wsmenu').classList.remove('open');document.getElementById('nwOverlay').classList.add('open');}
+  function closeNW(){document.getElementById('nwOverlay').classList.remove('open');}
+  function createNW(){
+    var name=document.getElementById('nw-name').value.trim();
+    if(!name){document.getElementById('nw-err').style.display='block';return;}
+    var ver=document.getElementById('nw-ver').value.trim();
+    var full=ver?name+' '+ver:name;
+    var ab=(document.getElementById('nw-ab').value.trim()||name.slice(0,2)).toUpperCase();
+    var repoUrl=document.getElementById('nw-repo').value.trim()||'github.com/org/'+name.toLowerCase().replace(/\s+/g,'-');
+    var prov=document.getElementById('nw-vcs').value==='Bitbucket'?'bb':'gh';
+    var w={key:'ws'+Date.now(),ab:ab,name:full,cat:document.getElementById('nw-cat').value,color:nwColor,
+      cov:0,req:0,tc:0,gaps:0,partial:0,
+      docs:[],nodes:[["Command","cmd"],["Feature","feat"],["State","stat"],["Error","err"]],
+      reqs:[],repos:[[repoUrl,document.getElementById('nw-branch').value||'main',"0",prov,"run","Indexing…"]],
+      code:'<span class="cm"># No test cases analysed yet — run Step B</span>',codefile:"—",
+      scen:[],map:[],gc:[],fw:document.getElementById('nw-fw').value||'pytest',
+      gen:["—","—","—",'<span class="cm"># Run Steps A–C to surface gaps, then generate here</span>']};
+    WS.push(w);
+    renderPortfolio();
+    closeNW();
+    setActive(w);
+    go('A');
+  }
+
+  // enter a workspace: set active, close menu, jump to Step A (stayHome=true keeps dashboard)
+  function enterWS(key,stayHome){
+    var w=WS.filter(function(x){return x.key===key;})[0]; if(!w)return;
+    setActive(w);
+    document.getElementById('wsmenu').classList.remove('open');
+    if(!stayHome) go('A');
+  }
+  document.addEventListener('click',function(e){
+    var sw=document.getElementById('wsswitch'),m=document.getElementById('wsmenu');
+    if(!sw.contains(e.target)&&!m.contains(e.target))m.classList.remove('open');
+  });
+
+  var titles={home:"Master Dashboard",A:"Step A — Spec Knowledge Graph",B:"Step B — Test Script Graph",C:"Step C — Coverage Mapping",D:"Step D — Gap Remediation",settings:"Workspace Settings"};
+  function go(s){
+    document.querySelectorAll('.screen').forEach(function(e){e.classList.remove('show')});
+    document.getElementById('screen-'+s).classList.add('show');
+    document.querySelectorAll('.nav button[data-screen]').forEach(function(b){b.classList.toggle('active',b.dataset.screen===s)});
+    document.getElementById('stepper').style.display = (s==='home'||s==='settings') ? 'none' : 'flex';
+    var order=['A','B','C','D'],idx=order.indexOf(s);
+    document.querySelectorAll('#stepper .step').forEach(function(st){
+      var i=order.indexOf(st.dataset.screen);
+      st.classList.toggle('active',i===idx);
+      st.classList.toggle('done',i<idx);
+    });
+    document.getElementById('crumb').textContent=titles[s];
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  // theme toggle
+  var tb=document.getElementById('themebtn');
+  tb.addEventListener('click',function(){
+    var light=document.documentElement.getAttribute('data-theme')==='light';
+    document.documentElement.setAttribute('data-theme',light?'dark':'light');
+    tb.textContent=light?'🌙':'☀️';
+  });
+  document.querySelectorAll('[data-screen]').forEach(function(el){
+    el.addEventListener('click',function(){go(el.dataset.screen)});
+  });
+  // toggle buttons (visual only)
+  document.querySelectorAll('.toggle').forEach(function(t){
+    t.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click',function(){t.querySelectorAll('button').forEach(function(x){x.classList.remove('on')});b.classList.add('on')});
+    });
+  });
+  renderSwatches();
+  renderPortfolio();
+  setActive(WS[0]);
+  go('home'); // land on master dashboard, hide stepper
+</script>
+</body>
+</html>
