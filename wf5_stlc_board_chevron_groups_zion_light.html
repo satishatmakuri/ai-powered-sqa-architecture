@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STLC Board — Chevrons · Sub-Phases · Groups · Zion (Light · Confluence)</title>
+<style>
+/* ── CONFLUENCE-COMPATIBLE · LIGHT THEME · Self-contained · Static ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f0f4f9; color: #1e293b; font-size: 13px; }
+
+/* page chrome */
+.wrap { max-width: 1700px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: #fff; }
+.hdr { background: #fff; border-bottom: 3px solid #e2e8f0; padding: 13px 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.brand { display: flex; align-items: center; gap: 11px; }
+.mark { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #4f46e5, #7c3aed, #db2777); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; color: #fff; box-shadow: 0 3px 10px rgba(124,58,237,0.3); }
+.bn { font-size: 0.92rem; font-weight: 700; color: #1e293b; }
+.bs { font-size: 0.58rem; color: #64748b; margin-top: 2px; }
+.htags { display: flex; gap: 5px; }
+.tg { padding: 4px 10px; border-radius: 20px; font-size: 0.58rem; font-weight: 600; }
+.tg-1 { background: #ede9fe; border: 1px solid #c4b5fd; color: #6d28d9; }
+.tg-2 { background: #dcfce7; border: 1px solid #86efac; color: #166534; }
+.tg-3 { background: #e0f2fe; border: 1px solid #7dd3fc; color: #0369a1; }
+
+.conf-note { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 7px 14px; margin: 12px 22px 0; font-size: 0.62rem; color: #1e40af; display: flex; align-items: center; gap: 8px; }
+
+/* board (horizontal scroll for narrow viewports) */
+.board-wrap { padding: 14px 22px 22px; overflow-x: auto; }
+.board { min-width: 1640px; }
+
+/* TITLE BAR (row 0) */
+.title-bar {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: #fff;
+  padding: 11px 22px;
+  text-align: center;
+  font-size: 0.95rem; font-weight: 700;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  letter-spacing: 0.03em;
+  box-shadow: 0 2px 6px rgba(22,163,74,0.25);
+}
+.title-bar small { display:block; font-size: 0.6rem; font-weight: 500; opacity: 0.95; margin-top: 2px; letter-spacing: 0.05em; }
+
+/* The shared 10-col grid that aligns chevrons, tiles, groups, zion */
+.grid-10 { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+
+/* ── ROW 1: PHASE CHEVRONS ── */
+.chev-row { margin-bottom: 5px; }
+.chev {
+  position: relative;
+  padding: 12px 22px 12px 22px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.7rem;
+  line-height: 1.25;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 56px;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+.chev:first-child { clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%); padding-left: 12px; }
+.chev:last-child { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 14px 50%); padding-right: 12px; }
+.chev-num { font-size: 0.72rem; font-weight: 800; }
+.chev-nm { font-size: 0.66rem; font-weight: 700; margin-top: 2px; line-height: 1.18; }
+
+/* ── ROW 2: SUB-PHASE TILES ── */
+.sub-row { margin-bottom: 8px; }
+.sub-tile {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-top: 3px solid;
+  border-radius: 4px;
+  padding: 7px 8px;
+  min-height: 175px;
+  font-size: 0.58rem;
+  line-height: 1.55;
+  color: #1e293b;
+}
+.sub-tile .si {
+  display: flex; align-items: flex-start; gap: 4px;
+  padding: 1px 0;
+}
+.sub-tile .si-id { color: #94a3b8; font-weight: 700; font-family: 'Consolas', monospace; font-size: 0.55rem; flex-shrink: 0; min-width: 19px; padding-top: 1px; }
+.sub-tile .si-tx { color: #334155; font-size: 0.58rem; line-height: 1.4; }
+
+/* ── ROW 3: GROUP BANDS ── */
+.grp-row { margin-bottom: 8px; }
+.grp-band {
+  padding: 8px 10px;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 4px;
+  border: 1px solid;
+  letter-spacing: 0.04em;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 40px;
+}
+.grp-band small { display: block; font-size: 0.55rem; font-weight: 500; opacity: 0.85; margin-top: 1px; letter-spacing: 0.02em; }
+.gb-a { background: #DBEAFE; border-color: #93c5fd; color: #1E40AF; }
+.gb-b { background: #FEF3C7; border-color: #fcd34d; color: #92400E; }
+.gb-c { background: #FEE2E2; border-color: #fca5a5; color: #B91C1C; }
+.gb-d { background: #E2E8F0; border-color: #cbd5e1; color: #475569; }
+.gb-e { background: #DCFCE7; border-color: #86efac; color: #166534; }
+
+/* ── ROW 4: ZION TILES ── */
+.zion-row { }
+.zion-tile {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-top: 3px solid;
+  border-radius: 4px;
+  padding: 7px 8px;
+  min-height: 78px;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.zion-tile .zh { font-size: 0.5rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 2px; }
+.zion-tile .zc {
+  display: inline-block;
+  font-size: 0.5rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin: 1px 2px 1px 0;
+  font-family: 'Consolas', monospace;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+/* footer */
+.foot { background: #fff; border-top: 1px solid #e2e8f0; padding: 9px 22px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; font-size: 0.58rem; color: #475569; }
+.foot-copy { margin-left: auto; color: #94a3b8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="brand">
+    <div class="mark">Z</div>
+    <div><div class="bn">Zion Quality Platform</div><div class="bs">AI-Powered Software Quality Architecture · Multi-Layer AI Agent System</div></div>
+  </div>
+  <div class="htags">
+    <span class="tg tg-1">Wireframe 5</span>
+    <span class="tg tg-2">Board View</span>
+    <span class="tg tg-3">Light · Confluence Ready</span>
+  </div>
+</div>
+
+<div class="conf-note">ℹ️ <strong>Confluence:</strong> Insert → Other Macros → HTML → paste full file content. Static layout (no scripts). Scroll horizontally inside the macro frame to see all 10 phases.</div>
+
+<!-- BOARD -->
+<div class="board-wrap">
+<div class="board">
+
+  <!-- TITLE BAR -->
+  <div class="title-bar">
+    Zion Quality Platform — Software Testing Life Cycle (STLC) Phases
+    <small>10 Phases · 5 Groups · 50 Sub-Activities · 15 Zion Components</small>
+  </div>
+
+  <!-- ROW 1 — Phase Chevrons -->
+  <div class="grid-10 chev-row" id="chevRow"></div>
+
+  <!-- ROW 2 — Sub-Phase Tiles -->
+  <div class="grid-10 sub-row" id="subRow"></div>
+
+  <!-- ROW 3 — Group Bands (each spans 2 phases) -->
+  <div class="grid-10 grp-row">
+    <div class="grp-band gb-a" style="grid-column: span 2;">Pre-Testing<small>Discovery &amp; Planning · Phases 1–2</small></div>
+    <div class="grp-band gb-b" style="grid-column: span 2;">Test Preparation<small>Design &amp; Environment · Phases 3–4</small></div>
+    <div class="grp-band gb-c" style="grid-column: span 2;">Test Execution<small>Active Validation · Phases 5–6</small></div>
+    <div class="grp-band gb-d" style="grid-column: span 2;">Test Intelligence &amp; Closure<small>Metrics &amp; Sign-off · Phases 7–8</small></div>
+    <div class="grp-band gb-e" style="grid-column: span 2;">Release &amp; Operations<small>Delivery &amp; Production · Phases 9–10</small></div>
+  </div>
+
+  <!-- ROW 4 — Zion Component Tiles -->
+  <div class="grid-10 zion-row" id="zionRow"></div>
+
+</div>
+</div>
+
+<div class="foot">
+  <span><strong>Row 1:</strong> Phase chevrons</span>
+  <span>·</span>
+  <span><strong>Row 2:</strong> Sub-phase tiles</span>
+  <span>·</span>
+  <span><strong>Row 3:</strong> Group bands (aligned)</span>
+  <span>·</span>
+  <span><strong>Row 4:</strong> Zion components per phase</span>
+  <span class="foot-copy">AI-Powered Software Quality Architecture — Zion Platform © 2025</span>
+</div>
+
+</div>
+
+<script>
+const PH = [
+  { n:1,  name:"Requirements Analysis & Review",     color:"#3B82F6",
+    subs:[["1.1","Requirements Elicitation & Doc Review"],["1.2","NL Requirement Parsing & Classification"],
+          ["1.3","Feasibility, Testability & Quality Analysis"],["1.4","Test Basis & RTM Creation"],
+          ["1.5","Risk ID & Acceptance Criteria"]],
+    zions:["IntelliSpec","Vault","FlowEngine"] },
+  { n:2,  name:"Test Planning",                       color:"#8B5CF6",
+    subs:[["2.1","Test Strategy & Scope"],["2.2","Resource, Schedule & Effort Estimation"],
+          ["2.3","Risk Assessment & Mitigation"],["2.4","Tool Selection & Entry/Exit Criteria"],
+          ["2.5","Test Plan Auto-Generation"]],
+    zions:["Compass","FlowEngine","Nexus"] },
+  { n:3,  name:"Test Design & Development",           color:"#EC4899",
+    subs:[["3.1","Test Scenario & Case Generation"],["3.2","BDD / Gherkin Specification"],
+          ["3.3","Synthetic Test Data Generation"],["3.4","Test Script Dev & Optimization"],
+          ["3.5","RTM Update & Coverage Analysis"]],
+    zions:["TestGen","DataForge","IntelliSpec"] },
+  { n:4,  name:"Test Environment Setup",              color:"#F59E0B",
+    subs:[["4.1","Environment Requirements Definition"],["4.2","IaC Infrastructure Provisioning"],
+          ["4.3","Test Data Setup & CI/CD Pipeline"],["4.4","Tools Install & Env Health Check"],
+          ["4.5","Access Mgmt & Security Config"]],
+    zions:["Envoy","Bridge","Guardian"] },
+  { n:5,  name:"Test Execution",                      color:"#10B981",
+    subs:[["5.1","Smoke / Functional / Regression"],["5.2","Integration & End-to-End Testing"],
+          ["5.3","Performance / Load / Stress Testing"],["5.4","Security & Penetration Testing"],
+          ["5.5","API, Cross-Platform & Visual Testing"],["5.6","Test Result Recording & Analysis"]],
+    zions:["TestBot","Guardian","Beacon"] },
+  { n:6,  name:"Defect Management",                   color:"#EF4444",
+    subs:[["6.1","Defect Identification & Auto-Logging"],["6.2","Classification, Dedup & Smart Assign"],
+          ["6.3","Root Cause Analysis (AI-assisted)"],["6.4","Retesting, Verification & Triage"],
+          ["6.5","Defect Trend & Pattern Analysis"]],
+    zions:["Sentinel","Nexus"] },
+  { n:7,  name:"Test Reporting & Metrics",            color:"#06B6D4",
+    subs:[["7.1","Real-time Test Dashboards"],["7.2","Quality Gate & Coverage Analysis"],
+          ["7.3","Risk-based Quality Reporting"],["7.4","Predictive Quality Trend Analysis"],
+          ["7.5","Stakeholder & Summary Reports"]],
+    zions:["Beacon","Prism","Nexus"] },
+  { n:8,  name:"Test Closure",                        color:"#16A34A",
+    subs:[["8.1","Exit Criteria & Quality Sign-off"],["8.2","Artifact Archiving & Knowledge Transfer"],
+          ["8.3","Lessons Learned Documentation"],["8.4","Process Improvement Recommendations"]],
+    zions:["Vault","Compass","Nexus"] },
+  { n:9,  name:"Customer Release",                    color:"#F97316",
+    subs:[["9.1","Release Readiness Assessment"],["9.2","UAT Coordination & Monitoring"],
+          ["9.3","Go-live & Deployment Verification"],["9.4","Release Notes & Customer Comm"],
+          ["9.5","Rollback Plan Validation"]],
+    zions:["Guardian","Bridge","Pulse"] },
+  { n:10, name:"Post-Release & Prod. Monitoring",     color:"#7C3AED",
+    subs:[["10.1","Anomaly Detection & Perf Monitoring"],["10.2","Sentiment & Defect Auto-Triage"],
+          ["10.3","SLA Compliance Tracking"],["10.4","Hotfix Testing & Validation"],
+          ["10.5","Continuous Improvement & ML Retraining"]],
+    zions:["Pulse","Sentinel","Nexus","FlowEngine"] }
+];
+
+// Row 1 — chevrons
+const chevRow = document.getElementById('chevRow');
+PH.forEach(p=>{
+  const d = document.createElement('div');
+  d.className = 'chev';
+  d.style.background = `linear-gradient(135deg, ${p.color}, ${p.color}d0)`;
+  d.innerHTML = `<span class="chev-num">${p.n}.</span><span class="chev-nm">${p.name}</span>`;
+  chevRow.appendChild(d);
+});
+
+// Row 2 — sub-phase tiles
+const subRow = document.getElementById('subRow');
+PH.forEach(p=>{
+  const items = p.subs.map(s=>`<div class="si"><span class="si-id">${s[0]}</span><span class="si-tx">${s[1]}</span></div>`).join('');
+  const d = document.createElement('div');
+  d.className = 'sub-tile';
+  d.style.borderTopColor = p.color;
+  d.innerHTML = items;
+  subRow.appendChild(d);
+});
+
+// Row 4 — Zion tiles
+const zionRow = document.getElementById('zionRow');
+PH.forEach(p=>{
+  const chips = p.zions.map(z=>`<span class="zc" style="border-color:${p.color}50;color:${p.color}">Zion.${z}</span>`).join('');
+  const d = document.createElement('div');
+  d.className = 'zion-tile';
+  d.style.borderTopColor = p.color;
+  d.innerHTML = `<div class="zh">Zion Components</div><div>${chips}</div>`;
+  zionRow.appendChild(d);
+});
+</script>
+</body>
+</html>
