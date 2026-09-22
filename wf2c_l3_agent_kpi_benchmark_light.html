@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L3 Agent KPI Benchmark</title>
+<style>
+:root{
+  --ground:#f0f4f9; --card:#ffffff; --soft:#f8fafc; --soft2:#f1f5f9;
+  --ink:#1e293b; --ink2:#374151; --mute:#64748b; --faint:#94a3b8;
+  --line:#e2e8f0; --line2:#cbd5e1;
+  --l3:#8b5cf6; --l3bg:#f5f3ff; --l3bd:#c4b5fd; --l3ink:#6d28d9;
+  --t1:#166534; --t1bg:#dcfce7; --t1bd:#86efac;
+  --t2:#0369a1; --t2bg:#e0f2fe; --t2bd:#7dd3fc;
+  --t3:#92400e; --t3bg:#fef3c7; --t3bd:#fcd34d;
+  --t4:#9a3412; --t4bg:#ffedd5; --t4bd:#fdba74;
+  --t5:#991b1b; --t5bg:#fee2e2; --t5bd:#fca5a5;
+  --mono:'Consolas','SFMono-Regular',Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--ground);color:var(--ink);font-size:13px;line-height:1.45}
+.wrap{max-width:100%;overflow:hidden;border:1px solid var(--line);background:var(--ground)}
+.hdr{background:linear-gradient(135deg,#fff 0%,#f8faff 100%);border-bottom:3px solid var(--line);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.brand{display:flex;align-items:center;gap:11px}
+.mark{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#4f46e5,#7c3aed,#db2777);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.3)}
+.bn{font-size:.95rem;font-weight:700}
+.bs{font-size:.6rem;color:var(--mute);margin-top:2px}
+.htitle{font-size:.9rem;font-weight:700;text-align:center;text-wrap:balance}
+.hsub{font-size:.64rem;color:var(--mute);margin-top:3px;text-align:center}
+.htags{display:flex;gap:6px;flex-wrap:wrap}
+.tg{padding:4px 10px;border-radius:20px;font-size:.6rem;font-weight:600}
+.tg-1{background:#ede9fe;border:1px solid #c4b5fd;color:#6d28d9}
+.tg-2{background:#fce7f3;border:1px solid #f9a8d4;color:#9d174d}
+.tg-3{background:#dcfce7;border:1px solid #86efac;color:#166534}
+.tg-4{background:#e0f2fe;border:1px solid #7dd3fc;color:#0369a1}
+
+.opt-bar{background:linear-gradient(135deg,#f5f3ff,#fdf2f8);border-bottom:1px solid var(--line);padding:9px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:.66rem}
+.opt-bar .b{background:linear-gradient(135deg,#7c3aed,#db2777);color:#fff;padding:3px 9px;border-radius:5px;font-size:.56rem;font-weight:700;letter-spacing:.05em}
+.opt-bar .s{color:#475569}.opt-bar .s b{color:var(--ink)}
+.opt-bar .d{color:#16a34a;font-weight:700}
+.ly-bar{background:var(--soft);border-bottom:1px solid var(--line);padding:8px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ly-ttl{font-size:.6rem;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.1em}
+.ly-item{display:flex;align-items:center;gap:6px;font-size:.62rem;color:var(--faint)}
+.ly-item.on{color:var(--l3ink);font-weight:700;background:var(--l3bg);border:1px solid var(--l3bd);padding:2px 8px;border-radius:5px}
+.ly-sq{width:9px;height:9px;border-radius:2px}
+.ly-div{width:1px;height:14px;background:var(--line)}
+
+.sec{padding:18px 22px 4px}
+.sec-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sec-k{font-family:var(--mono);font-size:.6rem;font-weight:700;color:var(--l3ink);background:var(--l3bg);border:1px solid var(--l3bd);padding:1px 6px;border-radius:4px}
+.sec-t{font-size:.95rem;font-weight:700;text-wrap:balance}
+.sec-d{font-size:.68rem;color:var(--mute);max-width:90ch}
+
+/* dimension cards */
+.dims{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:900px){.dims{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.dims{grid-template-columns:1fr}}
+.dim{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:11px 12px;display:flex;flex-direction:column;gap:6px}
+.dim-top{display:flex;align-items:center;gap:8px}
+.dim-id{font-family:var(--mono);font-size:.6rem;font-weight:800;color:#fff;background:var(--l3);border-radius:4px;padding:2px 6px}
+.dim-nm{font-size:.74rem;font-weight:700;flex:1}
+.dim-w{font-family:var(--mono);font-size:.8rem;font-weight:800;color:var(--l3ink);font-variant-numeric:tabular-nums}
+.wbar{height:4px;background:var(--soft2);border-radius:2px;overflow:hidden}
+.wbar i{display:block;height:100%;background:var(--l3)}
+.dim ul{list-style:none;display:flex;flex-direction:column;gap:3px}
+.dim li{font-size:.62rem;color:var(--ink2);padding-left:10px;position:relative}
+.dim li:before{content:"";position:absolute;left:0;top:.5em;width:4px;height:4px;border-radius:50%;background:var(--l3bd)}
+.dim li b{color:var(--ink)}
+
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:10px;margin-top:10px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:11px 12px}
+.panel h4{font-size:.72rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.gate{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-top:1px dashed var(--line);font-size:.63rem;color:var(--ink2)}
+.gate:first-of-type{border-top:none}
+.gate .gid{font-family:var(--mono);font-weight:800;font-size:.58rem;color:var(--t5);background:var(--t5bg);border:1px solid var(--t5bd);border-radius:3px;padding:0 5px;flex-shrink:0}
+.tier{display:grid;grid-template-columns:118px 64px 1fr;gap:8px;align-items:center;padding:5px 0;border-top:1px dashed var(--line);font-size:.63rem}
+.tier:first-of-type{border-top:none}
+.pill{display:inline-block;font-size:.58rem;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid;white-space:nowrap}
+.p1{background:var(--t1bg);border-color:var(--t1bd);color:var(--t1)}
+.p2{background:var(--t2bg);border-color:var(--t2bd);color:var(--t2)}
+.p3{background:var(--t3bg);border-color:var(--t3bd);color:var(--t3)}
+.p4{background:var(--t4bg);border-color:var(--t4bd);color:var(--t4)}
+.p5{background:var(--t5bg);border-color:var(--t5bd);color:var(--t5)}
+.tier .rng{font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums}
+.formula{font-family:var(--mono);font-size:.62rem;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:8px 10px;color:var(--ink2);line-height:1.6;margin-top:8px;overflow-x:auto}
+
+/* flow */
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.st{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 10px;display:flex;flex-direction:column;gap:3px}
+.st-n{font-family:var(--mono);font-size:.58rem;font-weight:800;color:var(--l3ink)}
+.st-t{font-size:.68rem;font-weight:700}
+.st-d{font-size:.6rem;color:var(--mute)}
+
+/* phase filter */
+.ph-nav{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.pp{padding:4px 9px;border-radius:5px;font-size:.6rem;font-weight:600;white-space:nowrap;cursor:pointer;border:1px solid var(--line2);background:var(--card);color:#475569;font-family:inherit}
+.pp:focus-visible{outline:2px solid var(--l3);outline-offset:1px}
+.pp.on{box-shadow:inset 0 0 0 1px currentColor;font-weight:800}
+
+/* KPI table */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line2);border-radius:10px;background:var(--card);box-shadow:0 2px 10px rgba(0,0,0,.06)}
+table.kpi{border-collapse:collapse;width:100%;min-width:1640px;font-size:.64rem}
+.kpi th{position:sticky;top:0;background:var(--soft2);text-align:left;font-size:.58rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.06em;padding:9px 9px;border-bottom:2px solid var(--line2);border-right:1px solid var(--line);vertical-align:bottom}
+.kpi th .w{display:block;font-family:var(--mono);color:var(--l3ink);letter-spacing:0;text-transform:none;margin-top:2px}
+.kpi td{padding:8px 9px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+.kpi tr.phr td{background:var(--soft);padding:7px 9px;border-bottom:1px solid var(--line2)}
+.phr .phnum{display:inline-flex;width:20px;height:20px;border-radius:5px;align-items:center;justify-content:center;color:#fff;font-size:.58rem;font-weight:800;margin-right:7px;vertical-align:middle}
+.phr .phnm{font-size:.72rem;font-weight:700;color:var(--ink);vertical-align:middle}
+.phr .phs{font-size:.58rem;color:var(--mute);margin-left:10px;vertical-align:middle}
+.cid{font-family:var(--mono);font-size:.56rem;font-weight:700;color:var(--faint)}
+.cnm{font-size:.72rem;font-weight:700;color:var(--ink);margin:2px 0 4px;line-height:1.3}
+.ci-tag{font-size:.5rem;font-weight:700;padding:1px 5px;border-radius:3px;font-family:var(--mono)}
+.tag-ai{background:#ede9fe;border:1px solid #c4b5fd;color:#6d28d9}
+.tag-ml{background:#e0f2fe;border:1px solid #7dd3fc;color:#0369a1}
+.tag-hx{background:#fef3c7;border:1px solid #fcd34d;color:#92400e}
+.tag-bl{background:#f1f5f9;border:1px solid #cbd5e1;color:#475569}
+.tags{display:flex;gap:3px;flex-wrap:wrap}
+.tech{font-size:.6rem;color:var(--mute);margin-top:5px}
+.io{font-size:.6rem}
+.io div{display:flex;gap:4px}
+.io span.k{font-family:var(--mono);font-weight:700;color:var(--faint);flex-shrink:0;width:22px}
+.kl{list-style:none;display:flex;flex-direction:column;gap:4px}
+.kl li{line-height:1.35}
+.kl .tv{font-family:var(--mono);font-weight:800;color:var(--t1);font-variant-numeric:tabular-nums;white-space:nowrap}
+.kl .mv{font-family:var(--mono);font-size:.56rem;color:var(--faint);white-space:nowrap}
+.gold{font-size:.6rem;color:var(--ink2)}
+.shared{margin-top:5px;font-size:.56rem;color:var(--l3ink);font-weight:600}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.6rem;color:var(--mute);margin:8px 2px 0}
+.legend .tv{font-family:var(--mono);font-weight:800;color:var(--t1)}
+.legend .mv{font-family:var(--mono);color:var(--faint)}
+
+/* shared blocks */
+.blocks{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px}
+.blk{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+.blk-t{font-size:.7rem;font-weight:700}
+.blk-d{font-size:.6rem;color:var(--mute);margin:3px 0 6px}
+.blk-u{display:flex;gap:3px;flex-wrap:wrap}
+.blk-u span{font-family:var(--mono);font-size:.54rem;font-weight:700;background:var(--l3bg);border:1px solid var(--l3bd);color:var(--l3ink);border-radius:3px;padding:0 5px}
+
+/* calculator */
+.calc{background:var(--card);border:1px solid var(--line2);border-radius:10px;padding:12px 14px}
+.calc-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:.66rem}
+.calc select{font-family:inherit;font-size:.68rem;padding:4px 8px;border:1px solid var(--line2);border-radius:5px;background:var(--card);color:var(--ink);max-width:100%}
+.ex{font-size:.56rem;font-weight:700;color:var(--t3);background:var(--t3bg);border:1px solid var(--t3bd);padding:1px 7px;border-radius:9px}
+.calc-wrap{overflow-x:auto}
+table.sc{border-collapse:collapse;width:100%;min-width:860px;font-size:.66rem}
+.sc th{font-size:.56rem;text-transform:uppercase;letter-spacing:.06em;color:#475569;text-align:center;padding:6px;border-bottom:2px solid var(--line2);background:var(--soft2)}
+.sc th:first-child{text-align:left}
+.sc td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:center}
+.sc td:first-child{text-align:left;font-weight:700}
+.sc input[type=number]{width:56px;font-family:var(--mono);font-size:.68rem;padding:3px 4px;border:1px solid var(--line2);border-radius:4px;text-align:center;color:var(--ink);background:var(--card)}
+.sc input:focus-visible,.calc select:focus-visible{outline:2px solid var(--l3);outline-offset:1px}
+.sc .comp{font-family:var(--mono);font-weight:800;font-size:.78rem;font-variant-numeric:tabular-nums}
+.sc .rk{font-family:var(--mono);font-weight:800;color:var(--l3ink)}
+.verdict{margin-top:10px;font-size:.66rem;color:var(--ink2);background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+
+.conf-note{background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:7px 14px;margin:14px 22px 0;font-size:.63rem;color:#1e40af}
+.foot{background:var(--card);border-top:1px solid var(--line);padding:10px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:.6rem;color:#475569;margin-top:18px}
+.foot-c{margin-left:auto;font-size:.58rem;color:var(--faint)}
+@media (max-width:560px){.hdr,.opt-bar,.ly-bar,.sec,.foot{padding-left:16px;padding-right:16px}.conf-note{margin-left:16px;margin-right:16px}.tier{grid-template-columns:1fr 60px}.tier span:last-child{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hdr">
+  <div class="brand">
+    <div class="mark">Z</div>
+    <div><div class="bn">Zion Quality Platform</div><div class="bs">AI-Powered Software Quality Architecture &middot; Multi-Layer AI Agent System</div></div>
+  </div>
+  <div>
+    <div class="htitle">L3 Agent (Controller) &mdash; Reusable Solution Benchmark KPIs</div>
+    <div class="hsub">30 L3 components &middot; 10 STLC phases &middot; one benchmark for Sol PE grp1 &middot; grp2 &middot; grp3</div>
+  </div>
+  <div class="htags">
+    <span class="tg tg-1">Wireframe 2c</span>
+    <span class="tg tg-2">L3 Benchmark</span>
+    <span class="tg tg-3">Light Theme</span>
+    <span class="tg tg-4">Confluence Ready</span>
+  </div>
+</div>
+
+<div class="opt-bar">
+  <span class="b">BENCHMARK CHARTER</span>
+  <span class="s">Rule: <b>one certified solution per L3 capability</b> across Sol PE</span>
+  <span style="color:#cbd5e1">|</span>
+  <span class="s">Every grp1 / grp2 / grp3 submission is scored on the <b>same golden dataset</b>, <b>6 weighted dimensions</b> and <b>6 mandatory gates</b></span>
+  <span style="color:#cbd5e1">|</span>
+  <span class="d">Highest composite that passes all gates = platform standard</span>
+</div>
+
+<div class="ly-bar">
+  <span class="ly-ttl">Architecture Layers</span>
+  <div class="ly-item"><div class="ly-sq" style="background:#6366f1"></div>L1 &middot; Work Process</div>
+  <div class="ly-div"></div>
+  <div class="ly-item"><div class="ly-sq" style="background:#0ea5e9"></div>L2 &middot; Application</div>
+  <div class="ly-div"></div>
+  <div class="ly-item on"><div class="ly-sq" style="background:#8b5cf6"></div>L3 &middot; Agent (Controller) &mdash; AI agents, ML models, heuristics, core business logic</div>
+  <div class="ly-div"></div>
+  <div class="ly-item"><div class="ly-sq" style="background:#10b981"></div>L4 &middot; Data</div>
+  <div style="margin-left:auto;font-size:.58rem;color:#94a3b8">Companion to wf2b (STLC &times; 4 layers, optimized)</div>
+</div>
+
+<!-- A. Scoring model -->
+<div class="sec">
+  <div class="sec-h"><span class="sec-k">A</span><span class="sec-t">Scoring model &mdash; six dimensions every L3 solution is measured on</span></div>
+  <p class="sec-d">Dimension weights are fixed across all 30 components so rankings are comparable. The component-specific KPIs in section C feed each dimension; the generic KPIs below apply to every component regardless of phase.</p>
+  <div class="dims" id="dims"></div>
+
+  <div class="two">
+    <div class="panel">
+      <h4><span class="pill p5">GATES</span> Mandatory pass / fail &mdash; any failure makes a solution ineligible</h4>
+      <div id="gates"></div>
+    </div>
+    <div class="panel">
+      <h4><span class="pill p1">TIERS</span> Eligibility ranking by composite score</h4>
+      <div id="tiers"></div>
+      <div class="formula">
+        KPI score &nbsp;= 100 if value meets Target &middot; 60 at Min &middot; linear between &middot; 0 below Min<br>
+        Dimension &nbsp;= mean of its KPI scores (component-specific + generic)<br>
+        Composite &nbsp;= 0.30&middot;D1 + 0.20&middot;D2 + 0.15&middot;D3 + 0.10&middot;D4 + 0.15&middot;D5 + 0.10&middot;D6<br>
+        Tie-break &nbsp;= higher D1 &rarr; lower cost per 1k runs &rarr; more groups already adopting<br>
+        Challenger replaces champion only if composite &ge; champion + 5 and no gate regresses
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B. Flow -->
+<div class="sec">
+  <div class="sec-h"><span class="sec-k">B</span><span class="sec-t">Evaluation flow &mdash; from idea to certified reusable component</span></div>
+  <div class="flow" id="flow"></div>
+</div>
+
+<!-- C. KPI table -->
+<div class="sec">
+  <div class="sec-h"><span class="sec-k">C</span><span class="sec-t">Benchmark KPIs per L3 component &mdash; STLC phases 1&ndash;10</span></div>
+  <p class="sec-d">Each KPI shows the <b>Target</b> (earns full score, required for Tier 1) and the <b>Min</b> floor (below it the KPI scores 0; below it on any D1 KPI fails gate G5). Filter by phase:</p>
+  <div class="ph-nav" id="phNav" role="toolbar" aria-label="Filter by STLC phase"></div>
+  <div class="tbl-wrap">
+    <table class="kpi" id="kpi">
+      <thead><tr>
+        <th style="width:190px">L3 component<span class="w">type &middot; technique</span></th>
+        <th style="width:170px">Reusable I/O contract<span class="w">what every group must accept / return</span></th>
+        <th style="width:250px">D1 &middot; Efficacy<span class="w">30%</span></th>
+        <th style="width:190px">D2 &middot; Reuse &amp; genericity<span class="w">20%</span></th>
+        <th style="width:170px">D3 &middot; Scale &amp; performance<span class="w">15%</span></th>
+        <th style="width:180px">D4 &middot; Reliability &amp; trust<span class="w">10%</span></th>
+        <th style="width:160px">D5 &middot; Business value<span class="w">15%</span></th>
+        <th style="width:190px">Golden benchmark set<span class="w">shared, versioned, owned by review board</span></th>
+      </tr></thead>
+      <tbody id="kpiBody"></tbody>
+    </table>
+  </div>
+  <div class="legend">
+    <span><span class="tv">&ge;0.90</span> Target (Tier-1)</span>
+    <span><span class="mv">min 0.82</span> Floor</span>
+    <span><span class="ci-tag tag-ai">AI</span> LLM / agentic</span>
+    <span><span class="ci-tag tag-ml">ML</span> trained model</span>
+    <span><span class="ci-tag tag-hx">HX</span> heuristic / algorithmic</span>
+    <span><span class="ci-tag tag-bl">BL</span> deterministic business logic</span>
+    <span>D6 Governance &amp; maintainability (10%) uses the generic KPIs in section A for every component.</span>
+  </div>
+</div>
+
+<!-- D. Shared building blocks -->
+<div class="sec">
+  <div class="sec-h"><span class="sec-k">D</span><span class="sec-t">Shared building blocks &mdash; build once, reuse across components</span></div>
+  <p class="sec-d">Duplication also happens <i>inside</i> the 30 components. These common cores should be built once as platform services; a group proposing a component that re-implements one of them scores 0 on the D2 &ldquo;uses shared services&rdquo; KPI.</p>
+  <div class="blocks" id="blocks"></div>
+</div>
+
+<!-- E. Calculator -->
+<div class="sec">
+  <div class="sec-h"><span class="sec-k">E</span><span class="sec-t">Ranking scorecard &mdash; compare grp1, grp2 and grp3 submissions</span></div>
+  <p class="sec-d">Enter each group&rsquo;s dimension scores (0&ndash;100) from the benchmark run. The composite, tier and rank update instantly.</p>
+  <div class="calc">
+    <div class="calc-top">
+      <label for="calcComp"><b>L3 component</b></label>
+      <select id="calcComp"></select>
+      <span class="ex">Example values &mdash; replace with your benchmark results</span>
+    </div>
+    <div class="calc-wrap">
+      <table class="sc">
+        <thead><tr><th>Sol PE group</th><th>D1 Efficacy<br>30%</th><th>D2 Reuse<br>20%</th><th>D3 Scale<br>15%</th><th>D4 Trust<br>10%</th><th>D5 Value<br>15%</th><th>D6 Gov.<br>10%</th><th>All gates<br>pass</th><th>Composite</th><th>Tier</th><th>Rank</th></tr></thead>
+        <tbody id="scBody"></tbody>
+      </table>
+    </div>
+    <div class="verdict" id="verdict"></div>
+  </div>
+</div>
+
+<div class="conf-note">&#8505;&#65039; <strong>Confluence:</strong> Insert &rarr; Other Macros &rarr; HTML &rarr; paste full file content. Phase filter and scorecard need scripts enabled in the macro; the tables render statically either way.</div>
+
+<div class="foot">
+  <span>AI-Powered Software Quality Architecture &mdash; Multi-Layer AI Agent System &middot; Zion Platform</span>
+  <span>30 L3 components &middot; 6 dimensions &middot; 6 gates &middot; 5 tiers</span>
+  <span class="foot-c">Companion to wf2b (STLC &times; 4 layers, optimized) &middot; for Sol PE grp1 / grp2 / grp3</span>
+</div>
+
+</div>
+
+<script>
+var DIMS = [
+  {id:"D1", nm:"Functional efficacy", w:30, k:[
+    "<b>Component KPIs</b> in section C, measured on the shared golden set",
+    "Must beat the current manual / tool baseline on the same set",
+    "Every D1 KPI at or above its <b>Min</b> (gate G5)"]},
+  {id:"D2", nm:"Reuse & genericity", w:20, k:[
+    "<b>Portability:</b> runs on &ge;3 product lines (NVMe SSD, UFS, eMMC/uSD, PSSD) with &le;10% efficacy drop",
+    "<b>Config over code:</b> &ge;90% of group/product specifics in YAML/prompt packs, 0 hard-coded paths",
+    "<b>Standard contract:</b> versioned OpenAPI / JSON Schema I/O, SemVer releases",
+    "<b>Uses shared services</b> (section D) instead of re-implementing them",
+    "<b>Adoption:</b> used by &ge;2 of 3 groups within 2 quarters; onboarding a new group &le;2 days"]},
+  {id:"D3", nm:"Scalability & performance", w:15, k:[
+    "p95 latency and throughput at the component target",
+    "<b>10&times; load</b> with &le;20% latency degradation",
+    "Stateless container, horizontally scalable on Zion K8s",
+    "<b>Cost per 1k runs</b> (LLM tokens + GPU-hrs) at or below benchmark",
+    "Fits the on-prem GPU / model-size budget"]},
+  {id:"D4", nm:"Reliability & trust", w:10, k:[
+    "Run-to-run consistency &ge;95% (fixed seed, temperature 0)",
+    "Hallucination / fabricated-output rate at or below component target",
+    "Evidence or citation attached to every output",
+    "Availability &ge;99.5%; graceful fallback to rules or a human"]},
+  {id:"D5", nm:"Business value", w:15, k:[
+    "<b>Effort saved</b> vs manual baseline (component target)",
+    "<b>Accept-without-edit</b> rate by SMEs",
+    "Cycle-time reduction of the STLC activity it serves",
+    "Monthly active users across groups"]},
+  {id:"D6", nm:"Governance & maintainability", w:10, k:[
+    "Solution code test coverage &ge;80%; Review Shield: 0 critical",
+    "SAST 0 high; 0 secrets; data stays on-prem",
+    "Model card, data sheet, README, runbook",
+    "MLOps: model registry versioning, drift monitor, retrain path",
+    "Named owner and support SLA"]}
+];
+var GATES = [
+  ["G1","Registered in the Zion Capability Registry <b>before</b> development starts; duplicate check done against existing Tier-1/Tier-2 components."],
+  ["G2","Benchmarked on the shared golden dataset with a reproducible harness (versioned data, fixed seeds, scripted run)."],
+  ["G3","Data confidentiality: customer specs, logs and telemetry are processed only through the approved on-prem LLM / Zion LLM gateway."],
+  ["G4","Human-in-the-loop for irreversible actions: closing defects, granting access, release Go, committing healed scripts."],
+  ["G5","Every D1 efficacy KPI is at or above its Min floor."],
+  ["G6","Documentation pack complete: README, I/O contract, model card, runbook, benchmark report."]
+];
+var TIERS = [
+  ["p1","Tier 1 &middot; Certified","&ge; 85","Platform standard. Mandatory reuse across grp1/2/3; new builds of this capability are blocked."],
+  ["p2","Tier 2 &middot; Conditional","75 &ndash; 84","Reusable with a named improvement plan; re-benchmark in one quarter."],
+  ["p3","Tier 3 &middot; Group-local","60 &ndash; 74","Usable within the owning group only; not listed in the shared catalog."],
+  ["p4","Tier 4 &middot; Rework","45 &ndash; 59","Not for production use; merge effort into the leading solution."],
+  ["p5","Not eligible","&lt; 45 or gate fail","Retire, or re-submit after fixing the failed gate."]
+];
+var FLOW = [
+  ["Register intent","Group files the capability in the Zion registry with its L3 ID (e.g. L3-1.a)."],
+  ["Duplicate check","If a Tier-1/2 solution exists, extend it instead of building a new one."],
+  ["Build to contract","Implement the reusable I/O contract and use the shared services."],
+  ["Benchmark run","Automated harness on the golden set; produces the KPI report."],
+  ["Score & gate","6 dimensions &rarr; composite; 6 gates checked."],
+  ["Cross-group review","grp1/2/3 leads and AI champions validate the evidence."],
+  ["Rank & publish","Tier assigned; Tier 1 goes into the shared catalog as the standard."],
+  ["Quarterly re-benchmark","Champion vs challenger; golden set grows with new cases."]
+];
+
+var PH = [
+  {n:1,name:"Requirements Analysis & Review",color:"#3B82F6",bg:"#EFF6FF"},
+  {n:2,name:"Test Planning",color:"#8B5CF6",bg:"#F5F3FF"},
+  {n:3,name:"Test Design & Development",color:"#EC4899",bg:"#FDF2F8"},
+  {n:4,name:"Test Environment Setup",color:"#F59E0B",bg:"#FFFBEB"},
+  {n:5,name:"Test Execution",color:"#10B981",bg:"#ECFDF5"},
+  {n:6,name:"Defect Management",color:"#EF4444",bg:"#FEF2F2"},
+  {n:7,name:"Test Reporting & Metrics",color:"#06B6D4",bg:"#ECFEFF"},
+  {n:8,name:"Test Closure",color:"#16A34A",bg:"#F0FDF4"},
+  {n:9,name:"Customer Release",color:"#F97316",bg:"#FFF7ED"},
+  {n:10,name:"Post-Release & Prod. Monitoring",color:"#7C3AED",bg:"#F5F3FF"}
+];
+
+/* eff: [metric, target, min] ; other cols: strings */
+var C = [
+/* ---------- Phase 1 ---------- */
+{p:1,id:"1.a",nm:"NL Req Parsing & Classification Agent",t:["ai","hx"],tech:"LLM extraction + taxonomy classifier; clause-level chunking",
+ i:"Spec / PRD (PDF, DOCX, ReqIF)",o:"Atomic reqs JSON {id, text, type, priority, source clause}",
+ eff:[["Atomic requirement extraction recall","≥95%","88%"],["Classification macro-F1 (func / perf / security / compliance / interface)","≥0.90","0.82"],["Source-clause traceability","100%","98%"]],
+ reuse:"Taxonomy in YAML; same build parses NVMe, JEDEC UFS/eMMC and internal PRDs with no code change",
+ scale:"≥300 pages/hr; p95 ≤8 s/page; 500-page spec with no chunk loss",
+ trust:"Hallucinated requirements ≤1%; run-to-run agreement ≥97%",
+ val:"Manual parsing effort ↓ ≥60%; SME acceptance ≥85%",
+ gold:"5 annotated specs (NVMe 2.0 Base, ZNS, UFS 4.0, 2 internal PRDs), ~2,500 labelled requirements",sh:["Spec ingestion","LLM gateway"]},
+{p:1,id:"1.b",nm:"Feasibility & Quality Analyzer",t:["ai","hx"],tech:"LLM rubric on ISO/IEC/IEEE 29148 attributes + ambiguity lexicon",
+ i:"Atomic requirements",o:"Flags {ambiguous, untestable, incomplete, conflicting} + rewrite suggestion",
+ eff:[["Requirement-defect detection precision / recall","≥0.85 / 0.80","0.75 / 0.70"],["Conflicting-pair detection recall","≥0.75","0.60"],["Rewrite suggestion acceptance","≥70%","55%"]],
+ reuse:"Pluggable rule packs (29148 + group checklists); rules not prompts carry the domain",
+ scale:"1,000 reqs ≤10 min; conflict search via embedding blocking, not O(n²)",
+ trust:"Every flag cites rule + text span; false alarms ≤15%",
+ val:"Req defects escaping into test design ↓ ≥40%",
+ gold:"800 requirements with SME-labelled 29148 defects + 120 known conflict pairs",sh:["Embedding service","Rule engine"]},
+{p:1,id:"1.c",nm:"RTM Auto-Generator + Risk Scoring",t:["ai","hx"],tech:"Semantic linking + traceability graph; likelihood × impact risk heuristic",
+ i:"Requirements + test cases",o:"RTM links {req, tc, confidence} + risk score 1–25",
+ eff:[["Trace-link precision / recall","≥0.90 / 0.85","0.80 / 0.75"],["Risk rank vs SME (Spearman ρ)","≥0.75","0.60"],["Orphan req / TC detection","100%","98%"]],
+ reuse:"ALM adapters (Jira, Polarion, TestRail); risk weights configurable per program",
+ scale:"10k reqs × 50k TCs ≤30 min; incremental re-link on delta ≤2 min",
+ trust:"Confidence + rationale per link; links <0.6 routed to human review",
+ val:"RTM creation effort ↓ ≥70%; coverage gaps found before design ≥90%",
+ gold:"Curated RTMs from 2 released products (~6k links) with SME risk rankings",sh:["Embedding service","Risk library"]},
+/* ---------- Phase 2 ---------- */
+{p:2,id:"2.a",nm:"Test Strategy AI Advisor",t:["ai"],tech:"RAG over strategy templates and past strategies + LLM drafting",
+ i:"Scope, risk register, product type",o:"Strategy draft {levels, types, techniques, entry/exit}",
+ eff:[["Section completeness vs ISO/IEC/IEEE 29119-3","≥95%","85%"],["SME rubric score","≥4.0 / 5","3.3"],["High risks with a mapped strategy element","100%","95%"]],
+ reuse:"Template library parameterised by product line (client/enterprise SSD, UFS, eMMC, PSSD)",
+ scale:"Draft ≤3 min; ≥50 concurrent plans",
+ trust:"≥90% of recommendations cite a template or KB source",
+ val:"Strategy authoring time ↓ ≥50%",
+ gold:"20 approved historical strategies + SME scoring rubric",sh:["Spec ingestion","Doc generator"]},
+{p:2,id:"2.b",nm:"Effort Estimator ML Model",t:["ml"],tech:"Gradient boosting / quantile regression on historical effort",
+ i:"Features {req count, complexity, TC count, reuse %, FW delta}",o:"Person-days P10 / P50 / P90",
+ eff:[["MMRE (mean magnitude of relative error)","≤20%","30%"],["PRED(25)","≥75%","60%"],["P10–P90 interval coverage","≥80%","70%"]],
+ reuse:"One feature schema for all groups; only a thin per-group calibration layer",
+ scale:"Inference ≤200 ms; retrain ≤1 hr on 5k projects",
+ trust:"Top-5 SHAP drivers per estimate; drift PSI <0.2",
+ val:"Estimate-vs-actual variance ↓ ≥30% vs expert baseline",
+ gold:"≥150 closed projects, planned vs actual effort, time-split hold-out",sh:["MLOps pipeline"]},
+{p:2,id:"2.c",nm:"Risk Scoring & Plan Generator",t:["hx","ai"],tech:"FMEA RPN heuristic + LLM plan writer",
+ i:"Features, risk items, strategy",o:"RPN scores, mitigations, test plan (MD / DOCX / Confluence)",
+ eff:[["Top-10 risk overlap with SME","≥80%","65%"],["Plan section completeness","≥95%","85%"],["Mitigation relevance (SME)","≥4.0 / 5","3.3"]],
+ reuse:"FMEA scales and weights in config; output renderers shared",
+ scale:"Plan for 200 features ≤5 min",
+ trust:"RPN fully deterministic (same input → same score, 100%)",
+ val:"Plan cycle time ↓ ≥50%; review comments per plan ↓ ≥30%",
+ gold:"15 plans with SME risk rankings and review comments",sh:["Risk library","Rule engine","Doc generator"]},
+/* ---------- Phase 3 ---------- */
+{p:3,id:"3.a",nm:"Scenario + LLM Test Case Gen Agent",t:["ai","hx"],tech:"LLM + technique heuristics (EP, BVA, pairwise, state transition)",
+ i:"Atomic requirement + domain pack",o:"TCs {pre, steps, expected, technique, req link}",
+ eff:[["Requirement coverage","≥95%","85%"],["Valid, executable TC rate","≥90%","80%"],["Fault detection vs expert suite (mutation parity)","≥90%","75%"],["Duplicate TCs","≤5%","10%"]],
+ reuse:"Technique plug-ins; domain packs (NVMe admin / IO, UFS UPIU); TMS-neutral schema",
+ scale:"≥500 TCs/hr; batch of 1,000 requirements",
+ trust:"Non-existent opcode / field / parameter ≤2%; every TC traced to req + technique",
+ val:"TC design effort ↓ ≥60%; accept-without-edit ≥70%",
+ gold:"NVMe Format NVM, Sanitize, Get Log Page expert suites (~1,500 TCs) + seeded mutants",sh:["LLM gateway","Embedding service"]},
+{p:3,id:"3.b",nm:"BDD Writer & Data Synth Agent",t:["ai","hx"],tech:"LLM Gherkin writer + constraint-based / generative data synthesis",
+ i:"TC or requirement; data schema + constraints",o:".feature files; synthetic datasets",
+ eff:[["Gherkin lint pass","100%","98%"],["Step-definition reuse ratio","≥60%","40%"],["Synthetic data constraint validity","≥99%","97%"],["Boundary-value coverage","≥95%","85%"]],
+ reuse:"Shared step library; generators driven by JSON Schema / NVMe structure definitions",
+ scale:"1M records ≤10 min",
+ trust:"0 real customer / PII records; distribution fidelity KS p>0.05 where applicable",
+ val:"Test data prep time ↓ ≥70%",
+ gold:"300 reference scenarios + 20 data schemas with constraint oracles",sh:["LLM gateway"]},
+{p:3,id:"3.c",nm:"Script Dev/Review & Coverage Agent",t:["ai","hx"],tech:"Code LLM + static analysis + coverage-gap heuristics",
+ i:"TC; existing scripts; coverage data",o:"Automation script; review findings; coverage-gap list",
+ eff:[["Generated script first-run pass (lint + execute)","≥85%","70%"],["Review finding precision","≥0.80","0.65"],["Coverage-gap identification recall","≥0.85","0.70"]],
+ reuse:"Framework adapters (in-house NVMe framework, pytest, Robot); lint rules shared with Review Shield",
+ scale:"100 scripts/hr; 100k-LOC repo analysed ≤15 min",
+ trust:"SAST 0 high; no hard-coded device paths or credentials",
+ val:"Scripting effort ↓ ≥50%; review turnaround ↓ ≥60%",
+ gold:"200 TC→script reference pairs + seeded-defect review set",sh:["LLM gateway","Log parser"]},
+/* ---------- Phase 4 ---------- */
+{p:4,id:"4.a",nm:"IaC Provisioner Agent",t:["ai","bl"],tech:"LLM → Terraform / Ansible + policy-as-code checks",
+ i:"Env spec {host OS, kernel, driver, FW, tools}",o:"IaC modules + provisioned rig / VM / pod",
+ eff:[["IaC validity (validate / lint)","100%","98%"],["First-attempt provisioning success","≥95%","85%"],["Policy-as-code compliance","100%","100%"]],
+ reuse:"Module registry covers VM, K8s and bare-metal host + DUT rigs",
+ scale:"50 rigs in parallel; env ready ≤30 min",
+ trust:"Idempotent re-apply (no diff) 100%; destroy / rollback 100%",
+ val:"Env setup lead time ↓ ≥70%",
+ gold:"25 reference environment specs with expected end-state",sh:["Rule engine","LLM gateway"]},
+{p:4,id:"4.b",nm:"Env Validator & Drift Detector",t:["ml","bl"],tech:"Golden-config diff rules + anomaly model on inventory snapshots",
+ i:"Rig inventory snapshot",o:"Health status + drift items {expected, actual}",
+ eff:[["Drift detection recall / precision","≥95% / 90%","88% / 80%"],["Health-check false negatives","≤2%","5%"]],
+ reuse:"Probe plug-ins (OS, driver, FW version, PCIe link, tool versions); golden config per product",
+ scale:"500 rigs scanned ≤5 min; continuous every 15 min",
+ trust:"Every drift shows expected vs actual value",
+ val:"Env-caused false test failures ↓ ≥60%",
+ gold:"100 seeded-drift scenarios on reference rigs",sh:["Anomaly core","MLOps pipeline"]},
+{p:4,id:"4.c",nm:"Access & Security Recommender",t:["bl","ai"],tech:"RBAC / least-privilege policy engine + LLM rationale",
+ i:"Role, project, current grants",o:"Access recommendations + misconfiguration findings",
+ eff:[["Least-privilege violation recall","≥95%","85%"],["Recommendation acceptance","≥80%","65%"],["Secret-exposure detection (seeded)","100%","100%"]],
+ reuse:"OPA / Rego policies shared; LDAP / AD connectors",
+ scale:"5k identities evaluated ≤5 min",
+ trust:"0 auto-grants without approval",
+ val:"Access provisioning time ↓ ≥50%",
+ gold:"200 seeded IAM misconfiguration cases",sh:["Rule engine"]},
+/* ---------- Phase 5 ---------- */
+{p:5,id:"5.a",nm:"Test Orchestrator Agent",t:["ai","hx"],tech:"Test impact analysis + scheduling heuristic / RL on rig pool",
+ i:"Suite, change set, rig pool",o:"Optimised schedule + execution run",
+ eff:[["Defect-catch retention at ≥40% suite reduction","≥98%","95%"],["Rig utilisation","≥85%","70%"],["Makespan vs FIFO","↓ ≥25%","↓ 10%"]],
+ reuse:"Executor adapters (Jenkins, GitLab CI, in-house runner); rig-pool abstraction",
+ scale:"≥10k tests/day; 500 rigs; queue decision ≤1 s",
+ trust:"Deterministic selection; safe fallback to full regression",
+ val:"Regression cycle time ↓ ≥40%",
+ gold:"6-month CI replay with known defects",sh:["Risk library"]},
+{p:5,id:"5.b",nm:"Self-Healing Script Agent",t:["ai","hx"],tech:"LLM + API / CLI / log-field diff heuristics",
+ i:"Failed script + failure context",o:"Patch (diff) + confidence + classification",
+ eff:[["Heal success on true script breakage","≥80%","60%"],["False heal (masks a real product defect)","≤1%","2%"],["Script vs product failure classification F1","≥0.90","0.80"]],
+ reuse:"Shared failure-signature taxonomy; framework-neutral diff output",
+ scale:"Heal proposal ≤60 s",
+ trust:"Every heal is a PR needing approval; 100% audit log",
+ val:"Script maintenance effort ↓ ≥50%",
+ gold:"300 labelled breakages (200 script-caused, 100 product-caused)",sh:["Log parser","LLM gateway"]},
+{p:5,id:"5.c",nm:"Visual AI + Perf Analyzer",t:["ml","hx"],tech:"Change-point / SPC on IOPS, BW, latency p99–p99.99; CV diff for GUI tools",
+ i:"Perf metrics (fio, IOMeter, internal tools), screenshots",o:"Regression verdict + bottleneck attribution",
+ eff:[["Perf regression recall at ≥3% delta","≥95%","85%"],["False-positive regressions","≤5%","10%"],["Tail-latency outlier F1","≥0.90","0.80"],["Visual diff F1","≥0.90","0.80"]],
+ reuse:"Metric-agnostic ingestion; thresholds per product in config",
+ scale:"1M datapoints per run ≤2 min",
+ trust:"Significance (p-value / CI) reported; baselines versioned",
+ val:"Perf analysis time ↓ ≥70%",
+ gold:"400 perf runs with injected 1–10% regressions",sh:["Anomaly core","MLOps pipeline"]},
+/* ---------- Phase 6 ---------- */
+{p:6,id:"6.a",nm:"Defect Classifier & Severity AI",t:["ai","ml"],tech:"Fine-tuned classifier / LLM on report + logs",
+ i:"Defect report + attached logs",o:"{component, category, severity, priority, owner team}",
+ eff:[["Component classification accuracy","≥90%","80%"],["Severity weighted-F1","≥0.85","0.75"],["S1 / critical recall","≥98%","95%"],["Owner assignment accuracy","≥85%","75%"]],
+ reuse:"Taxonomy in config; Jira / internal PLM connectors",
+ scale:"≤5 s per defect; 5k defects/day",
+ trust:"Severity downgrade always needs a human",
+ val:"Triage time ↓ ≥60%; reassignment bounce ↓ ≥50%",
+ gold:"10k historical defects with final post-triage labels",sh:["Log parser","MLOps pipeline"]},
+{p:6,id:"6.b",nm:"Duplicate Detector Agent",t:["ml"],tech:"Embeddings + log-signature hashing",
+ i:"New defect",o:"Top-k duplicates with similarity",
+ eff:[["Top-5 recall","≥90%","80%"],["Precision@1","≥85%","72%"],["False merge","≤2%","5%"]],
+ reuse:"Same embedding service as RTM and knowledge search; cross-project search",
+ scale:"Search over 1M defects, p95 ≤500 ms",
+ trust:"Suggest only; never auto-close",
+ val:"Duplicate defects filed ↓ ≥50%",
+ gold:"3k labelled duplicate pairs",sh:["Embedding service","Log parser"]},
+{p:6,id:"6.c",nm:"RCA Analyzer + Pattern Detector",t:["ai","hx"],tech:"Log mining + causal / knowledge graph + LLM hypothesis ranking",
+ i:"Defect + FW trace, host dmesg, NVMe error log, UART",o:"Ranked root-cause hypotheses + similar RCAs + pattern clusters",
+ eff:[["Correct root cause in top-3","≥70%","55%"],["RCA category accuracy","≥85%","75%"],["Pattern cluster purity","≥0.80","0.65"]],
+ reuse:"Log parser plug-ins; common RCA taxonomy (5-Why / Ishikawa)",
+ scale:"2 GB log ingest ≤10 min",
+ trust:"Evidence lines cited for 100% of hypotheses",
+ val:"Defect open → RCA time ↓ ≥40%",
+ gold:"500 closed defects with confirmed RCA and logs",sh:["Log parser","Embedding service"]},
+/* ---------- Phase 7 ---------- */
+{p:7,id:"7.a",nm:"Metrics Analytics Intelligence",t:["ai","bl"],tech:"NL-to-query over a semantic metrics layer + insight LLM",
+ i:"Metrics warehouse + question",o:"KPI values + narrative insight + query",
+ eff:[["NL → query execution accuracy","≥90%","80%"],["Metric correctness vs certified definitions","100%","100%"],["Insight relevance (SME)","≥4.0 / 5","3.3"]],
+ reuse:"One semantic layer (DRE, defect density, pass rate…) for all groups",
+ scale:"Dashboard query p95 ≤3 s over 3 years of data",
+ trust:"0 fabricated numbers; every value links to its query",
+ val:"Manual metrics prep ↓ ≥80%",
+ gold:"200 NL questions with verified answers",sh:["LLM gateway"]},
+{p:7,id:"7.b",nm:"Predictive QA ML Model",t:["ml"],tech:"Defect-proneness, residual-defect and reliability-growth models",
+ i:"Code churn, test results, defect arrival",o:"Defect-prone modules, residual defects, readiness probability",
+ eff:[["Defect-prone module AUC","≥0.80","0.70"],["Residual-defect forecast MAPE","≤20%","30%"],["Release-readiness prediction accuracy","≥85%","75%"]],
+ reuse:"Shared feature store; per-product calibration only",
+ scale:"Nightly batch ≤30 min",
+ trust:"Brier score ≤0.15; drift monitor; explanations",
+ val:"Escaped defects ↓ ≥25% through focused testing",
+ gold:"8 past release cycles, time-split validation",sh:["MLOps pipeline"]},
+{p:7,id:"7.c",nm:"Auto Report Generator Agent",t:["ai","bl"],tech:"Template engine + LLM narrative with numeric verification",
+ i:"Metrics + audience + period",o:"Daily / weekly / exec / customer report",
+ eff:[["Numeric consistency with source data","100%","100%"],["Template compliance","≥98%","92%"],["Stakeholder rating","≥4.0 / 5","3.3"]],
+ reuse:"Template library per audience; DOCX / PPTX / Confluence / email outputs",
+ scale:"≤2 min per report; 100 reports/day",
+ trust:"Every numeric claim auto-verified against source",
+ val:"Report prep effort ↓ ≥80%",
+ gold:"50 approved reports with their source data",sh:["Doc generator","LLM gateway"]},
+/* ---------- Phase 8 ---------- */
+{p:8,id:"8.a",nm:"Exit Criteria Evaluator Agent",t:["bl","ai"],tech:"Deterministic criteria engine + LLM waiver summary",
+ i:"Exit criteria (DSL / YAML) + metrics",o:"Pass / fail per criterion + waiver recommendation",
+ eff:[["Deterministic criterion evaluation accuracy","100%","100%"],["Waiver recommendation agreement with CCB","≥85%","70%"]],
+ reuse:"Criteria DSL shared; per-program YAML",
+ scale:"≤1 min per evaluation",
+ trust:"Deterministic core; full audit trail",
+ val:"Sign-off cycle ↓ ≥50%",
+ gold:"30 historical closure decisions incl. waivers",sh:["Rule engine"]},
+{p:8,id:"8.b",nm:"Knowledge Extractor Agent",t:["ai"],tech:"LLM extraction into KB / knowledge graph with entity linking",
+ i:"Closure artifacts, retro notes, RCAs",o:"Structured lessons + KG entities",
+ eff:[["Lesson extraction precision / recall","≥0.85 / 0.80","0.75 / 0.65"],["Entity-linking accuracy","≥90%","80%"],["KB retrieval hit@5","≥85%","70%"]],
+ reuse:"Single Zion KG ontology across groups",
+ scale:"1,000 documents/hr",
+ trust:"Source link for every lesson; confidential redaction 100%",
+ val:"New-member KT time ↓ ≥40%",
+ gold:"100 documents with SME-extracted lessons",sh:["Spec ingestion","Embedding service"]},
+{p:8,id:"8.c",nm:"Process Optimizer Agent",t:["ml","hx"],tech:"Process mining + bottleneck analysis + simulation",
+ i:"Workflow event logs (XES / OCEL)",o:"Bottlenecks + recommendations + simulated gain",
+ eff:[["Bottleneck identification agreement","≥80%","65%"],["Conformance fitness","≥0.90","0.80"],["Recommendations adopted","≥50%","30%"]],
+ reuse:"Standard event-log schema from any ALM",
+ scale:"1M events ≤10 min",
+ trust:"Simulated gain reported with confidence interval",
+ val:"Activity cycle time ↓ ≥15% after adoption",
+ gold:"12 months of Jira / ALM event logs",sh:["MLOps pipeline"]},
+/* ---------- Phase 9 ---------- */
+{p:9,id:"9.a",nm:"Release Gate Validator Agent",t:["bl","ai"],tech:"Gate policy engine + risk model + evidence checker",
+ i:"Release candidate evidence",o:"Go / No-Go + evidence checklist",
+ eff:[["Decision agreement with release board","≥95%","90%"],["Missing-evidence detection recall","100%","100%"],["False Go on seeded blockers","0","0"]],
+ reuse:"Gate policies per customer / product in YAML",
+ scale:"≤5 min per RC",
+ trust:"Explainable checklist; human makes the final call",
+ val:"Release readiness review time ↓ ≥50%",
+ gold:"40 historical RC decisions incl. 10 blocked",sh:["Rule engine","Risk library"]},
+{p:9,id:"9.b",nm:"Deployment Verifier Agent",t:["ai","bl"],tech:"Manifest checks, FW image checksum / version, post-deploy smoke",
+ i:"Deployment manifest + targets",o:"Signed verification report",
+ eff:[["Deployment fault detection recall","≥98%","95%"],["FW / image integrity verification","100%","100%"]],
+ reuse:"Check-packs per target (customer platform, OEM qualification)",
+ scale:"100 targets in parallel; ≤15 min",
+ trust:"Signed, tamper-evident report",
+ val:"Post-release deployment issues ↓ ≥50%",
+ gold:"50 seeded deployment faults",sh:["Rule engine"]},
+{p:9,id:"9.c",nm:"Comms Drafter & Rollback Agent",t:["ai","bl"],tech:"LLM release notes / customer comms + rollback dry-run validator",
+ i:"Change log, known issues, rollback plan",o:"Release notes, customer comms, rollback validation",
+ eff:[["Release-note completeness (fixes + known issues)","≥98%","95%"],["Factual errors","0","0"],["Rollback dry-run success","≥95%","90%"]],
+ reuse:"Customer-specific templates and tone in config",
+ scale:"≤5 min per release",
+ trust:"Confidential leak check 100% (codenames, internal IDs)",
+ val:"Comms prep effort ↓ ≥70%",
+ gold:"30 past release notes with change logs",sh:["Doc generator","LLM gateway"]},
+/* ---------- Phase 10 ---------- */
+{p:10,id:"10.a",nm:"Anomaly Detection Agent",t:["ml"],tech:"SPC + isolation forest / LSTM-AE on field telemetry (SMART, error counters, latency)",
+ i:"Telemetry streams",o:"Anomaly alerts + severity + contributing signals",
+ eff:[["Anomaly precision / recall","≥0.85 / 0.90","0.75 / 0.80"],["Lead time before failure","≥24 h","8 h"],["False alerts per day","≤5","10"]],
+ reuse:"Generic stream schema; per-product thresholds",
+ scale:"100k device streams; detection latency ≤1 min",
+ trust:"Contributing signals explained; drift monitor",
+ val:"Field failure MTTD ↓ ≥50%",
+ gold:"Labelled field incidents + injected anomalies",sh:["Anomaly core","MLOps pipeline"]},
+{p:10,id:"10.b",nm:"Customer Feedback Analyzer",t:["ai"],tech:"NLP sentiment + topic + defect extraction",
+ i:"Customer tickets, emails, FA reports",o:"Sentiment, topic, auto-triaged defect",
+ eff:[["Sentiment F1","≥0.85","0.75"],["Topic classification accuracy","≥88%","78%"],["Defect-worthy issue recall","≥90%","80%"]],
+ reuse:"Multilingual (EN / KO / ZH); topic taxonomy in config",
+ scale:"10k items/day",
+ trust:"Customer data only via on-prem LLM",
+ val:"Customer issue response time ↓ ≥40%",
+ gold:"2k labelled customer tickets",sh:["LLM gateway","Log parser"]},
+{p:10,id:"10.c",nm:"Hotfix Triage & MLOps Pipeline",t:["hx","ml"],tech:"Hotfix priority heuristic + targeted regression + champion / challenger retraining",
+ i:"Field issues; feedback data",o:"Hotfix priority + targeted suite; retrained model versions",
+ eff:[["Hotfix priority agreement","≥90%","80%"],["Targeted regression catch vs full","≥98%","95%"],["Retrained model non-regression gate","100%","100%"]],
+ reuse:"One pipeline serves every ML component (2.b, 4.b, 5.c, 6.b, 7.b, 8.c, 10.a)",
+ scale:"Retrain cycle ≤24 h; ≥20 models",
+ trust:"Registry versioning; model rollback ≤15 min",
+ val:"Hotfix turnaround ↓ ≥40%",
+ gold:"60 historical hotfixes",sh:["MLOps pipeline","Risk library"]}
+];
+
+var BLOCKS = [
+  ["LLM gateway & prompt registry","On-prem model routing, token metering, versioned prompt packs, PII / confidentiality filter.","ALL AI"],
+  ["Embedding & semantic similarity service","One embedding model and vector index for linking, dedup and retrieval.","1.b 1.c 3.a 6.b 6.c 8.b"],
+  ["Spec & document ingestion","PDF / DOCX / ReqIF parsing, clause-aware chunking, table extraction.","1.a 2.a 8.b"],
+  ["Rule & policy engine","YAML / OPA rules for criteria, gates, access and compliance checks.","1.b 2.c 4.a 4.c 8.a 9.a 9.b"],
+  ["Risk scoring library","Likelihood × impact, FMEA RPN and test-impact risk in one calibrated library.","1.c 2.c 5.a 9.a 10.c"],
+  ["Time-series anomaly core","SPC, change-point and isolation-forest detectors with a common alert schema.","4.b 5.c 10.a"],
+  ["Log parser & signature library","FW trace, host dmesg, NVMe error log, UART parsers and failure signatures.","3.c 5.b 6.a 6.b 6.c 10.b"],
+  ["Report & document generator","Audience templates rendered to DOCX, PPTX, Confluence and email.","2.a 2.c 7.c 9.c"],
+  ["MLOps pipeline & model registry","Feature store, training, drift monitoring, champion / challenger, rollback.","2.b 4.b 5.c 6.a 6.b 7.b 8.c 10.a 10.c"],
+  ["Golden dataset & benchmark harness","Versioned golden sets, scripted runs, automatic KPI report for gate G2.","ALL 30"]
+];
+
+function esc(s){return s;}
+/* A */
+document.getElementById("dims").innerHTML = DIMS.map(function(d){
+  return '<div class="dim"><div class="dim-top"><span class="dim-id">'+d.id+'</span><span class="dim-nm">'+d.nm+'</span><span class="dim-w">'+d.w+'%</span></div>'+
+    '<div class="wbar"><i style="width:'+(d.w/30*100)+'%"></i></div><ul>'+d.k.map(function(k){return '<li>'+k+'</li>';}).join('')+'</ul></div>';
+}).join('');
+document.getElementById("gates").innerHTML = GATES.map(function(g){return '<div class="gate"><span class="gid">'+g[0]+'</span><span>'+g[1]+'</span></div>';}).join('');
+document.getElementById("tiers").innerHTML = TIERS.map(function(t){return '<div class="tier"><span class="pill '+t[0]+'">'+t[1]+'</span><span class="rng">'+t[2]+'</span><span>'+t[3]+'</span></div>';}).join('');
+/* B */
+document.getElementById("flow").innerHTML = FLOW.map(function(f,i){return '<div class="st"><span class="st-n">STEP '+(i+1)+'</span><span class="st-t">'+f[0]+'</span><span class="st-d">'+f[1]+'</span></div>';}).join('');
+
+/* C */
+var TAGN = {ai:"AI",ml:"ML",hx:"HX",bl:"BL"};
+function row(c){
+  var ph = PH[c.p-1];
+  var tags = c.t.map(function(t){return '<span class="ci-tag tag-'+t+'">'+TAGN[t]+'</span>';}).join('');
+  var eff = '<ul class="kl">'+c.eff.map(function(e){return '<li>'+e[0]+' <span class="tv">'+e[1]+'</span> <span class="mv">min '+e[2]+'</span></li>';}).join('')+'</ul>';
+  return '<tr data-p="'+c.p+'">'+
+    '<td style="border-left:3px solid '+ph.color+'"><div class="cid">L3-'+c.id+'</div><div class="cnm">'+c.nm+'</div><div class="tags">'+tags+'</div><div class="tech">'+c.tech+'</div></td>'+
+    '<td class="io"><div><span class="k">IN</span><span>'+c.i+'</span></div><div style="margin-top:4px"><span class="k">OUT</span><span>'+c.o+'</span></div></td>'+
+    '<td>'+eff+'</td>'+
+    '<td>'+c.reuse+'<div class="shared">Shared: '+c.sh.join(' · ')+'</div></td>'+
+    '<td>'+c.scale+'</td>'+
+    '<td>'+c.trust+'</td>'+
+    '<td>'+c.val+'</td>'+
+    '<td class="gold">'+c.gold+'</td></tr>';
+}
+var body = '';
+PH.forEach(function(ph){
+  var items = C.filter(function(c){return c.p===ph.n;});
+  body += '<tr class="phr" data-p="'+ph.n+'"><td colspan="8"><span class="phnum" style="background:'+ph.color+'">'+ph.n+'</span><span class="phnm">'+ph.name+'</span><span class="phs">'+items.length+' L3 components</span></td></tr>';
+  body += items.map(row).join('');
+});
+document.getElementById("kpiBody").innerHTML = body;
+
+var nav = document.getElementById("phNav");
+function mkBtn(label,p,color,bg){
+  var b=document.createElement("button"); b.type="button"; b.className="pp"; b.textContent=label; b.setAttribute("data-p",p);
+  if(color){b.style.color=color;b.style.background=bg;b.style.borderColor=color+"55";}
+  b.addEventListener("click",function(){filter(p);});
+  nav.appendChild(b);
+}
+mkBtn("All phases","all");
+PH.forEach(function(p){mkBtn(p.n+". "+p.name,String(p.n),p.color,p.bg);});
+function filter(p){
+  Array.prototype.forEach.call(document.querySelectorAll("#kpiBody tr"),function(tr){tr.hidden = !(p==="all"||tr.getAttribute("data-p")===p);});
+  Array.prototype.forEach.call(nav.children,function(b){b.classList.toggle("on",b.getAttribute("data-p")===p);});
+  try{localStorage.setItem("l3kpi-phase",p);}catch(e){}
+}
+var saved="all"; try{saved=localStorage.getItem("l3kpi-phase")||"all";}catch(e){}
+filter(saved);
+
+/* D */
+document.getElementById("blocks").innerHTML = BLOCKS.map(function(b){
+  return '<div class="blk"><div class="blk-t">'+b[0]+'</div><div class="blk-d">'+b[1]+'</div><div class="blk-u">'+b[2].split(" ").map(function(u){return u==="ALL"?"":'<span>'+(u==="AI"||u==="30"?"ALL "+u:u)+'</span>';}).join('')+'</div></div>';
+}).join('');
+
+/* E */
+var sel = document.getElementById("calcComp");
+C.forEach(function(c){var o=document.createElement("option");o.value=c.id;o.textContent="L3-"+c.id+"  "+c.nm;sel.appendChild(o);});
+var W=[.30,.20,.15,.10,.15,.10];
+var EX={grp1:[88,82,78,85,80,75,true],grp2:[91,65,80,82,85,70,true],grp3:[88,92,86,88,80,90,true]};
+var sb=document.getElementById("scBody");
+Object.keys(EX).forEach(function(g){
+  var tr=document.createElement("tr");
+  var h='<td>'+g+'</td>';
+  for(var i=0;i<6;i++){h+='<td><input type="number" min="0" max="100" id="sc-'+g+'-'+i+'" aria-label="'+g+' D'+(i+1)+'" value="'+EX[g][i]+'"></td>';}
+  h+='<td><input type="checkbox" id="sc-'+g+'-gate" aria-label="'+g+' all gates pass" '+(EX[g][6]?'checked':'')+'></td><td class="comp" id="cp-'+g+'"></td><td id="tr-'+g+'"></td><td class="rk" id="rk-'+g+'"></td>';
+  tr.innerHTML=h; sb.appendChild(tr);
+});
+function tierOf(s,gate){
+  if(!gate||s<45) return ["p5","Not eligible"];
+  if(s>=85) return ["p1","Tier 1 · Certified"];
+  if(s>=75) return ["p2","Tier 2 · Conditional"];
+  if(s>=60) return ["p3","Tier 3 · Group-local"];
+  return ["p4","Tier 4 · Rework"];
+}
+function calc(){
+  var res=[];
+  Object.keys(EX).forEach(function(g){
+    var s=0; for(var i=0;i<6;i++){var v=parseFloat(document.getElementById("sc-"+g+"-"+i).value); if(isNaN(v))v=0; v=Math.max(0,Math.min(100,v)); s+=W[i]*v;}
+    var gate=document.getElementById("sc-"+g+"-gate").checked;
+    var d1=parseFloat(document.getElementById("sc-"+g+"-0").value)||0;
+    res.push({g:g,s:s,gate:gate,d1:d1});
+    var t=tierOf(s,gate);
+    document.getElementById("cp-"+g).textContent=s.toFixed(1);
+    document.getElementById("tr-"+g).innerHTML='<span class="pill '+t[0]+'">'+t[1]+'</span>';
+  });
+  var ranked=res.slice().sort(function(a,b){ if(a.gate!==b.gate) return a.gate?-1:1; if(b.s!==a.s) return b.s-a.s; return b.d1-a.d1;});
+  ranked.forEach(function(r,i){document.getElementById("rk-"+r.g).textContent=r.gate?("#"+(i+1)):"—";});
+  var top=ranked[0], comp=sel.options[sel.selectedIndex].text;
+  var t=tierOf(top.s,top.gate);
+  var v=document.getElementById("verdict");
+  if(!top.gate){ v.innerHTML='<b>'+comp+':</b> no submission passes all gates, so none is eligible for cross-group reuse yet.'; return; }
+  v.innerHTML='<b>'+comp+':</b> '+top.g+' leads with '+top.s.toFixed(1)+' ('+t[1]+'). '+
+    (t[0]==="p1" ? 'It becomes the Sol PE standard; the other groups adopt and contribute to it instead of maintaining their own.'
+     : 'No Tier-1 winner yet: '+top.g+' is the preferred base, and the other groups merge their strengths into it before re-benchmarking.');
+}
+sb.addEventListener("input",calc); sb.addEventListener("change",calc); sel.addEventListener("change",calc);
+calc();
+</script>
+</body>
+</html>
