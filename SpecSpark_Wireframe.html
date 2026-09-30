@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SpecSpark — Spec-to-Script Test Design Platform</title>
+<style>
+  :root{
+    --bg:#0e1117; --panel:#161b25; --panel-2:#1d2533; --line:#2a3344;
+    --txt:#e7ecf3; --muted:#93a0b5; --faint:#6b7689;
+    --brand:#5b8cff; --brand-2:#7c5cff; --spark:#ff8a3d; --spark-2:#ffc24a; --accent:#00c2a8;
+    --good:#2ec27e; --warn:#f4b740; --bad:#ff5d6c;
+    --chip:#222b3a; --shadow:0 8px 30px rgba(0,0,0,.35);
+    --topbar-bg:rgba(13,17,23,.6); --side-a:#121620; --side-b:#0f131b; --code:#0b0f16; --codetxt:#d6deeb;
+    --r:14px;
+  }
+  html[data-theme="light"]{
+    --bg:#eef1f7; --panel:#ffffff; --panel-2:#f4f6fb; --line:#dde3ec;
+    --txt:#1a2230; --muted:#56627a; --faint:#8a93a6;
+    --chip:#eef1f7; --shadow:0 10px 28px rgba(25,40,80,.09);
+    --topbar-bg:rgba(255,255,255,.75); --side-a:#ffffff; --side-b:#f4f6fb; --code:#0f1522; --codetxt:#d6deeb;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%}
+  body{font-family:'Segoe UI',Inter,system-ui,Arial,sans-serif;color:var(--txt);font-size:14px;line-height:1.45;
+    background:radial-gradient(1100px 650px at 85% -10%,rgba(255,138,61,.10),transparent),
+               radial-gradient(900px 600px at -10% 10%,rgba(91,140,255,.10),transparent),var(--bg);}
+  /* ===== Shell ===== */
+  .app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+  .side{background:linear-gradient(180deg,var(--side-a),var(--side-b));border-right:1px solid var(--line);padding:18px 14px 90px;position:sticky;top:0;height:100vh;overflow:auto}
+  .logo{display:flex;align-items:center;gap:10px;padding:6px 8px 16px}
+  .logo .mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--spark),var(--brand-2));display:grid;place-items:center;box-shadow:0 6px 18px rgba(255,138,61,.4)}
+  .logo .mark svg{width:21px;height:21px}
+  .logo h1{font-size:16.5px;margin:0;letter-spacing:.3px}
+  .logo small{display:block;color:var(--faint);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+  .zion{display:block;font-size:10.5px;color:var(--faint);margin:-6px 8px 12px;font-weight:600}
+  .zion b{color:var(--brand)}
+  .nav{display:flex;flex-direction:column;gap:3px}
+  .nav .grp{color:var(--faint);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin:14px 10px 4px;display:flex;justify-content:space-between}
+  .nav .grp em{font-style:normal;color:var(--spark)}
+  .nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;cursor:pointer;background:transparent;color:var(--muted);padding:9px 10px;border-radius:10px;font-size:13px;font-weight:600;font-family:inherit}
+  .nav button .ic{width:22px;height:22px;border-radius:7px;background:var(--chip);display:grid;place-items:center;font-size:11px;font-weight:800;color:var(--brand);flex:none}
+  .nav button.p2 .ic{color:var(--spark)}
+  .nav button:hover{background:var(--panel-2);color:var(--txt)}
+  .nav button.active{background:linear-gradient(90deg,rgba(91,140,255,.18),rgba(124,92,255,.05));color:var(--txt);box-shadow:inset 0 0 0 1px rgba(91,140,255,.35)}
+  .nav button.active .ic{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff}
+  .nav button.p2.active{background:linear-gradient(90deg,rgba(255,138,61,.18),rgba(255,194,74,.05));box-shadow:inset 0 0 0 1px rgba(255,138,61,.4)}
+  .nav button.p2.active .ic{background:linear-gradient(135deg,var(--spark),var(--spark-2));color:#fff}
+  .side .footer{position:fixed;bottom:0;left:0;width:250px;border-top:1px solid var(--line);padding:12px 18px;display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;background:var(--side-b)}
+  .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--spark),var(--brand));display:grid;place-items:center;font-weight:700;color:#fff;font-size:12px}
+  /* workspace switcher */
+  .wswrap{position:relative;margin:0 4px 4px}
+  .wsswitch{width:100%;display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:9px 11px;cursor:pointer;color:var(--txt)}
+  .wsswitch:hover{box-shadow:inset 0 0 0 1px var(--brand)}
+  .wsswitch .chev{margin-left:auto;color:var(--faint)}
+  .wsswitch small{display:block;color:var(--faint);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+  .wsswitch b{font-size:13px}
+  .specdot{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:10px;font-weight:800;color:#fff;flex:none}
+  .wsmenu{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--panel);border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow);padding:6px;z-index:60}
+  .wsmenu.open{display:block}
+  .wsmenu button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;color:var(--txt);padding:7px 8px;border-radius:8px;cursor:pointer;font-size:12.5px;font-family:inherit}
+  .wsmenu button:hover{background:var(--panel-2)}
+  .wsmenu .specdot{width:24px;height:24px;font-size:9px;border-radius:7px}
+  .wsmenu .mini{margin-left:auto;font-size:11px;font-weight:700;color:var(--muted)}
+  /* ===== Main ===== */
+  .main{display:flex;flex-direction:column;min-width:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 26px;border-bottom:1px solid var(--line);background:var(--topbar-bg);backdrop-filter:blur(8px);position:sticky;top:0;z-index:20}
+  .crumb{color:var(--faint);font-size:12.5px}.crumb b{color:var(--txt)}
+  .actions{display:flex;align-items:center;gap:10px}
+  .search{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:var(--muted);min-width:230px}
+  .search input{background:transparent;border:0;outline:0;color:var(--txt);width:100%;font-size:13px;font-family:inherit}
+  .themebtn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--txt);cursor:pointer;font-size:16px}
+  .content{padding:22px 26px 70px}
+  /* stepper */
+  .stepper{display:grid;grid-template-columns:repeat(4,1fr) 18px repeat(4,1fr);background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:6px;margin-bottom:20px;box-shadow:var(--shadow)}
+  .stepper .sep{display:grid;place-items:center;color:var(--faint);font-weight:800}
+  .stepper .step{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;cursor:pointer;color:var(--muted);min-width:0}
+  .stepper .step:hover{background:var(--panel-2)}
+  .stepper .num{width:24px;height:24px;border-radius:50%;background:var(--chip);display:grid;place-items:center;font-weight:800;font-size:11.5px;color:var(--brand);flex:none}
+  .stepper .step.p2 .num{color:var(--spark)}
+  .stepper .step.done .num{background:var(--good);color:#fff}
+  .stepper .step.active{background:linear-gradient(90deg,rgba(91,140,255,.18),rgba(124,92,255,.05));color:var(--txt);box-shadow:inset 0 0 0 1px rgba(91,140,255,.35)}
+  .stepper .step.active .num{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff}
+  .stepper .step.p2.active{background:linear-gradient(90deg,rgba(255,138,61,.18),rgba(255,194,74,.05));box-shadow:inset 0 0 0 1px rgba(255,138,61,.4)}
+  .stepper .step.p2.active .num{background:linear-gradient(135deg,var(--spark),var(--spark-2))}
+  .stepper .lbl{font-size:12px;font-weight:700;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stepper .lbl small{display:block;color:var(--faint);font-weight:600;font-size:10px}
+  /* generic */
+  .screen{display:none;animation:fade .2s ease}.screen.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+  .page-head h2{margin:0 0 4px;font-size:21px}
+  .page-head p{margin:0;color:var(--muted);max-width:760px}
+  .phase-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:6px;margin-bottom:6px;background:rgba(91,140,255,.14);color:var(--brand)}
+  .phase-tag.p2{background:rgba(255,138,61,.15);color:var(--spark)}
+  .hero{display:flex;align-items:center;justify-content:space-between;gap:18px;background:linear-gradient(120deg,rgba(255,138,61,.14),rgba(124,92,255,.10));border:1px solid var(--line);border-radius:var(--r);padding:22px 24px;margin-bottom:18px}
+  .hero h2{margin:0 0 4px;font-size:22px}.hero p{margin:0;color:var(--muted);max-width:780px}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--chip);color:var(--muted);white-space:nowrap}
+  .pill.live{color:var(--accent)}.pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(0,194,168,.18)}
+  .btn{border:0;cursor:pointer;border-radius:10px;padding:10px 16px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:8px;font-family:inherit;white-space:nowrap}
+  .btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;box-shadow:0 8px 22px rgba(91,140,255,.3)}
+  .btn.spark{background:linear-gradient(135deg,var(--spark),#f0643a);color:#fff;box-shadow:0 8px 22px rgba(255,138,61,.3)}
+  .btn.ghost{background:var(--panel-2);color:var(--txt);border:1px solid var(--line)}
+  .btn.sm{padding:6px 11px;font-size:12px}
+  .grid{display:grid;gap:18px}
+  .cols-2{grid-template-columns:1.15fr .85fr}.cols-2e{grid-template-columns:1fr 1fr}
+  .cols-3{grid-template-columns:repeat(3,1fr)}.cols-4{grid-template-columns:repeat(4,1fr)}.cols-6{grid-template-columns:repeat(6,1fr)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);min-width:0}
+  .card h3{margin:0 0 3px;font-size:14.5px}
+  .card .sub{color:var(--faint);font-size:12px;margin-bottom:14px}
+  .row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.wrap{flex-wrap:wrap}
+  .mt{margin-top:18px}.mb{margin-bottom:18px}
+  .kpi .v{font-size:26px;font-weight:800;line-height:1.1}.kpi .l{color:var(--muted);font-size:12px;font-weight:600}
+  .kpi .d{font-size:11px;font-weight:700;color:var(--good);margin-top:3px}
+  .note{color:var(--faint);font-size:11.5px;margin-top:10px}
+  .badge{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .badge.ok{background:rgba(46,194,126,.16);color:#1f9d63}
+  .badge.run{background:rgba(91,140,255,.16);color:#4a78e8}
+  .badge.warn{background:rgba(244,183,64,.18);color:#b9820c}
+  .badge.bad{background:rgba(255,93,108,.15);color:#e0404f}
+  .badge.idle{background:var(--chip);color:var(--muted)}
+  .badge.sp{background:rgba(255,138,61,.16);color:#e06a20}
+  html:not([data-theme="light"]) .badge.ok{color:#5fe0a3} html:not([data-theme="light"]) .badge.run{color:#9bbcff}
+  html:not([data-theme="light"]) .badge.warn{color:#ffd27a} html:not([data-theme="light"]) .badge.bad{color:#ff9aa3} html:not([data-theme="light"]) .badge.sp{color:#ffb07a}
+  .tag{font-size:10.5px;padding:2px 8px;border-radius:6px;background:var(--chip);color:var(--muted);font-weight:600;white-space:nowrap}
+  .prog{height:7px;border-radius:999px;background:var(--panel-2);overflow:hidden;border:1px solid var(--line)}
+  .prog>i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--accent));border-radius:999px}
+  .prog.sp>i{background:linear-gradient(90deg,var(--spark),var(--spark-2))}
+  .mono{font-family:ui-monospace,Consolas,monospace;white-space:nowrap}
+  .reqid{font-family:ui-monospace,Consolas,monospace;color:var(--brand);font-weight:700;font-size:11.5px;white-space:nowrap}
+  .tcid{font-family:ui-monospace,Consolas,monospace;color:var(--spark);font-weight:700;font-size:11.5px;white-space:nowrap}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{text-align:left;color:var(--faint);font-weight:700;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:hover td{background:rgba(91,140,255,.04)}
+  /* upload */
+  .drop{border:1.6px dashed var(--line);border-radius:12px;padding:20px;text-align:center;color:var(--muted);background:var(--panel-2)}
+  .drop .big{font-size:26px;margin-bottom:4px}
+  .filelist{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+  .file{display:flex;align-items:center;gap:11px;padding:9px 11px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
+  .file .ft{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-size:9.5px;font-weight:800;flex:none;background:rgba(124,92,255,.15);color:#7c5cff}
+  .file .ft.pdf{background:rgba(255,93,108,.14);color:#e0404f}.file .ft.py{background:rgba(46,194,126,.15);color:#1f9d63}
+  .file .ft.git{background:rgba(255,138,61,.15);color:#e06a20}.file .ft.xls{background:rgba(0,194,168,.15);color:#0a9a86}
+  .file .meta{flex:1;min-width:0}.file .meta b{display:block;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .file .meta small{color:var(--faint)}
+  /* pipeline stages */
+  .stages{display:flex;flex-direction:column;gap:10px}
+  .stage{display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center}
+  .stage .si{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:var(--chip);color:var(--muted)}
+  .stage.ok .si{background:var(--good);color:#fff}.stage.run .si{background:var(--brand);color:#fff}
+  .stage b{font-size:12.5px}.stage small{display:block;color:var(--faint);font-size:11px}
+  /* chips */
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{font-size:11.5px;font-weight:700;padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--panel-2);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit}
+  .chip i{width:8px;height:8px;border-radius:50%}
+  .chip.on{color:var(--txt);box-shadow:inset 0 0 0 1px var(--brand);background:rgba(91,140,255,.08)}
+  .chip .n{color:var(--faint);font-weight:700}
+  /* bars */
+  .hbars{display:flex;flex-direction:column;gap:9px}
+  .hbar{display:grid;grid-template-columns:118px 1fr 44px;gap:10px;align-items:center;font-size:12px}
+  .hbar .t{height:12px;border-radius:999px;background:var(--panel-2);overflow:hidden;border:1px solid var(--line)}
+  .hbar .t i{display:block;height:100%;border-radius:999px}
+  .hbar .p{text-align:right;font-weight:800}
+  /* flow diagram */
+  .flow{display:grid;grid-template-columns:150px 1fr 150px;gap:14px;align-items:stretch}
+  .io{border:1px dashed var(--line);border-radius:12px;padding:12px;background:var(--panel-2);display:flex;flex-direction:column;gap:7px}
+  .io h4{margin:0 0 2px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .io span{font-size:11.5px;font-weight:600;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+  .lanes{display:flex;flex-direction:column;gap:12px}
+  .lane{border-radius:12px;padding:12px 12px 10px;border:1px solid var(--line);position:relative}
+  .lane.l1{background:linear-gradient(90deg,rgba(91,140,255,.08),transparent)}
+  .lane.l2{background:linear-gradient(90deg,rgba(255,138,61,.09),transparent)}
+  .lane .lh{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+  .lane .lh b{font-size:12px;letter-spacing:.04em}
+  .lane .lh small{color:var(--faint);font-size:11px;font-weight:600}
+  .agents{display:flex;align-items:stretch;gap:0}
+  .agent{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 9px;font-size:11.5px;min-width:0;cursor:pointer}
+  .agent:hover{box-shadow:0 0 0 1px var(--brand)}
+  .agent b{display:block;font-size:11.5px;line-height:1.2}
+  .agent small{color:var(--faint);font-size:10.5px;line-height:1.25;display:block;margin-top:3px}
+  .agent .ai{font-size:9px;font-weight:800;letter-spacing:.08em;color:var(--brand);text-transform:uppercase}
+  .lane.l2 .agent .ai{color:var(--spark)}
+  .arrow{display:grid;place-items:center;color:var(--faint);font-weight:800;width:18px;flex:none}
+  .loopback{margin-top:8px;font-size:11px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:8px;border-top:1px dashed var(--line);padding-top:7px}
+  .loopback .lp{color:var(--spark);font-size:14px}
+  .gate{display:flex;align-items:center;justify-content:center;gap:10px;font-size:11.5px;font-weight:700;color:var(--muted)}
+  .gate span{background:rgba(244,183,64,.16);color:#b9820c;border:1px solid rgba(244,183,64,.4);padding:4px 10px;border-radius:999px}
+  html:not([data-theme="light"]) .gate span{color:#ffd27a}
+  /* spec grid */
+  .specgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+  .speccard{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:13px;cursor:pointer}
+  .speccard:hover{transform:translateY(-2px);box-shadow:0 0 0 1px var(--brand),var(--shadow);transition:.15s}
+  .speccard .top{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  .speccard .name{font-weight:800;font-size:13px;line-height:1.1}.speccard .name small{display:block;color:var(--faint);font-weight:600;font-size:10px}
+  .speccard .st{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px}.speccard .st b{color:var(--txt)}
+  /* tree */
+  .tree{display:flex;flex-direction:column;gap:6px;max-height:520px;overflow:auto}
+  .tnode{padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);cursor:pointer;font-size:12.5px}
+  .tnode.req{border-left:3px solid var(--brand)}
+  .tnode.sc{margin-left:18px;border-left:3px solid var(--spark)}
+  .tnode.on{box-shadow:0 0 0 1px var(--brand);background:rgba(91,140,255,.07)}
+  .tnode small{color:var(--faint);display:block;font-size:11px;margin-top:2px}
+  .kv{display:grid;grid-template-columns:130px 1fr;gap:8px 12px;font-size:12.5px}
+  .kv dt{color:var(--faint);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding-top:2px}
+  .kv dd{margin:0}
+  ol.steps{margin:0;padding-left:18px;font-size:12.5px}ol.steps li{margin-bottom:4px}
+  /* heatmap */
+  .heat{display:grid;gap:4px;font-size:11px}
+  .heat .h{color:var(--faint);font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.04em;text-align:center;padding-bottom:4px}
+  .heat .rl{font-weight:700;color:var(--muted);display:flex;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .heat .c{height:30px;border-radius:6px;display:grid;place-items:center;font-weight:800;color:#fff}
+  .heat .c.z{background:var(--panel-2);color:var(--faint);border:1px dashed var(--line)}
+  /* gates */
+  .gchk{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+  .gchk:last-child{border:0}
+  .gchk .ck{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:900;color:#fff;background:var(--good)}
+  .gchk .ck.w{background:var(--warn)}
+  .gchk small{color:var(--faint);display:block;font-size:11px}
+  /* donut */
+  .donut{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;flex:none}
+  .donut span{width:84px;height:84px;border-radius:50%;background:var(--panel);display:grid;place-items:center;text-align:center;font-weight:800;line-height:1.1}
+  /* code */
+  pre.code{margin:0;background:var(--code);color:var(--codetxt);border-radius:12px;padding:14px 16px;font-size:12px;line-height:1.55;overflow:auto;font-family:ui-monospace,Consolas,monospace;border:1px solid #1f2838;max-height:420px}
+  .code .kw{color:#c792ea}.code .fn{color:#82aaff}.code .str{color:#ecc48d}.code .cm{color:#697098;font-style:italic}.code .nu{color:#f78c6c}
+  .code .add{background:rgba(46,194,126,.16);display:block;color:#a6f0c6}.code .del{background:rgba(255,93,108,.16);display:block;color:#ffb3ba;text-decoration:line-through;text-decoration-color:rgba(255,93,108,.5)}
+  .codehead{display:flex;align-items:center;justify-content:space-between;background:#141b29;color:#9aa7bd;border-radius:12px 12px 0 0;padding:8px 14px;font-size:11.5px;font-family:ui-monospace,Consolas,monospace;border:1px solid #1f2838;border-bottom:0}
+  .codehead+pre.code{border-radius:0 0 12px 12px}
+  .console{background:#0a0e14;color:#b8c4d6;border-radius:12px;padding:12px 14px;font-family:ui-monospace,Consolas,monospace;font-size:11.5px;line-height:1.6;max-height:300px;overflow:auto;border:1px solid #1f2838}
+  .console .ok{color:#5fe0a3}.console .er{color:#ff8a94}.console .in{color:#82aaff}.console .wa{color:#ffd27a}.console .mu{color:#5d6a80}
+  /* toggle */
+  .toggle{display:inline-flex;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:3px}
+  .toggle button{border:0;background:transparent;color:var(--muted);padding:6px 12px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit}
+  .toggle button.on{background:var(--panel);color:var(--txt);box-shadow:var(--shadow)}
+  /* target cards */
+  .tgt{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--panel-2);cursor:pointer}
+  .tgt.on{box-shadow:0 0 0 2px var(--spark);background:rgba(255,138,61,.05)}
+  .tgt h4{margin:0 0 3px;font-size:13.5px}.tgt p{margin:0;color:var(--muted);font-size:12px}
+  .tgt .row{margin-top:10px}
+  /* timeline (self-heal) */
+  .tl{position:relative;padding-left:26px}
+  .tl::before{content:"";position:absolute;left:10px;top:4px;bottom:4px;width:2px;background:var(--line)}
+  .tli{position:relative;margin-bottom:14px}
+  .tli .dt{position:absolute;left:-22px;top:2px;width:16px;height:16px;border-radius:50%;border:3px solid var(--panel);box-shadow:0 0 0 1px var(--line)}
+  .tli b{font-size:12.5px}.tli p{margin:2px 0 0;color:var(--muted);font-size:12px}
+  /* fields */
+  .field{margin-bottom:13px}
+  .field label{display:block;font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:5px}
+  .field input,.field select,.field textarea{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;color:var(--txt);font-size:12.5px;font-family:inherit;outline:none}
+  .field .hint{font-size:11px;color:var(--faint);margin-top:4px}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .sw{width:34px;height:19px;border-radius:999px;background:var(--good);position:relative;flex:none}
+  .sw::after{content:"";position:absolute;right:2px;top:2px;width:15px;height:15px;border-radius:50%;background:#fff}
+  .sw.off{background:var(--line)}.sw.off::after{right:auto;left:2px}
+  .setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+  .setrow:last-child{border:0}.setrow small{display:block;color:var(--faint);font-size:11px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:10px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .callout{border:1px solid rgba(255,138,61,.35);background:rgba(255,138,61,.07);border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--txt)}
+  .callout b{color:var(--spark)}
+  .callout.blue{border-color:rgba(91,140,255,.35);background:rgba(91,140,255,.07)}.callout.blue b{color:var(--brand)}
+  @media (max-width:1200px){.specgrid{grid-template-columns:repeat(3,1fr)}.cols-6{grid-template-columns:repeat(3,1fr)}.stepper .lbl small{display:none}}
+  @media (max-width:900px){.app{grid-template-columns:1fr}.side{display:none}.cols-2,.cols-2e,.cols-3,.cols-4{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.agents{flex-direction:column}.arrow{transform:rotate(90deg);width:auto;height:14px}.stepper{grid-template-columns:repeat(4,1fr)}.stepper .sep{display:none}.search{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="side">
+    <div class="logo">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div>
+      <div><h1>SpecSpark</h1><small>Spec → Test → Script</small></div>
+    </div>
+    <div class="zion">on <b>Zion</b> · AI Solutions · v0.9 wireframe</div>
+    <div class="wswrap">
+      <div class="wsswitch" onclick="document.getElementById('wsmenu').classList.toggle('open')">
+        <div class="specdot" id="ws-dot">NV</div>
+        <div><small>Protocol workspace</small><b id="ws-side">NVMe 2.1</b></div><span class="chev">▾</span>
+      </div>
+      <div class="wsmenu" id="wsmenu"></div>
+    </div>
+    <nav class="nav" id="nav">
+      <div class="grp">Portfolio</div>
+      <button data-screen="home" class="active"><span class="ic">▥</span> Command Center</button>
+      <button data-screen="settings"><span class="ic">⚙</span> Workspace Settings</button>
+      <div class="grp">Phase 1 · <em>Test Design</em></div>
+      <button data-screen="s1"><span class="ic">1</span> Spec Ingestion</button>
+      <button data-screen="s2"><span class="ic">2</span> Testable Requirements</button>
+      <button data-screen="s3"><span class="ic">3</span> Scenarios &amp; Test Cases</button>
+      <button data-screen="s4"><span class="ic">4</span> Coverage &amp; RTM Gate</button>
+      <div class="grp">Phase 2 · <em>Automation</em></div>
+      <button data-screen="s5" class="p2"><span class="ic">5</span> Framework Context</button>
+      <button data-screen="s6" class="p2"><span class="ic">6</span> Script Generation</button>
+      <button data-screen="s7" class="p2"><span class="ic">7</span> Execute · Real / Virtual</button>
+      <button data-screen="s8" class="p2"><span class="ic">8</span> Self-Heal &amp; Handoff</button>
+    </nav>
+    <div class="footer"><div class="avatar">TE</div><div><b style="color:var(--txt)">Test Engineering</b><br/>Sol PE · SSIR</div></div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb">Zion / AI Solutions / SpecSpark / <b id="ws-crumb">NVMe 2.1</b> / <b id="crumb">Command Center</b></div>
+      <div class="actions">
+        <div class="search">🔎<input placeholder="Search requirements, TCs, scripts…"/></div>
+        <span class="pill live"><span class="dot"></span> 9 agents online</span>
+        <button class="themebtn" id="themebtn" title="Toggle light / dark">🌙</button>
+        <button class="btn ghost sm">Export RTM</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="stepper" id="stepper">
+        <div class="step" data-screen="s1"><div class="num">1</div><div class="lbl">Ingest Spec<small>Parse · chunk · KG</small></div></div>
+        <div class="step" data-screen="s2"><div class="num">2</div><div class="lbl">Requirements<small>Testable · categorised</small></div></div>
+        <div class="step" data-screen="s3"><div class="num">3</div><div class="lbl">Scenarios &amp; TCs<small>Design techniques</small></div></div>
+        <div class="step" data-screen="s4"><div class="num">4</div><div class="lbl">Coverage Gate<small>100% RTM</small></div></div>
+        <div class="sep">›</div>
+        <div class="step p2" data-screen="s5"><div class="num">5</div><div class="lbl">Framework<small>Libs · scripts · template</small></div></div>
+        <div class="step p2" data-screen="s6"><div class="num">6</div><div class="lbl">Generate<small>Script per TC</small></div></div>
+        <div class="step p2" data-screen="s7"><div class="num">7</div><div class="lbl">Execute<small>Test PC / QEMU / QVP</small></div></div>
+        <div class="step p2" data-screen="s8"><div class="num">8</div><div class="lbl">Self-Heal<small>Log → fix → rerun</small></div></div>
+      </div>
+
+      <!-- =========================================== HOME -->
+      <section class="screen show" id="screen-home">
+        <div class="hero">
+          <div>
+            <h2>SpecSpark Command Center</h2>
+            <p>Turn a memory-protocol specification into a <b>100%-covered test suite</b> and <b>working automation scripts</b>. Phase 1 designs the tests; Phase 2 writes, runs and self-heals the scripts on a real Test PC + DUT or a virtual QEMU / QVP target.</p>
+          </div>
+          <div class="row"><button class="btn ghost" onclick="go('settings')">Configure</button><button class="btn spark" onclick="go('s1')">⚡ New Spark Run</button></div>
+        </div>
+
+        <div class="grid cols-6 mb" id="home-kpis"></div>
+
+        <div class="card mb">
+          <div class="row between"><div><h3>End-to-End Workflow</h3><div class="sub">Multi-agent pipeline · click any agent to open its screen · amber pills are human-in-the-loop (HITL) approval gates</div></div>
+            <span class="pill">Orchestrated via Zion Agent Runtime · LLM via Zion model gateway</span></div>
+          <div class="flow">
+            <div class="io"><h4>Inputs</h4>
+              <span>📄 Spec / standard (PDF)</span><span>📝 Product requirements (PRD, DOCX/XLSX)</span><span>🧩 Test framework libraries</span><span>🗂 Existing test scripts</span><span>📐 Script template</span><span>📊 DSA historical defect data</span>
+            </div>
+            <div class="lanes">
+              <div class="lane l1">
+                <div class="lh"><b style="color:var(--brand)">PHASE 1 · TEST DESIGN</b><small>Spec → testable requirements → scenarios → TCs → 100% coverage</small></div>
+                <div class="agents">
+                  <div class="agent" onclick="go('s1')"><span class="ai">Agent 1</span><b>Spec Parser</b><small>Layout-aware parse, tables, registers, section tree → Graph-RAG</small></div><div class="arrow">→</div>
+                  <div class="agent" onclick="go('s2')"><span class="ai">Agent 2</span><b>Requirement Extractor</b><small>SHALL/SHOULD/MAY atomisation, 8 categories, testability score</small></div><div class="arrow">→</div>
+                  <div class="agent" onclick="go('s3')"><span class="ai">Agent 3</span><b>Scenario &amp; TC Designer</b><small>EP · BVA · state-transition · negative · perf profiles</small></div><div class="arrow">→</div>
+                  <div class="agent" onclick="go('s4')"><span class="ai">Agent 4</span><b>Coverage Critic</b><small>Bi-directional RTM, gap finder, re-prompts Agent 3</small></div>
+                </div>
+                <div class="loopback"><span class="lp">↺</span><span>Coverage &lt; 100% → gaps sent back to Agent 3 until every testable clause has ≥1 TC</span></div>
+              </div>
+              <div class="gate"><span>HITL Gate 1 · Test Architect approves requirements &amp; TC suite</span>↓<span>Baseline pushed to UTH test plan</span></div>
+              <div class="lane l2">
+                <div class="lh"><b style="color:var(--spark)">PHASE 2 · AUTOMATION</b><small>TCs + framework context → scripts → execution → self-heal</small></div>
+                <div class="agents">
+                  <div class="agent" onclick="go('s5')"><span class="ai">Agent 5</span><b>Framework Indexer</b><small>API catalog, code graph, style from template &amp; existing scripts</small></div><div class="arrow">→</div>
+                  <div class="agent" onclick="go('s6')"><span class="ai">Agent 6</span><b>Script Generator</b><small>One script per TC, template-conformant, static checks</small></div><div class="arrow">→</div>
+                  <div class="agent" onclick="go('s7')"><span class="ai">Agent 7</span><b>Execution Orchestrator</b><small>LaaS: Test PC + DUT · or QEMU / QVP virtual</small></div><div class="arrow">→</div>
+                  <div class="agent" onclick="go('s8')"><span class="ai">Agent 8·9</span><b>Failure Triage + Self-Heal</b><small>Classify: script vs env vs DUT bug → patch → re-run</small></div>
+                </div>
+                <div class="loopback"><span class="lp">↺</span><span>Fail log → LLM → patch → re-execute (max N iterations) · DUT bugs are <u>never</u> "fixed" in the script — they are raised as defects</span></div>
+              </div>
+              <div class="gate"><span>HITL Gate 2 · Merge request reviewed by Review Shield + engineer</span></div>
+            </div>
+            <div class="io"><h4>Outputs</h4>
+              <span>✅ Testable requirement list</span><span>🧪 TC suite (UTH / Xray)</span><span>🔗 RTM · 100% coverage</span><span>🐍 Working scripts (MR)</span><span>📈 Execution report</span><span>🐞 Suspected DUT defects</span><span>↗ Feeds CoverSight &amp; Review Shield</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb">
+          <div class="row between"><div><h3>Protocol Workspaces</h3><div class="sub">One workspace per specification · each runs the same 8-step pipeline</div></div>
+            <button class="btn ghost sm">+ New Workspace</button></div>
+          <div class="specgrid" id="specgrid"></div>
+        </div>
+
+        <div class="grid cols-2e">
+          <div class="card"><h3>Test Design Effort — Manual vs SpecSpark</h3><div class="sub">Per spec release · engineer-days (wireframe targets, to be baselined in pilot)</div>
+            <div class="hbars" id="effort"></div>
+            <div class="legend"><span><i style="background:var(--faint)"></i>Manual baseline</span><span><i style="background:var(--spark)"></i>With SpecSpark (incl. human review)</span></div>
+          </div>
+          <div class="card"><h3>Recent Spark Runs</h3><div class="sub">Across all workspaces</div>
+            <table><thead><tr><th>Run</th><th>Workspace</th><th>Stage</th><th>Coverage</th><th>Scripts pass</th></tr></thead><tbody id="runs"></tbody></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================== S1 INGEST -->
+      <section class="screen" id="screen-s1">
+        <div class="page-head"><div><span class="phase-tag">Phase 1 · Step 1</span><h2>Spec Ingestion &amp; Knowledge Graph</h2>
+          <p>Upload the protocol specification and any product requirement documents. The <b>Spec Parser Agent</b> preserves section numbering, tables, register maps and figures so every downstream requirement can be cited back to its exact clause.</p></div>
+          <button class="btn primary" onclick="go('s2')">Extract Requirements →</button></div>
+        <div class="grid cols-2">
+          <div class="card"><h3>1 · Source Documents</h3><div class="sub">PDF · DOCX · XLSX · HTML · ReqIF — standards, PRDs, customer specs, errata / ECNs</div>
+            <div class="drop"><div class="big">⬆</div><b>Drag &amp; drop specification / requirement files</b><br/><small>or import from Confluence · SharePoint · JIRA epics</small></div>
+            <div class="filelist" id="s1-files"></div>
+            <div class="frow mt">
+              <div class="field"><label>Scope filter</label><select><option>Whole document</option><option>Selected chapters only</option><option>Delta vs previous revision (ECN / errata)</option></select><div class="hint">Delta mode only re-designs TCs for changed clauses</div></div>
+              <div class="field"><label>Product profile</label><select id="s1-profile"></select><div class="hint">Optional / not-supported features are filtered out</div></div>
+            </div>
+          </div>
+          <div class="card"><h3>2 · Parsing Pipeline</h3><div class="sub">Spec Parser Agent · live status</div>
+            <div class="stages" id="s1-stages"></div>
+            <div class="grid cols-3 mt" id="s1-stats"></div>
+            <div class="callout blue mt"><b>Why a knowledge graph?</b> Memory specs define behaviour across distant sections (e.g. a command in ch.5, its status codes in ch.4, power rules in ch.8). The graph links them so the requirement agent reasons over the whole feature, not one chunk.</div>
+          </div>
+        </div>
+        <div class="card mt"><div class="row between"><div><h3>3 · Spec Structure Explorer</h3><div class="sub">Detected chapters · clause density · normative keywords</div></div><span class="pill" id="s1-norm"></span></div>
+          <table><thead><tr><th>Chapter</th><th>Title</th><th>Pages</th><th>Normative clauses</th><th>Tables / registers</th><th>Relevance</th></tr></thead><tbody id="s1-chap"></tbody></table>
+        </div>
+      </section>
+
+      <!-- =========================================== S2 REQUIREMENTS -->
+      <section class="screen" id="screen-s2">
+        <div class="page-head"><div><span class="phase-tag">Phase 1 · Step 2</span><h2>Testable Requirements</h2>
+          <p>The <b>Requirement Extractor Agent</b> splits compound clauses into atomic, verifiable requirements, classifies them into test categories, scores testability and cites the source clause. Non-testable or ambiguous text is flagged for the architect instead of silently dropped.</p></div>
+          <div class="row"><button class="btn ghost">Approve all ≥ 0.9</button><button class="btn primary" onclick="go('s3')">Design Scenarios →</button></div></div>
+        <div class="grid cols-4 mb" id="s2-kpis"></div>
+        <div class="grid cols-2">
+          <div class="card"><div class="row between"><div><h3>Extracted Requirements</h3><div class="sub">Filter by category · click a row to open the TC tree</div></div><span class="pill" id="s2-count"></span></div>
+            <div class="chips mb" id="s2-chips"></div>
+            <table><thead><tr><th>Req ID</th><th>Requirement (atomic)</th><th>Keyword</th><th>Category</th><th>Clause</th><th>Testability</th><th>Review</th></tr></thead><tbody id="s2-reqs"></tbody></table>
+          </div>
+          <div>
+            <div class="card mb"><h3>Category Distribution</h3><div class="sub">All requirements in this workspace</div><div class="hbars" id="s2-cat"></div></div>
+            <div class="card"><h3>Needs Architect Attention</h3><div class="sub">Not auto-approved</div><div id="s2-flags"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================== S3 SCENARIOS -->
+      <section class="screen" id="screen-s3">
+        <div class="page-head"><div><span class="phase-tag">Phase 1 · Step 3</span><h2>Test Scenarios &amp; Test Cases</h2>
+          <p>For each requirement the <b>Scenario &amp; TC Designer Agent</b> derives scenarios using standard test-design techniques, then expands each into executable test cases with preconditions, steps, expected results and pass criteria traced to the spec.</p></div>
+          <div class="row"><button class="btn ghost">Push to UTH</button><button class="btn primary" onclick="go('s4')">Check Coverage →</button></div></div>
+        <div class="grid cols-4 mb" id="s3-kpis"></div>
+        <div class="grid" style="grid-template-columns:.9fr 1.1fr">
+          <div class="card"><h3>Requirement → Scenario Tree</h3><div class="sub">Selected requirement expanded</div><div class="tree" id="s3-tree"></div></div>
+          <div class="card"><div class="row between"><div><h3 id="s3-tctitle">Test Case</h3><div class="sub" id="s3-tcsub"></div></div><div class="row"><span class="badge ok">Grounded</span><button class="btn ghost sm">Edit</button></div></div>
+            <dl class="kv" id="s3-tc"></dl>
+          </div>
+        </div>
+        <div class="card mt"><h3>Design Techniques Applied</h3><div class="sub">How TCs were derived across this workspace</div>
+          <div class="grid cols-6" id="s3-tech"></div></div>
+      </section>
+
+      <!-- =========================================== S4 COVERAGE -->
+      <section class="screen" id="screen-s4">
+        <div class="page-head"><div><span class="phase-tag">Phase 1 · Step 4</span><h2>Coverage &amp; Traceability Gate</h2>
+          <p>The <b>Coverage Critic Agent</b> builds a bi-directional Requirements Traceability Matrix. Phase 1 cannot close until every testable clause maps to ≥1 approved TC and every TC maps back to a clause (no orphan tests).</p></div>
+          <div class="row"><button class="btn ghost">Download RTM (.xlsx)</button><button class="btn spark" onclick="go('s5')">Approve &amp; Start Phase 2 →</button></div></div>
+        <div class="grid cols-2">
+          <div class="card"><div class="row" style="gap:20px"><div class="donut" id="s4-donut"></div>
+            <div><h3>Requirement Coverage</h3><div class="sub" style="margin-bottom:6px">Testable requirements with ≥1 approved TC</div><div id="s4-sum"></div></div></div>
+            <div class="mt"><h3 style="font-size:13px">Coverage Gate Checklist</h3><div id="s4-gates"></div></div>
+          </div>
+          <div class="card"><h3>Coverage Heatmap · Chapter × Category</h3><div class="sub">Number of TCs · dashed = not applicable in this chapter</div>
+            <div class="heat" id="s4-heat"></div>
+            <div class="legend"><span><i style="background:#9fb8ff"></i>1–4 TCs</span><span><i style="background:#5b8cff"></i>5–14</span><span><i style="background:#3a55c9"></i>15+</span></div>
+          </div>
+        </div>
+        <div class="card mt"><div class="row between"><div><h3>Gap Closure Log</h3><div class="sub">Gaps found by the critic and auto-resolved by re-prompting the TC Designer</div></div><span class="badge ok" id="s4-open">0 open gaps</span></div>
+          <table><thead><tr><th>Gap</th><th>Requirement</th><th>Finding</th><th>Resolution</th><th>Status</th></tr></thead><tbody id="s4-gaps"></tbody></table>
+        </div>
+      </section>
+
+      <!-- =========================================== S5 FRAMEWORK -->
+      <section class="screen" id="screen-s5">
+        <div class="page-head"><div><span class="phase-tag p2">Phase 2 · Step 5</span><h2>Framework Context</h2>
+          <p>Give SpecSpark your test framework libraries, existing scripts and the script template. The <b>Framework Indexer Agent</b> builds an API catalog and code graph so generated scripts only call functions that really exist — no hallucinated APIs.</p></div>
+          <button class="btn spark" onclick="go('s6')">Generate Scripts →</button></div>
+        <div class="grid cols-3">
+          <div class="card"><h3>① Framework Libraries</h3><div class="sub">Git repo / package · read-only</div><div class="filelist" id="s5-libs" style="margin-top:0"></div></div>
+          <div class="card"><h3>② Existing Test Scripts</h3><div class="sub">Few-shot style &amp; idiom source</div><div class="filelist" id="s5-scripts" style="margin-top:0"></div></div>
+          <div class="card"><h3>③ Script Template</h3><div class="sub">Mandatory structure for every script</div><div class="filelist" id="s5-tpl" style="margin-top:0"></div>
+            <div class="note">Template sections detected: header docstring · TC-ID &amp; Req-ID tags · setup() · test body · teardown() · result logging</div></div>
+        </div>
+        <div class="grid cols-2 mt">
+          <div class="card"><div class="row between"><div><h3>API Catalog (auto-extracted)</h3><div class="sub">Signatures, docstrings, usage frequency from existing scripts</div></div><span class="pill" id="s5-apicount"></span></div>
+            <table><thead><tr><th>API</th><th>Module</th><th>Used in</th><th>Maps to spec</th></tr></thead><tbody id="s5-api"></tbody></table>
+          </div>
+          <div class="card"><h3>Phase 1 TCs selected for automation</h3><div class="sub">From approved suite · filter before generation</div>
+            <div class="chips mb"><button class="chip on">All automatable</button><button class="chip">Sanity first</button><button class="chip">Changed clauses only</button><button class="chip">Priority P1</button></div>
+            <div class="hbars" id="s5-sel"></div>
+            <div class="callout mt"><b>Not automatable (manual):</b> <span id="s5-manual"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================== S6 GENERATE -->
+      <section class="screen" id="screen-s6">
+        <div class="page-head"><div><span class="phase-tag p2">Phase 2 · Step 6</span><h2>Script Generation</h2>
+          <p>The <b>Script Generator Agent</b> writes one script per TC using the template, the API catalog and the closest existing scripts as examples. Each script passes static checks before it is allowed to run.</p></div>
+          <button class="btn spark" onclick="go('s7')">Execute Scripts →</button></div>
+        <div class="grid cols-4 mb" id="s6-kpis"></div>
+        <div class="grid" style="grid-template-columns:.8fr 1.2fr">
+          <div class="card"><h3>Generation Queue</h3><div class="sub">Per-TC status</div>
+            <table><thead><tr><th>TC</th><th>Script</th><th>Static</th></tr></thead><tbody id="s6-queue"></tbody></table>
+          </div>
+          <div class="card"><div class="row between"><div><h3>Generated Script</h3><div class="sub" id="s6-sub"></div></div><div class="toggle"><button class="on">Script</button><button>Diff vs template</button><button>Prompt trace</button></div></div>
+            <div class="codehead"><span id="s6-file"></span><span>template ✓ · APIs ✓ · lint ✓</span></div>
+            <pre class="code" id="s6-code"></pre>
+            <div class="row wrap mt" style="gap:8px"><span class="tag">✓ All APIs resolved in catalog</span><span class="tag">✓ TC-ID / Req-ID tags present</span><span class="tag">✓ Expected values cited from spec</span><span class="tag">✓ flake8 / pylint clean</span><span class="tag">✓ teardown restores DUT state</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================== S7 EXECUTE -->
+      <section class="screen" id="screen-s7">
+        <div class="page-head"><div><span class="phase-tag p2">Phase 2 · Step 7</span><h2>Execute on Real or Virtual Target</h2>
+          <p>The <b>Execution Orchestrator</b> reserves a Test PC + DUT through Zion <b>LaaS</b> or spins up a virtual device model, runs the scripts through Zion <b>UTH</b>, and streams logs back for triage.</p></div>
+          <button class="btn spark" onclick="go('s8')">Open Self-Heal Loop →</button></div>
+        <div class="grid cols-3 mb">
+          <div class="tgt" onclick="pickT(this)"><div class="row between"><h4>🖥 Real · Test PC + DUT</h4><span class="badge ok">LaaS</span></div><p id="s7-real"></p><div class="row"><span class="tag">Robotics insert / power-cycle</span><span class="tag">FW build selectable</span></div></div>
+          <div class="tgt on" onclick="pickT(this)"><div class="row between"><h4>🧪 Virtual · QEMU</h4><span class="badge run">Fast loop</span></div><p id="s7-qemu"></p><div class="row"><span class="tag">Parallel containers</span><span class="tag">Error injection</span></div></div>
+          <div class="tgt" onclick="pickT(this)"><div class="row between"><h4>🧬 Virtual · QVP</h4><span class="badge sp">Pre-silicon</span></div><p id="s7-qvp"></p><div class="row"><span class="tag">FW-in-the-loop</span><span class="tag">Before samples exist</span></div></div>
+        </div>
+        <div class="callout blue mb"><b>Recommended strategy:</b> debug scripts on virtual targets first (minutes, parallel, free), then promote passing scripts to real hardware. Performance, power and timing TCs are marked <i>real-only</i> because emulators don't model them faithfully.</div>
+        <div class="grid cols-2">
+          <div class="card"><div class="row between"><div><h3>Run Matrix</h3><div class="sub" id="s7-runsub"></div></div><span class="pill live"><span class="dot"></span> running</span></div>
+            <div class="grid cols-4 mb" id="s7-kpis" style="gap:10px"></div>
+            <table><thead><tr><th>TC</th><th>Target</th><th>Attempt</th><th>Result</th><th>Time</th></tr></thead><tbody id="s7-runs"></tbody></table>
+          </div>
+          <div class="card"><h3>Live Console</h3><div class="sub" id="s7-consub"></div><div class="console" id="s7-console"></div></div>
+        </div>
+      </section>
+
+      <!-- =========================================== S8 SELF-HEAL -->
+      <section class="screen" id="screen-s8">
+        <div class="page-head"><div><span class="phase-tag p2">Phase 2 · Step 8</span><h2>Self-Heal Loop &amp; Handoff</h2>
+          <p>Failures are classified before anything is changed. Only <b>script defects</b> go back to the LLM with the failure log, the script and the relevant API docs. <b>DUT / firmware defects</b> are raised as bugs, and <b>environment issues</b> are retried on another bench.</p></div>
+          <div class="row"><button class="btn ghost">Raise DUT defect</button><button class="btn spark">Open Merge Request →</button></div></div>
+        <div class="grid cols-4 mb" id="s8-kpis"></div>
+        <div class="grid" style="grid-template-columns:.85fr 1.15fr">
+          <div class="card"><h3>Failure Triage</h3><div class="sub">Failure Triage Agent · classification of first-run failures</div>
+            <div class="hbars" id="s8-triage"></div>
+            <h3 style="font-size:13px;margin-top:22px">Heal Iterations · <span class="tcid" id="s8-tc"></span></h3>
+            <div class="tl mt" id="s8-tl"></div>
+          </div>
+          <div class="card"><h3>Root Cause &amp; Patch</h3><div class="sub">Log excerpt fed to LLM → proposed patch → re-executed</div>
+            <div class="console" id="s8-log" style="max-height:150px;margin-bottom:12px"></div>
+            <div class="codehead"><span id="s8-file"></span><span>patch · attempt 2</span></div>
+            <pre class="code" id="s8-diff"></pre>
+            <div class="callout mt"><b>Guardrail · assertion integrity:</b> a patch that changes an expected value, status code, timeout or loosens an assertion taken from the spec is automatically rejected and escalated to a human. The loop fixes <i>how</i> the script talks to the DUT, never <i>what</i> the spec says the DUT must do.</div>
+          </div>
+        </div>
+        <div class="card mt"><h3>Handoff</h3><div class="sub">Where SpecSpark outputs go next on Zion</div>
+          <div class="grid cols-4">
+            <div class="callout blue"><b>UTH</b><br/>Approved TC suite + scripts registered as a test plan; regression scheduling.</div>
+            <div class="callout blue"><b>Review Shield</b><br/>Merge request with generated scripts is auto-reviewed before merge (HITL Gate 2).</div>
+            <div class="callout blue"><b>CoverSight</b><br/>Requirements + scripts feed the coverage knowledge graph for ongoing gap tracking.</div>
+            <div class="callout"><b>JIRA / Defects</b><br/>Suspected DUT / FW bugs filed with log, spec clause and repro script attached.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================== SETTINGS -->
+      <section class="screen" id="screen-settings">
+        <div class="page-head"><div><span class="phase-tag">Workspace</span><h2>Workspace Settings — <span id="set-name"></span></h2>
+          <p>Models, agents, gates and targets for this protocol workspace.</p></div><button class="btn primary">Save</button></div>
+        <div class="grid cols-3">
+          <div class="card"><h3>🤖 Models &amp; Grounding</h3><div class="sub">Routed through Zion model gateway</div>
+            <div class="field"><label>Reasoning model (requirements, TC design, triage)</label><select><option>Frontier model · long context</option><option>On-prem model</option></select></div>
+            <div class="field"><label>Code model (script generation, self-heal)</label><select><option>Frontier code model</option><option>On-prem code model</option></select></div>
+            <div class="field"><label>Retrieval</label><select><option>Graph-RAG (spec KG + code graph)</option><option>Hybrid vector + BM25</option></select></div>
+            <div class="setrow"><div>Require clause citation for every requirement<small>Uncited output is rejected</small></div><span class="sw"></span></div>
+            <div class="setrow"><div>Data stays on-prem<small>No spec text leaves the Zion boundary</small></div><span class="sw"></span></div>
+          </div>
+          <div class="card"><h3>🧭 Phase 1 Rules</h3><div class="sub">Extraction &amp; coverage</div>
+            <div class="field"><label>Requirement categories</label><div class="chips" id="set-cats"></div></div>
+            <div class="frow"><div class="field"><label>Auto-approve testability ≥</label><input value="0.90"/></div><div class="field"><label>Coverage gate</label><input value="100% SHALL · 100% SHOULD"/></div></div>
+            <div class="setrow"><div>Include MAY / optional clauses<small>Only if feature enabled in product profile</small></div><span class="sw"></span></div>
+            <div class="setrow"><div>HITL Gate 1 required<small>Architect sign-off before Phase 2</small></div><span class="sw"></span></div>
+          </div>
+          <div class="card"><h3>⚙ Phase 2 Rules</h3><div class="sub">Generation, execution &amp; self-heal</div>
+            <div class="frow"><div class="field"><label>Max heal iterations</label><input value="3"/></div><div class="field"><label>Parallel virtual runs</label><input value="16"/></div></div>
+            <div class="field"><label>Default target</label><select><option>Virtual first → promote to real</option><option>Real only</option><option>Virtual only</option></select></div>
+            <div class="setrow"><div>Assertion-integrity guardrail<small>Block patches that alter spec-derived expectations</small></div><span class="sw"></span></div>
+            <div class="setrow"><div>Auto-file DUT defects<small>Else queue for engineer confirmation</small></div><span class="sw off"></span></div>
+            <div class="setrow"><div>Send MR to Review Shield<small>HITL Gate 2</small></div><span class="sw"></span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+<script>
+var CATS=[["Functional","#5b8cff"],["Error / Negative","#ff5d6c"],["Sanity / Smoke","#00c2a8"],["Performance","#ff8a3d"],["Power Mgmt","#f4b740"],["Security","#7c5cff"],["Compliance","#2ec27e"],["Reliability / Stress","#8a93a6"]];
+var AUTO=[98,100,100,92,78,86,95,70];
+
+var WS=[
+{key:"nvme",ab:"NV",name:"NVMe 2.1",kind:"PCIe SSD interface",color:"#3b6cf6",
+ pages:1142,clauses:4690,chunks:"3,912",ent:"18.4k",req:1236,nontest:312,scen:2948,tc:4410,auto:3870,gen:3870,first:71,healed:96,cov:100,stage:"Step 8 · Self-heal",stepDone:8,gapsOpen:0,
+ cat:[412,228,64,96,118,142,120,56],
+ profile:["Client Gen5 SSD · NVM Command Set · no ZNS / KV","Enterprise U.2 · multi-controller · SR-IOV"],
+ docs:[["NVM_Express_Base_Specification_2.1.pdf","pdf","707 pages · section tree 1,284 nodes","ok","Parsed"],["NVM_Command_Set_Specification_1.1.pdf","pdf","122 pages · 612 chunks","ok","Parsed"],["PRD_Client_Gen5_SSD_v1.3.xlsx","xls","214 product requirements","ok","Parsed"],["Errata_ECN_bundle.pdf","pdf","Delta mode · 38 changed clauses","run","72%"]],
+ chap:[["1–2","Introduction & Theory of Operation",60,210,18,"Low"],["3","NVM Express Architecture",180,1240,96,"High"],["4","Data Structures & Status Codes",70,420,64,"High"],["5","Admin Command Set",220,1680,142,"High"],["7 (NVM CS)","I/O Commands",60,380,28,"High"],["8","Extended Capabilities · Power, Sanitize, Security",140,760,52,"High"],["Annex","Informative / Sample code",60,0,6,"Excluded"]],
+ reqs:[["NV-R-0142","If the NSID specifies an inactive namespace, the controller shall abort the command with status Invalid Namespace or Format.","SHALL",1,"§3.2.1",0.98,"ok"],["NV-R-0317","A command whose data transfer size exceeds MDTS shall be aborted with status Invalid Field in Command.","SHALL",1,"§5 Identify · MDTS",0.96,"ok"],["NV-R-0021","After CC.EN transitions 0→1 the controller shall set CSTS.RDY to 1 within CAP.TO.","SHALL",2,"§3.5",0.97,"ok"],["PRD-4.2","4 KiB random read, QD32 × 4 jobs, shall sustain ≥ 1.4 M IOPS at steady state.","SHALL",3,"PRD §4.2",0.95,"ok"],["NV-R-0702","The controller shall autonomously enter a non-operational power state when idle time exceeds the APST ITPT.","SHALL",4,"§5 APST",0.93,"ok"],["NV-R-0588","Sanitize with Crypto Erase shall render all user data in all namespaces unrecoverable.","SHALL",5,"§8 Sanitize",0.91,"ok"],["NV-R-0911","The host should not submit a command to a full Submission Queue.","SHOULD",0,"§3.3",0.62,"rev"]],
+ flags:[["NV-R-0911","Host-side obligation — rewritten as a negative test of controller behaviour on over-submission","Reclassify"],["NV-R-1044","Vendor-specific timing has no measurable limit in the spec — needs a value from PRD","Clarify"],["NV-R-0460","Compound clause split into 3 atomic requirements (Format NVM · SES · PI)","Confirm split"],["§ Informative",312+" descriptive statements excluded as non-testable","Info"]],
+ scen:[["SC-0142-01","I/O command to active NSID (positive baseline)","Equivalence partition",2],["SC-0142-02","Write to allocated-but-detached (inactive) NSID","State transition · negative",3],["SC-0142-03","NSID = 0h on an I/O command","Boundary value",2],["SC-0142-04","NSID = NN + 1 (beyond max namespaces)","Boundary value",2],["SC-0142-05","NSID = FFFFFFFFh on a command without broadcast support","Boundary · negative",2]],
+ tcd:{id:"TC-NV-0142-02a",title:"Write to detached namespace returns Invalid Namespace or Format",pre:"Controller enabled · namespace 2 created, attached, then detached (Namespace Attachment, SEL=1) · I/O queue pair 1 created",steps:["Identify (CNS 02h) — confirm NSID 2 absent from active namespace list","Submit Write: NSID=2, SLBA=0, 8 blocks, pattern A5h","Wait for completion on CQ 1 (timeout 1 s)","Read Error Information log page"],exp:"CQE status SCT=0h / SC=0Bh (Invalid Namespace or Format) · no media write · error log entry carries the same CID",tech:"State transition + negative",prio:"P1",tgt:"QEMU ✓ · Test PC + DUT ✓",trace:"NV-R-0142 → §3.2.1 · status code table §4 · Error log §5"},
+ libs:[["nvme-qa-framework","git","sol-pe/nvme-qa-fw · main · 412 APIs"],["pynvme-wrapper 3.4","py","Admin & I/O bindings"],["lab-utils","py","Logging · UTH result publisher"]],
+ scripts:[["regression/nvme_admin/**","git","1,284 scripts · style profile learned"],["sanity/bvt_suite/**","py","96 scripts · setup idioms"]],
+ tpl:[["tc_template_v4.py","py","Sol PE standard template"]],
+ api:[["admin.ns_detach(ctrl, nsid)","nvme_qa.admin","142 scripts","Namespace Attachment"],["io.write(qp, nsid, slba, nblocks, buf)","nvme_qa.io","611 scripts","Write command"],["qp.cq.wait(cid, timeout_ms)","nvme_qa.queue","1,020 scripts","Completion Queue"],["admin.get_error_log(ctrl)","nvme_qa.admin","88 scripts","Error Information log"],["expect_status(cqe, sct, sc)","nvme_qa.assert_","930 scripts","Status codes"]],apin:412,
+ tcs:[["TC-NV-0142-02a","tc_nv_0142_02a_detached_ns.py"],["TC-NV-0021-01","tc_nv_0021_01_ready_timeout.py"],["TC-NV-0317-03b","tc_nv_0317_03b_mdts_exceed.py"],["TC-NV-0702-02","tc_nv_0702_02_apst_entry.py"],["TC-NV-0588-01","tc_nv_0588_01_crypto_erase.py"],["TC-NV-PRD42-01","tc_nv_prd42_01_randread_iops.py"]],
+ real:"LaaS pool NVMe-Gen5 · 24 Test PCs · Gen5 client SSD engineering samples · FW build selectable",qemu:"QEMU emulated NVMe controller (hw/nvme) · multi-namespace · error injection",qvp:"Virtual platform: controller model + FW image under test · pre-silicon",qs:"qemu-nvme",
+ code:`"""
+TC-ID    : TC-NV-0142-02a
+Req-ID   : NV-R-0142   (NVMe Base 2.1 §3.2.1)
+Title    : Write to detached namespace returns Invalid Namespace or Format
+Category : Error / Negative        Priority : P1
+Source   : SpecSpark generated · review: pending (Review Shield)
+"""
+from nvme_qa import admin, io, queue
+from nvme_qa.assert_ import expect_status
+from lab_utils import tc_logger as log
+
+SC_INVALID_NS = 0x0B          # spec: Generic Command Status table
+
+def setup(ctrl):
+    ctrl.reset_and_enable()
+    ns = admin.ns_create(ctrl, size_gb=4)
+    admin.ns_attach(ctrl, ns.nsid)
+    admin.ns_detach(ctrl, ns.nsid)         # namespace now inactive
+    return ns, queue.create_io_pair(ctrl, qid=1, depth=64)
+
+def test_body(ctrl, ns, qp):
+    assert ns.nsid not in admin.identify_active_ns(ctrl)
+    cid = io.write(qp, nsid=ns.nsid, slba=0, nblocks=8, buf=io.pattern(0xA5))
+    cqe = qp.cq.wait(cid, timeout_ms=1000)
+    expect_status(cqe, sct=0x0, sc=SC_INVALID_NS)
+    err = admin.get_error_log(ctrl)[0]
+    assert err.cid == cid and err.status.sc == SC_INVALID_NS
+
+def teardown(ctrl, ns, qp):
+    queue.delete_io_pair(ctrl, qp)
+    admin.ns_delete(ctrl, ns.nsid)
+    log.publish_result(tc="TC-NV-0142-02a")`,
+ heal:{tc:"TC-NV-0317-03b",file:"tc_nv_0317_03b_mdts_exceed.py",
+  log:[["in","▶ TC-NV-0317-03b · attempt 1 · qemu-nvme"],["mu","  identify: MDTS=5, MPSMIN=4 KiB → max transfer 128 KiB = 32 LBAs"],["mu","  io.read(nsid=1, slba=0, nblocks=32) → CQE SC=00h (Success)"],["er","✖ AssertionError: expected SC=02h Invalid Field in Command, got 00h"],["wa","[triage] transfer == MDTS exactly → request was legal → SCRIPT defect (0.93)"]],
+  fail:"Expected Invalid Field, got Success",tri:"Transfer equalled MDTS exactly — the command was legal, so the DUT was correct",
+  diff:`   max_lbas = mdts_bytes(ctrl) // ns.lba_size
+-  nblocks  = max_lbas                  # intent: exceed MDTS
++  nblocks  = max_lbas + 1              # io.read() takes a 1-based count
+   cid = io.read(qp, nsid=1, slba=0, nblocks=nblocks)
+   expect_status(qp.cq.wait(cid), sct=0x0, sc=SC_INVALID_FIELD)   # unchanged`}},
+
+{key:"ufs",ab:"UF",name:"UFS 4.0",kind:"Mobile storage",color:"#7c5cff",
+ pages:786,clauses:3310,chunks:"2,640",ent:"12.9k",req:948,nontest:244,scen:2210,tc:3260,auto:2790,gen:2790,first:68,healed:93,cov:100,stage:"Step 7 · Executing",stepDone:7,gapsOpen:0,
+ cat:[318,172,52,84,96,118,74,34],
+ profile:["Mobile UFS 4.0 · HS-G5 · WriteBooster on · HPB off","Automotive UFS 3.1 profile"],
+ docs:[["JESD220F_UFS_4.0.pdf","pdf","~600 pages · UPIU / descriptors / flags","ok","Parsed"],["MIPI_UniPro_M-PHY_refs.pdf","pdf","Referenced clauses only","ok","Parsed"],["PRD_Mobile_UFS4_1TB.xlsx","xls","168 product requirements","ok","Parsed"]],
+ chap:[["5–6","UFS Architecture & UIC layer",90,420,30,"Med"],["7","UTP Transport · UPIU",120,610,48,"High"],["10","Command Set · SCSI & Query",160,980,74,"High"],["12","RPMB & Security",60,380,22,"High"],["13","Power Mode & Hibern8",70,440,26,"High"],["14","Descriptors, Flags, Attributes",110,480,210,"High"],["Annex","Informative",40,0,4,"Excluded"]],
+ reqs:[["UFS-R-0218","An RPMB Authenticated Data Write with an invalid MAC shall return result Authentication Failure (0002h).","SHALL",5,"§12 RPMB",0.97,"ok"],["UFS-R-0044","The device shall respond to a NOP OUT UPIU with a NOP IN UPIU.","SHALL",2,"§10 NOP",0.99,"ok"],["UFS-R-0391","When fWriteBoosterBufferFlushEn is set, the device shall flush the WriteBooster buffer during idle.","SHALL",0,"§ WriteBooster",0.9,"ok"],["PRD-2.1","Sequential read at HS-G5 × 2 lanes shall reach ≥ 4,000 MB/s.","SHALL",3,"PRD §2.1",0.95,"ok"],["UFS-R-0507","On DME_HIBERNATE_ENTER the link shall enter Hibern8 and exit on DME_HIBERNATE_EXIT without data loss.","SHALL",4,"§13 Hibern8",0.92,"ok"],["UFS-R-0610","A Query Request to a non-existent descriptor IDN shall return Invalid IDN.","SHALL",1,"§14 Query",0.96,"ok"],["UFS-R-0733","The device should minimise latency variation under mixed workloads.","SHOULD",3,"§ Perf note",0.55,"rev"]],
+ flags:[["UFS-R-0733","No measurable threshold — needs latency percentile target from PRD","Clarify"],["UFS-R-0391","'During idle' undefined — using PRD idle definition (≥ 50 ms no I/O)","Confirm"],["§ Informative","244 descriptive statements excluded","Info"]],
+ scen:[["SC-0218-01","Authenticated write with valid MAC and counter (baseline)","Equivalence partition",2],["SC-0218-02","Authenticated write with corrupted MAC","Negative · security",2],["SC-0218-03","Authenticated write with stale write counter","Negative · security",2],["SC-0218-04","Write counter increments only on success","State transition",2]],
+ tcd:{id:"TC-UFS-0218-02",title:"RPMB authenticated write with corrupted MAC is rejected",pre:"RPMB key programmed · RPMB W-LUN accessible · write counter read",steps:["Read current write counter (request 0002h)","Build Authenticated Data Write frame with correct counter","Flip 1 bit in the MAC field","Submit frame; send Result Read Request"],exp:"Result = 0002h (Authentication Failure) · RPMB data unchanged · write counter unchanged",tech:"Negative · security",prio:"P1",tgt:"QEMU UFS ✓ · Test PC + DUT ✓",trace:"UFS-R-0218 → §12 RPMB result codes"},
+ libs:[["ufs-qa-framework","git","sol-pe/ufs-qa-fw · 356 APIs"],["ufs-utils bindings","py","UPIU / Query / RPMB helpers"]],
+ scripts:[["regression/ufs/**","git","940 scripts"],["rpmb/**","py","62 scripts"]],tpl:[["tc_template_v4.py","py","Sol PE standard template"]],
+ api:[["rpmb.read_write_counter(dev, lun)","ufs_qa.rpmb","58 scripts","RPMB counter"],["rpmb.auth_write_frame(counter, addr, data)","ufs_qa.rpmb","41 scripts","RPMB frame"],["query.read_desc(dev, idn, index)","ufs_qa.query","402 scripts","Query Request"],["uic.hibern8_enter(dev)","ufs_qa.uic","77 scripts","Hibern8"],["expect_result(resp, code)","ufs_qa.assert_","510 scripts","Result codes"]],apin:356,
+ tcs:[["TC-UFS-0218-02","tc_ufs_0218_02_rpmb_bad_mac.py"],["TC-UFS-0044-01","tc_ufs_0044_01_nop.py"],["TC-UFS-0610-03","tc_ufs_0610_03_invalid_idn.py"],["TC-UFS-0507-01","tc_ufs_0507_01_hibern8.py"],["TC-UFS-0391-02","tc_ufs_0391_02_wb_flush.py"],["TC-UFS-PRD21-01","tc_ufs_prd21_01_seqread.py"]],
+ real:"LaaS pool UFS-Mobile · 16 Test PCs with UFS host adapter · 1 TB engineering samples",qemu:"QEMU UFS device model (ufs + ufs-lu) · UPIU, Query, multi-LU",qvp:"Virtual platform: UFS controller model + FW image · pre-silicon",qs:"qemu-ufs",
+ code:`"""
+TC-ID    : TC-UFS-0218-02
+Req-ID   : UFS-R-0218   (JESD220 UFS 4.0 · RPMB)
+Title    : RPMB authenticated write with corrupted MAC is rejected
+Category : Security                Priority : P1
+"""
+from ufs_qa import rpmb, lu
+from ufs_qa.assert_ import expect_result
+from lab_utils import tc_logger as log
+
+RESULT_AUTH_FAILURE = 0x0002    # spec: RPMB operation result codes
+
+def setup(dev):
+    dev.link_startup(); lu.wait_ready(dev, rpmb.WLUN)
+    return rpmb.read_block(dev, addr=0)          # snapshot for integrity check
+
+def test_body(dev, before):
+    counter = rpmb.read_write_counter(dev, lun=rpmb.WLUN)
+    frame = rpmb.auth_write_frame(counter=counter, addr=0, data=b"\\x5A" * 256)
+    frame.mac = rpmb.corrupt(frame.mac, bit=0)
+    expect_result(rpmb.submit(dev, frame), RESULT_AUTH_FAILURE)
+    assert rpmb.read_block(dev, addr=0) == before
+    assert rpmb.read_write_counter(dev, lun=rpmb.WLUN) == counter
+
+def teardown(dev, before):
+    log.publish_result(tc="TC-UFS-0218-02")`,
+ heal:{tc:"TC-UFS-0218-03",file:"tc_ufs_0218_03_stale_counter.py",
+  log:[["in","▶ TC-UFS-0218-03 · attempt 1 · qemu-ufs"],["mu","  rpmb.auth_write_frame(counter=0, addr=0) · MAC valid"],["er","✖ expected result 0003h (Counter Failure) — got 0000h (OK)"],["wa","[triage] fresh device: real counter was 0 → frame counter was NOT stale → SCRIPT defect (0.9)"]],
+  fail:"Expected Counter Failure, got OK",tri:"Hard-coded counter 0 matched a fresh device — the test never sent a stale counter",
+  diff:`-  frame = rpmb.auth_write_frame(counter=0, addr=0, data=blk)
++  rpmb.auth_write(dev, addr=1, data=blk)          # advance counter first
++  stale = rpmb.read_write_counter(dev, lun=rpmb.WLUN) - 1
++  frame = rpmb.auth_write_frame(counter=stale, addr=0, data=blk)
+   expect_result(rpmb.submit(dev, frame), RESULT_COUNTER_FAILURE)   # unchanged`}},
+
+{key:"emmc",ab:"EM",name:"eMMC 5.1",kind:"Embedded storage",color:"#00a88f",
+ pages:352,clauses:2140,chunks:"1,310",ent:"7.6k",req:684,nontest:171,scen:1480,tc:2140,auto:1920,gen:1210,first:66,healed:91,cov:100,stage:"Step 6 · Generating",stepDone:6,gapsOpen:0,
+ cat:[236,128,40,52,64,82,56,26],
+ profile:["Industrial eMMC 5.1 · HS400 ES · cache on","Consumer eMMC · HS200 max"],
+ docs:[["JESD84-B51_eMMC_5.1.pdf","pdf","352 pages · EXT_CSD 512 bytes mapped","ok","Parsed"],["PRD_Industrial_eMMC_v2.docx","doc","96 product requirements","ok","Parsed"]],
+ chap:[["6","Device operating modes & state machine",80,620,34,"High"],["6.6","Bus speed modes · HS200 / HS400",40,260,18,"High"],["6.6.22","RPMB",30,210,12,"High"],["6.9","Command classes · CMD0–CMD63",60,540,46,"High"],["7","Registers · OCR, CID, CSD, EXT_CSD",70,510,180,"High"],["Annex","Informative / timing figs",30,0,20,"Excluded"]],
+ reqs:[["EM-R-0310","Switching HS_TIMING to HS400 shall succeed only after BUS_WIDTH is set to 8-bit DDR.","SHALL",0,"§6.6 HS400",0.96,"ok"],["EM-R-0012","CMD0 with argument F0F0F0F0h shall move the device to Pre-Idle state.","SHALL",2,"§6.4 CMD0",0.98,"ok"],["EM-R-0455","The RPMB write counter shall increment after each successful authenticated write.","SHALL",5,"§6.6 RPMB",0.97,"ok"],["EM-R-0520","CMD5 (Sleep) shall be accepted only in Standby state; otherwise ILLEGAL_COMMAND.","SHALL",1,"§6.6 Sleep",0.95,"ok"],["EM-R-0602","FLUSH_CACHE shall complete within GENERIC_CMD6_TIME.","SHALL",4,"§7 EXT_CSD",0.9,"ok"],["EM-R-0701","Device should support background operations without host intervention.","SHOULD",7,"§6.6 BKOPS",0.66,"rev"]],
+ flags:[["EM-R-0701","SHOULD with no observable criterion — proposed: BKOPS status decreases after idle","Clarify"],["§ Informative","171 descriptive statements excluded","Info"]],
+ scen:[["SC-0310-01","Correct sequence HS200 → tuning → HS → 8-bit DDR → HS400","Positive · sequence",2],["SC-0310-02","HS400 switch while bus is 8-bit SDR","Negative · state",2],["SC-0310-03","HS400 switch while bus is 4-bit","Negative · state",1],["SC-0310-04","HS400 with Enhanced Strobe","Equivalence partition",2]],
+ tcd:{id:"TC-EM-0310-01",title:"HS400 switch succeeds with the spec-mandated sequence",pre:"Device in Transfer state · host supports HS400 · 1.8 V I/O",steps:["CMD6: HS_TIMING=2 (HS200); execute tuning (CMD21)","CMD6: HS_TIMING=1 (HS) at ≤ 52 MHz","CMD6: BUS_WIDTH=06h (8-bit DDR)","CMD6: HS_TIMING=3 (HS400); raise clock to 200 MHz","Read/verify 64 MiB"],exp:"No SWITCH_ERROR in R1 · EXT_CSD HS_TIMING=3 · data integrity OK",tech:"State transition",prio:"P1",tgt:"QEMU (functional) ✓ · Test PC + DUT (timing) ✓",trace:"EM-R-0310 → §6.6 HS400 selection"},
+ libs:[["emmc-qa-framework","git","sol-pe/emmc-qa-fw · 228 APIs"],["sdhci-host-lib","py","Host controller control"]],
+ scripts:[["regression/emmc/**","git","610 scripts"]],tpl:[["tc_template_v4.py","py","Sol PE standard template"]],
+ api:[["mmc.switch(dev, index, value)","emmc_qa.cmd","388 scripts","CMD6 SWITCH"],["mmc.execute_tuning(dev)","emmc_qa.bus","54 scripts","CMD21 tuning"],["mmc.read_ext_csd(dev)","emmc_qa.reg","410 scripts","EXT_CSD"],["host.set_clock(mhz)","sdhci_host","300 scripts","Host"],["expect_r1(resp, err=None)","emmc_qa.assert_","520 scripts","R1 status"]],apin:228,
+ tcs:[["TC-EM-0310-01","tc_em_0310_01_hs400_seq.py"],["TC-EM-0012-01","tc_em_0012_01_preidle.py"],["TC-EM-0455-02","tc_em_0455_02_rpmb_counter.py"],["TC-EM-0520-03","tc_em_0520_03_sleep_state.py"],["TC-EM-0602-01","tc_em_0602_01_flush_time.py"],["TC-EM-0310-02","tc_em_0310_02_hs400_sdr_neg.py"]],
+ real:"LaaS pool eMMC-Ind · 12 Test PCs + socket boards · industrial samples",qemu:"QEMU SD/MMC model in eMMC mode · command set & EXT_CSD",qvp:"Virtual platform: eMMC controller model + FW image",qs:"qemu-emmc",
+ code:`"""
+TC-ID    : TC-EM-0310-01
+Req-ID   : EM-R-0310   (JESD84-B51 · HS400 selection)
+Title    : HS400 switch succeeds with the spec-mandated sequence
+Category : Functional              Priority : P1
+"""
+from emmc_qa import mmc, data
+from emmc_qa.assert_ import expect_r1
+from lab_utils import tc_logger as log
+
+def setup(dev, host):
+    mmc.init_to_transfer(dev, host, vccq=1.8)
+
+def test_body(dev, host):
+    expect_r1(mmc.switch(dev, mmc.HS_TIMING, 0x2))      # HS200
+    mmc.execute_tuning(dev)
+    host.set_clock(52)
+    expect_r1(mmc.switch(dev, mmc.HS_TIMING, 0x1))      # back to HS
+    expect_r1(mmc.switch(dev, mmc.BUS_WIDTH, 0x06))     # 8-bit DDR
+    expect_r1(mmc.switch(dev, mmc.HS_TIMING, 0x3))      # HS400
+    host.set_clock(200)
+    assert mmc.read_ext_csd(dev).hs_timing & 0xF == 0x3
+    data.write_verify(dev, lba=0, mib=64)
+
+def teardown(dev, host):
+    log.publish_result(tc="TC-EM-0310-01")`,
+ heal:{tc:"TC-EM-0310-01",file:"tc_em_0310_01_hs400_seq.py",
+  log:[["in","▶ TC-EM-0310-01 · attempt 1 · qemu-emmc"],["mu","  CMD6 HS_TIMING=2 ✓ · tuning ✓"],["mu","  CMD6 HS_TIMING=3 → R1 SWITCH_ERROR (bit 7)"],["er","✖ expect_r1 failed: SWITCH_ERROR"],["wa","[triage] BUS_WIDTH never set to 8-bit DDR before HS400 → SCRIPT defect (0.95)"]],
+  fail:"CMD6 returned SWITCH_ERROR",tri:"The script skipped two steps of the HS400 sequence — the DUT rejected it correctly",
+  diff:`   mmc.execute_tuning(dev)
++  host.set_clock(52)
++  expect_r1(mmc.switch(dev, mmc.HS_TIMING, 0x1))      # back to HS
++  expect_r1(mmc.switch(dev, mmc.BUS_WIDTH, 0x06))     # 8-bit DDR
+   expect_r1(mmc.switch(dev, mmc.HS_TIMING, 0x3))      # HS400 — unchanged`}},
+
+{key:"sata",ab:"SA",name:"SATA 3.5",kind:"Serial ATA SSD",color:"#e0643a",
+ pages:980,clauses:2980,chunks:"2,210",ent:"9.8k",req:802,nontest:226,scen:1760,tc:2580,auto:2300,gen:2300,first:74,healed:97,cov:100,stage:"Complete",stepDone:9,gapsOpen:0,
+ cat:[280,150,48,70,72,88,62,32],
+ profile:["Client SATA SSD · NCQ · DevSleep · TCG Opal","Industrial SATA · no DevSleep"],
+ docs:[["SATA_Revision_3.5.pdf","pdf","Link / transport / device layers","ok","Parsed"],["ACS-4_command_set_refs.pdf","pdf","Referenced commands only","ok","Parsed"],["PRD_Client_SATA_SSD.xlsx","xls","132 product requirements","ok","Parsed"]],
+ chap:[["8–9","Link & Transport layers · FIS",220,760,64,"Med"],["13","Device command layer · NCQ",120,640,38,"High"],["13.x","Power management · Partial / Slumber / DevSleep",60,380,22,"High"],["ACS","Security feature set",50,420,26,"High"],["ACS","IDENTIFY DEVICE & logs",80,540,190,"High"],["Annex","Informative",60,0,10,"Excluded"]],
+ reqs:[["SA-R-0402","After DEVSLP is asserted for at least MDAT the device shall enter DevSleep and exit within DETO.","SHALL",4,"§ DevSleep",0.94,"ok"],["SA-R-0101","IDENTIFY DEVICE shall return 512 bytes with a valid checksum in word 255.","SHALL",2,"ACS IDENTIFY",0.99,"ok"],["SA-R-0233","READ FPDMA QUEUED with a tag already outstanding shall be aborted.","SHALL",1,"§13 NCQ",0.95,"ok"],["SA-R-0510","SECURITY ERASE UNIT shall abort unless immediately preceded by SECURITY ERASE PREPARE.","SHALL",5,"ACS Security",0.96,"ok"],["PRD-3.4","4 KiB random write QD32 shall sustain ≥ 85 K IOPS.","SHALL",3,"PRD §3.4",0.94,"ok"]],
+ flags:[["§ Informative","226 descriptive statements excluded","Info"]],
+ scen:[["SC-0402-01","DEVSLP asserted ≥ MDAT → DevSleep entered","Positive · timing",2],["SC-0402-02","DEVSLP asserted < MDAT → no DevSleep","Boundary value",2],["SC-0402-03","Exit DevSleep within DETO; I/O resumes","State transition",2],["SC-0402-04","DevSleep with NCQ commands outstanding","Negative · state",1]],
+ tcd:{id:"TC-SA-0402-01",title:"Device enters DevSleep after DEVSLP asserted for MDAT",pre:"DevSleep supported & enabled (SET FEATURES) · DevSleep timing log read",steps:["Read MDAT / DETO from IDENTIFY DEVICE data log","Idle link; assert DEVSLP","Hold ≥ MDAT; sample PHY state","De-assert; issue READ DMA; measure exit latency"],exp:"PHY = DevSleep while asserted · exit ≤ DETO · READ DMA completes without error",tech:"State transition + timing",prio:"P1",tgt:"Test PC + DUT only (timing)",trace:"SA-R-0402 → DevSleep section · IDENTIFY data log"},
+ libs:[["sata-qa-framework","git","sol-pe/sata-qa-fw · 298 APIs"],["ahci-host-lib","py","FIS / port control"]],
+ scripts:[["regression/sata/**","git","880 scripts"]],tpl:[["tc_template_v4.py","py","Sol PE standard template"]],
+ api:[["sata.assert_devslp(host)","sata_qa.pm","34 scripts","DevSleep"],["sata.read_devslp_timing(dev)","sata_qa.log","21 scripts","IDENTIFY data log"],["sata.phy_state(host)","sata_qa.link","140 scripts","PHY"],["ncq.read_fpdma(dev, tag, lba, n)","sata_qa.ncq","260 scripts","NCQ"],["expect(cond, within_ms)","sata_qa.assert_","700 scripts","—"]],apin:298,
+ tcs:[["TC-SA-0402-01","tc_sa_0402_01_devslp_entry.py"],["TC-SA-0101-01","tc_sa_0101_01_identify_cksum.py"],["TC-SA-0233-02","tc_sa_0233_02_dup_tag.py"],["TC-SA-0510-01","tc_sa_0510_01_erase_no_prepare.py"],["TC-SA-PRD34-01","tc_sa_prd34_01_randwrite.py"],["TC-SA-0402-03","tc_sa_0402_03_devslp_exit.py"]],
+ real:"LaaS pool SATA-Client · 20 Test PCs · DEVSLP pin control via Robotics rack",qemu:"QEMU AHCI (ich9-ahci) + ide-hd · command & NCQ functional",qvp:"Virtual platform: SATA controller model + FW image",qs:"qemu-ahci",
+ code:`"""
+TC-ID    : TC-SA-0402-01
+Req-ID   : SA-R-0402   (SATA 3.5 · DevSleep)
+Title    : Device enters DevSleep after DEVSLP asserted for MDAT
+Category : Power Mgmt              Priority : P1   Target: real-only
+"""
+from sata_qa import sata, io
+from sata_qa.assert_ import expect
+from lab_utils import tc_logger as log
+
+def setup(dev, host):
+    sata.set_feature(dev, sata.FEAT_DEVSLP, enable=True)
+    return sata.read_devslp_timing(dev)          # MDAT, DETO from device log
+
+def test_body(dev, host, t):
+    host.idle_link()
+    sata.assert_devslp(host)
+    host.wait_ms(t.mdat_ms)
+    expect(sata.phy_state(host) == sata.PHY_DEVSLEEP)
+    t0 = host.now_us(); sata.deassert_devslp(host)
+    io.read_dma(dev, lba=0, count=8)
+    expect((host.now_us() - t0) / 1000 <= t.deto_ms)
+
+def teardown(dev, host, t):
+    log.publish_result(tc="TC-SA-0402-01")`,
+ heal:{tc:"TC-SA-0402-01",file:"tc_sa_0402_01_devslp_entry.py",
+  log:[["in","▶ TC-SA-0402-01 · attempt 1 · LaaS bench SATA-11"],["mu","  assert DEVSLP → sample PHY after 0 ms"],["er","✖ expected PHY_DEVSLEEP, got PHY_ACTIVE"],["wa","[triage] sampled before MDAT elapsed → SCRIPT defect (0.91)"]],
+  fail:"PHY still active",tri:"The PHY was sampled before the minimum assertion time — the device had no chance to enter DevSleep",
+  diff:`   sata.assert_devslp(host)
+-  expect(sata.phy_state(host) == sata.PHY_DEVSLEEP)
++  t = sata.read_devslp_timing(dev)             # MDAT from device log
++  host.wait_ms(t.mdat_ms)
++  expect(sata.phy_state(host) == sata.PHY_DEVSLEEP)   # expectation unchanged`}},
+
+{key:"sd",ab:"SD",name:"SD / microSD 9.1",kind:"Removable card",color:"#d19a00",
+ pages:410,clauses:1860,chunks:"1,120",ent:"6.1k",req:596,nontest:158,scen:1260,tc:1720,auto:1540,gen:0,first:0,healed:0,cov:97,stage:"Step 4 · Coverage gate",stepDone:4,gapsOpen:18,
+ cat:[204,104,38,52,58,60,50,30],
+ profile:["microSD UHS-I · A2 · V30","SD Express profile"],
+ docs:[["SD_Physical_Layer_Spec_9.1.pdf","pdf","Physical layer · commands & registers","ok","Parsed"],["PRD_microSD_A2_V30.docx","doc","74 product requirements","ok","Parsed"]],
+ chap:[["4","Card functional description · init & states",110,640,40,"High"],["4.3","Bus speed modes · UHS-I",40,280,16,"High"],["4.13","Speed Class / Video / App Perf",40,220,20,"High"],["4.3.7","Lock / Unlock (CMD42)",20,160,8,"High"],["5","Card registers · OCR, CID, CSD, SCR, SSR",60,560,120,"High"],["Annex","Informative",30,0,10,"Excluded"]],
+ reqs:[["SD-R-0204","CMD6 switch to SDR104 shall be accepted only after 1.8 V signalling is established (CMD11).","SHALL",0,"§4.3 UHS-I",0.95,"ok"],["SD-R-0011","ACMD41 shall report busy until power-up completes and honour HCS.","SHALL",2,"§4.2 Init",0.97,"ok"],["SD-R-0350","A card marked V30 shall sustain ≥ 30 MB/s sequential write per Video Speed Class rules.","SHALL",3,"§4.13",0.93,"ok"],["SD-R-0412","A write to a write-protected group shall set WP_VIOLATION.","SHALL",1,"§4.3 WP",0.96,"ok"],["SD-R-0466","CMD42 unlock with a wrong password shall set LOCK_UNLOCK_FAILED.","SHALL",5,"§4.3.7",0.96,"ok"]],
+ flags:[["SD-R-0560","Optional feature (SD Express) disabled in profile — excluded from gate","Confirm"],["§ Informative","158 descriptive statements excluded","Info"]],
+ scen:[["SC-0204-01","Full UHS-I init: ACMD41 S18R → CMD11 → CMD6 SDR104","Positive · sequence",2],["SC-0204-02","CMD6 SDR104 at 3.3 V signalling","Negative · state",2],["SC-0204-03","CMD11 without S18A in ACMD41 response","Negative",1],["SC-0204-04","Fallback SDR104 → SDR50 on tuning failure","Error recovery",2]],
+ tcd:{id:"TC-SD-0204-01",title:"SDR104 selection with correct UHS-I init sequence",pre:"Card powered · host supports 1.8 V switching",steps:["ACMD41 with HCS=1, S18R=1 until ready; check S18A","CMD11; switch host I/O to 1.8 V","CMD6 mode 1, group 1 = SDR104","Tune (CMD19); run 128 MiB write/verify"],exp:"CMD6 status shows group 1 = SDR104 · tuning passes · data integrity OK",tech:"State transition",prio:"P1",tgt:"QEMU sd-card (functional) ✓ · Test PC + DUT ✓",trace:"SD-R-0204 → §4.3 UHS-I"},
+ libs:[["sd-qa-framework","git","sol-pe/sd-qa-fw · 190 APIs"]],scripts:[["regression/sd/**","git","430 scripts"]],tpl:[["tc_template_v4.py","py","Sol PE standard template"]],
+ api:[["sd.acmd41(dev, hcs, s18r)","sd_qa.init","120 scripts","Init"],["sd.cmd11_voltage_switch(dev)","sd_qa.init","38 scripts","CMD11"],["sd.cmd6_switch(dev, group, func)","sd_qa.cmd","96 scripts","CMD6"],["host.set_signal_voltage(v)","sdhci_host","80 scripts","Host"],["expect(cond)","sd_qa.assert_","400 scripts","—"]],apin:190,
+ tcs:[["TC-SD-0204-01","tc_sd_0204_01_sdr104.py"],["TC-SD-0011-01","tc_sd_0011_01_acmd41.py"],["TC-SD-0412-02","tc_sd_0412_02_wp_violation.py"],["TC-SD-0466-01","tc_sd_0466_01_wrong_pwd.py"],["TC-SD-0350-01","tc_sd_0350_01_v30.py"],["TC-SD-0204-02","tc_sd_0204_02_sdr104_3v3.py"]],
+ real:"LaaS pool SD-Card · 10 Test PCs + card readers · Robotics insert / eject",qemu:"QEMU sd-card model · SD command set & registers",qvp:"Virtual platform: card controller model + FW image",qs:"qemu-sd",
+ code:`"""
+TC-ID    : TC-SD-0204-01
+Req-ID   : SD-R-0204   (SD Physical Layer 9.1 · UHS-I)
+Title    : SDR104 selection with correct UHS-I init sequence
+Category : Functional              Priority : P1
+"""
+from sd_qa import sd, data
+from sd_qa.assert_ import expect
+from lab_utils import tc_logger as log
+
+def setup(dev, host):
+    host.power_cycle_card()
+
+def test_body(dev, host):
+    ocr = sd.acmd41(dev, hcs=1, s18r=1)
+    expect(ocr.s18a == 1)
+    sd.cmd11_voltage_switch(dev); host.set_signal_voltage(1.8)
+    sd.cmd6_switch(dev, group=1, func=sd.SDR104)
+    expect(sd.cmd6_status(dev).group1 == sd.SDR104)
+    expect(sd.tune(dev, cmd=19))
+    data.write_verify(dev, lba=0, mib=128)
+
+def teardown(dev, host):
+    log.publish_result(tc="TC-SD-0204-01")`,
+ heal:{tc:"TC-SD-0204-01",file:"tc_sd_0204_01_sdr104.py",
+  log:[["in","▶ TC-SD-0204-01 · attempt 1 · qemu-sd"],["mu","  ACMD41 hcs=1 → ready · S18A=0"],["er","✖ CMD6 group1 status = 0xF (function not supported)"],["wa","[triage] S18R not requested → card stayed at 3.3 V → SCRIPT defect (0.92)"]],
+  fail:"CMD6 rejected SDR104",tri:"1.8 V was never requested, so SDR104 was correctly unavailable",
+  diff:`-  ocr = sd.acmd41(dev, hcs=1)
++  ocr = sd.acmd41(dev, hcs=1, s18r=1)
++  sd.cmd11_voltage_switch(dev); host.set_signal_voltage(1.8)
+   sd.cmd6_switch(dev, group=1, func=sd.SDR104)
+   expect(sd.cmd6_status(dev).group1 == sd.SDR104)      # unchanged`}},
+
+{key:"cxl",ab:"CX",name:"CXL 3.1",kind:"Memory expansion",color:"#c23b6e",
+ pages:1160,clauses:5210,chunks:"4,480",ent:"21.2k",req:1410,nontest:388,scen:2520,tc:3950,auto:3440,gen:0,first:0,healed:0,cov:88,stage:"Step 3 · Designing TCs",stepDone:3,gapsOpen:142,
+ cat:[520,236,60,96,88,176,160,74],
+ profile:["Type-3 memory expander · CXL.io + CXL.mem · IDE on","Type-3 · no IDE"],
+ docs:[["CXL_Specification_3.1.pdf","pdf","~1,100 pages · Type-3 chapters prioritised","ok","Parsed"],["PRD_CXL_Memory_Expander.xlsx","xls","188 product requirements","ok","Parsed"],["PCIe_Base_refs.pdf","pdf","Referenced clauses only","run","54%"]],
+ chap:[["3","CXL transaction layers · .io / .mem",160,980,70,"High"],["8","Control & status registers · DVSEC",200,1240,260,"High"],["8.2.9","Component command interface · mailbox",180,1160,140,"High"],["11","Security · IDE",80,620,30,"High"],["12","Reliability, Availability, Serviceability",90,560,34,"High"],["Annex","Informative",60,0,12,"Excluded"]],
+ reqs:[["CX-R-0914","Get Poison List shall report every DPA previously injected via Inject Poison.","SHALL",1,"§8.2.9 Poison",0.95,"ok"],["CX-R-0102","A Type-3 device shall expose the CXL device DVSEC with valid vendor and revision IDs.","SHALL",2,"§8.1 DVSEC",0.98,"ok"],["CX-R-0350","A CXL.mem read to a committed HDM range shall return the last written data.","SHALL",0,"§3.3",0.97,"ok"],["CX-R-1210","IDE key refresh shall not drop in-flight transactions.","SHALL",5,"§11 IDE",0.88,"ok"],["CX-R-0880","Set Shutdown State shall persist across a conventional reset.","SHALL",0,"§8.2.9",0.93,"ok"]],
+ flags:[["CX-R-1210","'In-flight' needs a measurable definition — proposed outstanding-tag audit","Clarify"],["CX-R-0402","Fabric / switch clauses out of scope for Type-3 profile","Confirm"],["§ Informative","388 descriptive statements excluded","Info"]],
+ scen:[["SC-0914-01","Inject poison at 64B-aligned DPA → listed","Positive",2],["SC-0914-02","Inject at unaligned DPA → Invalid Input","Negative",2],["SC-0914-03","Clear Poison → removed from list","State transition",2],["SC-0914-04","Poison list overflow flag when list full","Boundary value",1]],
+ tcd:{id:"TC-CX-0914-01",title:"Injected poison DPA is reported by Get Poison List",pre:"Type-3 device enumerated · HDM decoder committed · Inject Poison supported",steps:["Pick 64-byte-aligned DPA inside capacity","Mailbox Inject Poison (DPA)","Mailbox Get Poison List over full range","Mailbox Clear Poison (DPA)"],exp:"Return code Success · DPA present in list · removed after Clear Poison",tech:"State transition",prio:"P1",tgt:"QEMU cxl-type3 ✓ · Test PC + DUT ✓",trace:"CX-R-0914 → §8.2.9 Media & Poison Mgmt"},
+ libs:[["cxl-qa-framework","git","sol-pe/cxl-qa-fw · 304 APIs"],["cxl-mailbox-lib","py","CCI mailbox helpers"]],scripts:[["regression/cxl/**","git","510 scripts"]],tpl:[["tc_template_v4.py","py","Sol PE standard template"]],
+ api:[["mbox.inject_poison(dev, dpa)","cxl_qa.mbox","22 scripts","Inject Poison"],["mbox.get_poison_list(dev, start, length)","cxl_qa.mbox","31 scripts","Get Poison List"],["hdm.commit(dev, base, size)","cxl_qa.hdm","140 scripts","HDM decoder"],["mem.read(host, hpa, n)","cxl_qa.mem","220 scripts","CXL.mem"],["expect(cond)","cxl_qa.assert_","480 scripts","—"]],apin:304,
+ tcs:[["TC-CX-0914-01","tc_cx_0914_01_poison_list.py"],["TC-CX-0102-01","tc_cx_0102_01_dvsec.py"],["TC-CX-0350-02","tc_cx_0350_02_hdm_rw.py"],["TC-CX-0880-01","tc_cx_0880_01_shutdown_state.py"],["TC-CX-1210-01","tc_cx_1210_01_ide_refresh.py"],["TC-CX-0914-02","tc_cx_0914_02_unaligned.py"]],
+ real:"LaaS pool CXL-Gen5 · 8 Test PCs (CXL-capable servers) · Type-3 samples",qemu:"QEMU cxl-type3 device · host bridge, HDM, mailbox, poison",qvp:"Virtual platform: CXL controller model + FW image",qs:"qemu-cxl",
+ code:`"""
+TC-ID    : TC-CX-0914-01
+Req-ID   : CX-R-0914   (CXL 3.1 · Media & Poison Mgmt)
+Title    : Injected poison DPA is reported by Get Poison List
+Category : Error / RAS             Priority : P1
+"""
+from cxl_qa import mbox, hdm
+from cxl_qa.assert_ import expect
+from lab_utils import tc_logger as log
+
+def setup(dev):
+    hdm.commit(dev, base=dev.hpa_base, size=dev.capacity)
+
+def test_body(dev):
+    dpa = mbox.align_down(dev.capacity // 2, 64)
+    expect(mbox.inject_poison(dev, dpa=dpa) == mbox.SUCCESS)
+    plist = mbox.get_poison_list(dev, start=0, length=dev.capacity)
+    expect(dpa in [p.dpa for p in plist])
+    expect(mbox.clear_poison(dev, dpa=dpa) == mbox.SUCCESS)
+    plist = mbox.get_poison_list(dev, start=0, length=dev.capacity)
+    expect(dpa not in [p.dpa for p in plist])
+
+def teardown(dev):
+    log.publish_result(tc="TC-CX-0914-01")`,
+ heal:{tc:"TC-CX-0914-01",file:"tc_cx_0914_01_poison_list.py",
+  log:[["in","▶ TC-CX-0914-01 · attempt 1 · qemu-cxl"],["mu","  inject_poison(dpa=0x10000010) → rc ignored"],["er","✖ DPA 0x10000010 not in poison list (0 entries)"],["wa","[triage] inject rc = Invalid Input (unaligned DPA) → SCRIPT defect (0.94)"]],
+  fail:"Poison list empty",tri:"Injection was rejected for an unaligned DPA and the script ignored the return code",
+  diff:`-  mbox.inject_poison(dev, dpa=0x1000_0010)
++  dpa = mbox.align_down(0x1000_0010, 64)       # DPA must be 64-byte aligned
++  expect(mbox.inject_poison(dev, dpa=dpa) == mbox.SUCCESS)
+   plist = mbox.get_poison_list(dev, start=0, length=dev.capacity)
+   expect(dpa in [p.dpa for p in plist])          # unchanged`}}
+];
+
+var cur=WS[0], curScreen="home";
+var NAMES={home:"Command Center",settings:"Workspace Settings",s1:"Spec Ingestion",s2:"Testable Requirements",s3:"Scenarios & Test Cases",s4:"Coverage & RTM Gate",s5:"Framework Context",s6:"Script Generation",s7:"Execute · Real / Virtual",s8:"Self-Heal & Handoff"};
+function $(id){return document.getElementById(id)}
+function fmt(n){return n.toLocaleString("en-US")}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function hl(src){
+  var re=/(#[^\n]*)|("""[\s\S]*?"""|"[^"\n]*"|'[^'\n]*')|\b(def|return|assert|from|import|and|not|in|for|if|else|with|as|None|True|False)\b|\b(0x[0-9A-Fa-f_]+|\d+(?:\.\d+)?)\b|\b([A-Za-z_][A-Za-z0-9_]*)(?=\()/g;
+  var out="",last=0,m;
+  while((m=re.exec(src))){out+=esc(src.slice(last,m.index));
+    var t=esc(m[0]);
+    out+=m[1]?'<span class="cm">'+t+'</span>':m[2]?'<span class="str">'+t+'</span>':m[3]?'<span class="kw">'+t+'</span>':m[4]?'<span class="nu">'+t+'</span>':'<span class="fn">'+t+'</span>';
+    last=re.lastIndex;}
+  return out+esc(src.slice(last));
+}
+function hlDiff(src){return src.split("\n").map(function(l){var c=l.charAt(0);var body=hl(l);
+  return c=="+"?'<span class="add">'+body+'</span>':c=="-"?'<span class="del">'+body+'</span>':body+"\n";}).join("")}
+function badge(s){return {ok:'<span class="badge ok">Approved</span>',rev:'<span class="badge warn">Review</span>'}[s]}
+function kpi(v,l,d,c){return '<div class="card kpi"><div class="v"'+(c?' style="color:'+c+'"':'')+'>'+v+'</div><div class="l">'+l+'</div>'+(d?'<div class="d">'+d+'</div>':'')+'</div>'}
+function tbar(w,col){return '<div class="t"><i style="width:'+w+'%;background:'+col+'"></i></div>'}
+function sum(a){return a.reduce(function(x,y){return x+y},0)}
+
+/* ---------- HOME ---------- */
+function renderHome(){
+  var R=sum(WS.map(function(w){return w.req})),T=sum(WS.map(function(w){return w.tc})),G=sum(WS.map(function(w){return w.gen}));
+  var closed=WS.filter(function(w){return w.cov==100}).length;
+  $("home-kpis").innerHTML=kpi(WS.length,"Protocol workspaces","NVMe · UFS · eMMC · SATA · SD · CXL")+kpi(fmt(R),"Testable requirements","from "+fmt(sum(WS.map(function(w){return w.clauses})))+" normative clauses","var(--brand)")+kpi(fmt(T),"Test cases designed","avg "+(T/R).toFixed(1)+" TCs / requirement")+kpi(closed+" / "+WS.length,"Workspaces at 100% RTM","gate enforced before Phase 2","var(--good)")+kpi(fmt(G),"Scripts generated","executed on real + virtual","var(--spark)")+kpi("~78%","Design effort saved","target · vs manual baseline","var(--accent)");
+  $("specgrid").innerHTML=WS.map(function(w){var c=w.cov==100?"var(--good)":w.cov>=90?"var(--warn)":"var(--bad)";
+    return '<div class="speccard" onclick="setWS(\''+w.key+'\');go(\'s1\')"><div class="top"><div class="specdot" style="background:'+w.color+'">'+w.ab+'</div><div class="name">'+w.name+'<small>'+w.kind+'</small></div></div>'
+    +'<div class="row between" style="font-size:11px;color:var(--muted)"><span>RTM coverage</span><b style="color:'+c+'">'+w.cov+'%</b></div><div class="prog" style="margin:5px 0"><i style="width:'+w.cov+'%"></i></div>'
+    +'<div class="st"><span>Reqs <b>'+fmt(w.req)+'</b></span><span>TCs <b>'+fmt(w.tc)+'</b></span></div><div class="st"><span>Scripts <b>'+(w.gen?fmt(w.gen):"—")+'</b></span><span class="badge '+(w.stepDone>=9?"ok":w.stepDone>=5?"sp":"run")+'">'+w.stage.replace("Step ","S")+'</span></div></div>'}).join("");
+  var E=[["Spec study & req extraction",15,3],["Scenario & TC design",25,5],["RTM / coverage review",8,1.5],["Script authoring",40,8],["Script debug on target",20,6]];
+  $("effort").innerHTML=E.map(function(e){return '<div class="hbar" style="grid-template-columns:170px 1fr 70px"><span>'+e[0]+'</span><div><div class="t" style="margin-bottom:3px"><i style="width:'+(e[1]/40*100)+'%;background:var(--faint)"></i></div><div class="t"><i style="width:'+(e[2]/40*100)+'%;background:var(--spark)"></i></div></div><span class="p">'+e[1]+' → '+e[2]+'</span></div>'}).join("");
+  $("runs").innerHTML=WS.map(function(w,i){return '<tr><td class="mono">SPK-'+(2609-i*3)+'</td><td><b>'+w.name+'</b></td><td>'+w.stage+'</td><td><b style="color:'+(w.cov==100?"var(--good)":"var(--warn)")+'">'+w.cov+'%</b></td><td>'+(w.healed?w.healed+'%':'—')+'</td></tr>'}).join("");
+}
+
+/* ---------- WORKSPACE ---------- */
+function renderWS(){
+  var w=cur;
+  ["ws-side","ws-crumb","set-name"].forEach(function(id){$(id).textContent=w.name});
+  $("ws-dot").textContent=w.ab;$("ws-dot").style.background=w.color;
+  // S1
+  $("s1-files").innerHTML=w.docs.map(function(d){return '<div class="file"><div class="ft '+d[1]+'">'+d[1].toUpperCase()+'</div><div class="meta"><b>'+d[0]+'</b><small>'+d[2]+'</small></div><span class="badge '+d[3]+'">'+d[4]+'</span></div>'}).join("");
+  $("s1-profile").innerHTML=w.profile.map(function(p){return "<option>"+p+"</option>"}).join("");
+  var ST=[["Layout parse","Text, tables, figures, headers/footers stripped"],["Section tree & clause IDs","Stable IDs for every numbered clause"],["Tables & register maps","Fields, bit ranges, reset values, status codes"],["Normative keyword tagging","SHALL · SHOULD · MAY · SHALL NOT"],["Embeddings + knowledge graph","Commands ↔ fields ↔ states ↔ errors"],["Cross-reference resolution","'see §x.y' links followed and merged"]];
+  $("s1-stages").innerHTML=ST.map(function(s,i){var run=(w.docs.some(function(d){return d[3]=="run"})&&i==5);return '<div class="stage '+(run?"run":"ok")+'"><div class="si">'+(run?"…":"✓")+'</div><div><b>'+s[0]+'</b><small>'+s[1]+'</small></div><span class="badge '+(run?"run":"ok")+'">'+(run?"Running":"Done")+'</span></div>'}).join("");
+  $("s1-stats").innerHTML='<div class="kpi"><div class="v">'+fmt(w.pages)+'</div><div class="l">pages</div></div><div class="kpi"><div class="v">'+w.chunks+'</div><div class="l">section-aware chunks</div></div><div class="kpi"><div class="v">'+w.ent+'</div><div class="l">KG entities</div></div>';
+  $("s1-norm").textContent=fmt(w.clauses)+" normative clauses detected";
+  $("s1-chap").innerHTML=w.chap.map(function(c){var r=c[5]=="High"?"ok":c[5]=="Excluded"?"idle":"warn";return '<tr><td class="reqid">'+c[0]+'</td><td>'+c[1]+'</td><td>'+c[2]+'</td><td>'+fmt(c[3])+'</td><td>'+c[4]+'</td><td><span class="badge '+r+'">'+c[5]+'</span></td></tr>'}).join("");
+  // S2
+  var appr=Math.round((1-(w.flags.length-1)*6/w.req)*1000)/10;
+  $("s2-kpis").innerHTML=kpi(fmt(w.clauses),"Normative clauses scanned")+kpi(fmt(w.req),"Atomic testable requirements","incl. PRD requirements","var(--brand)")+kpi(appr+"%","Auto-approved (score ≥ 0.9)","","var(--good)")+kpi(fmt(w.nontest),"Non-testable / informative","excluded with reason","var(--faint)");
+  $("s2-count").textContent=fmt(w.req)+" requirements";
+  $("s2-chips").innerHTML='<button class="chip on">All <span class="n">'+fmt(w.req)+'</span></button>'+CATS.map(function(c,i){return '<button class="chip"><i style="background:'+c[1]+'"></i>'+c[0]+' <span class="n">'+w.cat[i]+'</span></button>'}).join("");
+  $("s2-reqs").innerHTML=w.reqs.map(function(r){var c=CATS[r[3]];var tc=r[5]>=.9?"var(--good)":r[5]>=.75?"var(--warn)":"var(--bad)";
+    return '<tr style="cursor:pointer" onclick="go(\'s3\')"><td class="reqid">'+r[0]+'</td><td>'+r[1]+'</td><td><span class="tag">'+r[2]+'</span></td><td><span class="tag" style="color:'+c[1]+'">● '+c[0]+'</span></td><td class="mono" style="font-size:11px;white-space:nowrap">'+r[4]+'</td><td><b style="color:'+tc+'">'+r[5].toFixed(2)+'</b></td><td>'+badge(r[6])+'</td></tr>'}).join("");
+  var mx=Math.max.apply(null,w.cat);
+  $("s2-cat").innerHTML=CATS.map(function(c,i){return '<div class="hbar"><span>'+c[0]+'</span>'+tbar(w.cat[i]/mx*100,c[1])+'<span class="p">'+w.cat[i]+'</span></div>'}).join("");
+  $("s2-flags").innerHTML=w.flags.map(function(f){return '<div class="gchk" style="grid-template-columns:1fr auto"><div><span class="reqid">'+f[0]+'</span><small>'+f[1]+'</small></div><span class="badge '+(f[2]=="Info"?"idle":"warn")+'">'+f[2]+'</span></div>'}).join("");
+  // S3
+  $("s3-kpis").innerHTML=kpi(fmt(w.scen),"Test scenarios")+kpi(fmt(w.tc),"Test cases","","var(--brand)")+kpi((w.tc/w.req).toFixed(1),"TCs per requirement")+kpi("38 : 62","Positive : negative","negative-heavy by design","var(--spark)");
+  var r0=w.reqs[0];
+  $("s3-tree").innerHTML='<div class="tnode req on"><span class="reqid">'+r0[0]+'</span> '+r0[1]+'<small>'+r0[4]+' · '+CATS[r0[3]][0]+' · '+w.scen.length+' scenarios</small></div>'
+   +w.scen.map(function(s,i){return '<div class="tnode sc'+(i==1?" on":"")+'"><span class="tcid">'+s[0]+'</span> '+s[1]+'<small>'+s[2]+' · '+s[3]+' TCs</small></div>'}).join("")
+   +w.reqs.slice(1,4).map(function(r){return '<div class="tnode req"><span class="reqid">'+r[0]+'</span> '+r[1].slice(0,70)+'…<small>'+r[4]+' · collapsed</small></div>'}).join("");
+  var t=w.tcd;
+  $("s3-tctitle").innerHTML='<span class="tcid">'+t.id+'</span> '+t.title;
+  $("s3-tcsub").textContent="Scenario "+w.scen[1][0]+" · generated by TC Designer Agent";
+  $("s3-tc").innerHTML='<dt>Traceability</dt><dd class="mono" style="font-size:12px">'+t.trace+'</dd><dt>Technique</dt><dd>'+t.tech+'</dd><dt>Priority</dt><dd><span class="badge bad">'+t.prio+'</span></dd><dt>Preconditions</dt><dd>'+t.pre+'</dd><dt>Steps</dt><dd><ol class="steps">'+t.steps.map(function(s){return "<li>"+s+"</li>"}).join("")+'</ol></dd><dt>Expected result</dt><dd><b>'+t.exp+'</b></dd><dt>Automation target</dt><dd>'+t.tgt+'</dd>';
+  var TE=[["Equivalence partitioning",.24],["Boundary value analysis",.19],["State transition",.17],["Negative / error injection",.22],["Performance profile",.07],["Reset / power-cycle persistence",.11]];
+  $("s3-tech").innerHTML=TE.map(function(x){return '<div class="kpi"><div class="v" style="font-size:20px">'+fmt(Math.round(w.tc*x[1]))+'</div><div class="l">'+x[0]+'</div></div>'}).join("");
+  // S4
+  var cc=w.cov==100?"var(--good)":"var(--warn)";
+  $("s4-donut").style.background="conic-gradient("+cc+" 0 "+w.cov+"%,var(--bad) "+w.cov+"% 100%)";
+  $("s4-donut").innerHTML='<span><div style="font-size:22px">'+w.cov+'%</div><small style="color:var(--faint);font-weight:600">RTM</small></span>';
+  var cov=Math.round(w.req*w.cov/100);
+  $("s4-sum").innerHTML='<div class="row wrap" style="gap:6px"><span class="badge ok">'+fmt(cov)+' covered</span><span class="badge '+(w.gapsOpen?"bad":"idle")+'">'+w.gapsOpen+' gaps open</span><span class="badge idle">0 orphan TCs</span></div><div class="note">Gate status: <b style="color:'+cc+'">'+(w.cov==100?"PASSED — ready for Phase 2":"BLOCKED — critic re-prompting TC Designer")+'</b></div>';
+  var g=w.cov==100;
+  var GT=[["SHALL / SHALL NOT clauses → ≥ 1 TC","Every mandatory statement",g?100:w.cov],["SHOULD clauses → ≥ 1 TC","Recommended behaviour",g?100:w.cov-3],["MAY / optional (profile-enabled only)","Disabled features excluded with reason",g?100:w.cov-6],["Status / error codes exercised","Every code the spec says the feature can return",g?100:w.cov-2],["State-machine transitions","Valid and invalid transitions",g?100:w.cov-4],["Parameter boundaries (min · max · ±1)","From register / field tables",g?100:w.cov-1],["No orphan TCs (TC → clause)","Reverse traceability",100]];
+  $("s4-gates").innerHTML=GT.map(function(x){var ok=x[2]>=100;return '<div class="gchk"><div class="ck'+(ok?"":" w")+'">'+(ok?"✓":"!")+'</div><div>'+x[0]+'<small>'+x[1]+'</small></div><b style="color:'+(ok?"var(--good)":"var(--warn)")+'">'+x[2]+'%</b></div>'}).join("");
+  var ch=w.chap.filter(function(c){return c[5]!="Excluded"});
+  var h='<div></div>'+["Func","Error","Sanity","Perf","Power","Sec","Compl","Stress"].map(function(c){return '<div class="h">'+c+'</div>'}).join("");
+  ch.forEach(function(c,i){h+='<div class="rl" title="'+c[1]+'">'+c[0]+' · '+c[1].split(" ")[0]+'</div>';
+    CATS.forEach(function(k,j){var na=((i*3+j*5+w.req)%7)==0;var v=((i*7+j*13+w.req)%23)+1;var gap=!g&&((i+j+w.req)%9==0);
+      if(na) h+='<div class="c z">n/a</div>'; else if(gap) h+='<div class="c" style="background:var(--bad)">gap</div>';
+      else h+='<div class="c" style="background:'+(v<5?"#9fb8ff":v<15?"#5b8cff":"#3a55c9")+'">'+v+'</div>';});});
+  $("s4-heat").style.gridTemplateColumns="120px repeat(8,minmax(0,1fr))";$("s4-heat").innerHTML=h;
+  var GP=[["G-01",w.reqs[1][0],"Only positive path covered — no invalid-parameter TC","Added 2 negative TCs (invalid field · reserved bits set)"],["G-02",w.reqs[4][0],"Upper boundary (max + 1) not exercised","Added BVA TCs at max and max + 1"],["G-03",w.reqs[2][0],"Behaviour after reset / power cycle not verified","Added persistence TC across reset"],["G-04","—","Orphan TC maps to no normative clause","Re-linked to clause / retired"]];
+  $("s4-open").className="badge "+(g?"ok":"bad");$("s4-open").textContent=w.gapsOpen+" open gaps";
+  $("s4-gaps").innerHTML=GP.map(function(x,i){var open=!g&&i<2;return '<tr><td class="mono">'+x[0]+'</td><td class="reqid">'+x[1]+'</td><td>'+x[2]+'</td><td>'+x[3]+'</td><td><span class="badge '+(open?"run":"ok")+'">'+(open?"Re-prompting":"Closed")+'</span></td></tr>'}).join("");
+  // S5
+  function fl(a){return a.map(function(d){return '<div class="file"><div class="ft '+d[1]+'">'+d[1].toUpperCase()+'</div><div class="meta"><b>'+d[0]+'</b><small>'+d[2]+'</small></div><span class="badge ok">Indexed</span></div>'}).join("")}
+  $("s5-libs").innerHTML=fl(w.libs);$("s5-scripts").innerHTML=fl(w.scripts);$("s5-tpl").innerHTML=fl(w.tpl);
+  $("s5-apicount").textContent=w.apin+" APIs";
+  $("s5-api").innerHTML=w.api.map(function(a){return '<tr><td class="mono" style="font-size:11.5px;color:var(--brand)">'+a[0]+'</td><td class="mono" style="font-size:11px">'+a[1]+'</td><td>'+a[2]+'</td><td>'+a[3]+'</td></tr>'}).join("");
+  $("s5-sel").innerHTML=CATS.map(function(c,i){return '<div class="hbar"><span>'+c[0]+'</span>'+tbar(AUTO[i],c[1])+'<span class="p">'+AUTO[i]+'%</span></div>'}).join("");
+  $("s5-manual").textContent=fmt(w.tc-w.auto)+" TCs (physical inspection, thermal-chamber profiles, customer interop) are exported to UTH as manual TCs.";
+  // S6
+  var gen=w.gen||0;
+  $("s6-kpis").innerHTML=kpi(fmt(w.auto),"TCs selected")+kpi(gen?fmt(gen):"Not started","Scripts generated","","var(--spark)")+kpi(gen?"99.1%":"—","Static checks passed","API · template · lint")+kpi(gen?"0":"—","Hallucinated API calls","blocked by catalog check","var(--good)");
+  $("s6-queue").innerHTML=w.tcs.map(function(t,i){var s=gen?(i==5?["run","Generating"]:i==2?["warn","Re-gen · lint"]:["ok","Pass"]):["idle","Queued"];return '<tr><td class="tcid">'+t[0]+'</td><td class="mono" style="font-size:11px">'+t[1]+'</td><td><span class="badge '+s[0]+'">'+s[1]+'</span></td></tr>'}).join("");
+  $("s6-sub").textContent=w.tcd.id+" · template tc_template_v4.py · 3 nearest existing scripts used as examples";
+  $("s6-file").textContent=w.tcs[0][1];$("s6-code").innerHTML=hl(w.code);
+  // S7
+  $("s7-real").textContent=w.real;$("s7-qemu").textContent=w.qemu;$("s7-qvp").textContent=w.qvp;
+  $("s7-runsub").textContent="Plan PLAN-"+w.ab+"-0925 · virtual first, promote on pass";
+  var run=gen?[Math.round(gen*.62),Math.round(gen*.29),Math.round(gen*.06),Math.round(gen*.03)]:[0,0,0,0];
+  $("s7-kpis").innerHTML='<div class="kpi"><div class="v" style="font-size:20px;color:var(--good)">'+fmt(run[0])+'</div><div class="l">Pass · 1st run</div></div><div class="kpi"><div class="v" style="font-size:20px;color:var(--spark)">'+fmt(run[1])+'</div><div class="l">Healed → pass</div></div><div class="kpi"><div class="v" style="font-size:20px;color:var(--bad)">'+fmt(run[2])+'</div><div class="l">Suspected DUT bug</div></div><div class="kpi"><div class="v" style="font-size:20px">'+fmt(run[3])+'</div><div class="l">Escalated</div></div>';
+  var RS=[["Virtual","1","ok","PASS","1.8 s"],["Virtual","1","ok","PASS","0.9 s"],["Virtual","1 → 2","sp","HEALED","3.2 s"],["Real · bench 07","1","ok","PASS","12.4 s"],["Real · bench 07","1","bad","DUT BUG?","8.0 s"],["Virtual","1","run","RUNNING","…"]];
+  $("s7-runs").innerHTML=w.tcs.map(function(t,i){var r=RS[i];return '<tr><td class="tcid">'+t[0]+'</td><td>'+r[0]+'</td><td>'+r[1]+'</td><td><span class="badge '+r[2]+'">'+r[3]+'</span></td><td class="mono">'+r[4]+'</td></tr>'}).join("");
+  $("s7-consub").textContent="UTH run stream · "+w.qs+" × 16 + LaaS bench 07";
+  var L=[["mu","$ spark run --ws "+w.key+" --target "+w.qs+" --parallel 16 --promote real"],["in","[uth]  plan PLAN-"+w.ab+"-0925 registered · "+fmt(gen||w.auto)+" scripts"],["in","[laas] 16 × "+w.qs+" ready · bench 07 reserved (Test PC + DUT)"]];
+  w.tcs.forEach(function(t,i){var r=RS[i];L.push([r[2]=="ok"?"ok":r[2]=="bad"?"er":r[2]=="sp"?"wa":"in",(r[2]=="run"?"▶ ":"")+t[0]+"  ["+r[0]+"]  "+r[3]+"  "+r[4]]);
+    if(r[2]=="sp")L.push(["wa","  [triage] script defect → self-heal attempt 2 → PASS"]);
+    if(r[2]=="bad")L.push(["er","  [triage] spec-conformant script, DUT deviates → defect draft created"]);});
+  $("s7-console").innerHTML=L.map(function(l){return '<div class="'+l[0]+'">'+esc(l[1])+'</div>'}).join("");
+  // S8
+  var hh=w.heal;
+  $("s8-kpis").innerHTML=kpi(gen?w.first+"%":"—","First-run pass rate")+kpi(gen?w.healed+"%":"—","Pass after self-heal","max 3 iterations","var(--good)")+kpi(gen?"1.4":"—","Avg heal iterations","","var(--spark)")+kpi(gen?fmt(Math.round(gen*.06)):"—","Suspected DUT defects","raised, not patched","var(--bad)");
+  var TR=[["Script defect",58,"#ff8a3d"],["Environment / infra",21,"#8a93a6"],["Suspected DUT / FW bug",14,"#ff5d6c"],["Spec ambiguity",7,"#7c5cff"]];
+  $("s8-triage").innerHTML=TR.map(function(x){return '<div class="hbar" style="grid-template-columns:150px 1fr 44px"><span>'+x[0]+'</span>'+tbar(x[1],x[2])+'<span class="p">'+x[1]+'%</span></div>'}).join("")
+    +'<div class="note">Script → self-heal loop · Env → retry on another LaaS bench · DUT → defect with log + clause · Ambiguity → Test Architect</div>';
+  $("s8-tc").textContent=hh.tc;
+  var TL=[["var(--bad)","Attempt 1 · FAIL",hh.fail],["var(--warn)","Triage · script defect",hh.tri],["var(--brand)","Patch generated","Log + script + API docs → code model · assertion untouched → guardrail ✓"],["var(--good)","Attempt 2 · PASS (virtual)","Re-executed on "+w.qs],["var(--good)","Promoted · PASS on Test PC + DUT","LaaS bench 07 · added to MR"]];
+  $("s8-tl").innerHTML=TL.map(function(x){return '<div class="tli"><span class="dt" style="background:'+x[0]+'"></span><b>'+x[1]+'</b><p>'+x[2]+'</p></div>'}).join("");
+  $("s8-log").innerHTML=hh.log.map(function(l){return '<div class="'+l[0]+'">'+esc(l[1])+'</div>'}).join("");
+  $("s8-file").textContent=hh.file;$("s8-diff").innerHTML=hlDiff(hh.diff);
+  // settings
+  $("set-cats").innerHTML=CATS.map(function(c){return '<button class="chip on"><i style="background:'+c[1]+'"></i>'+c[0]+'</button>'}).join("");
+  // menu
+  $("wsmenu").innerHTML=WS.map(function(x){return '<button onclick="setWS(\''+x.key+'\');$(\'wsmenu\').classList.remove(\'open\')"><div class="specdot" style="background:'+x.color+'">'+x.ab+'</div>'+x.name+'<span class="mini">'+x.cov+'%</span></button>'}).join("");
+  paintStepper();
+}
+function setWS(k){cur=WS.filter(function(w){return w.key==k})[0];renderWS()}
+function paintStepper(){
+  var order=["s1","s2","s3","s4","s5","s6","s7","s8"];
+  document.querySelectorAll("#stepper .step").forEach(function(s){var id=s.dataset.screen,n=order.indexOf(id)+1;
+    s.classList.toggle("active",id==curScreen);s.classList.toggle("done",id!=curScreen&&n<cur.stepDone);
+    if(id.charAt(1)>=5)s.classList.add("p2");
+    s.querySelector(".num").textContent=(id!=curScreen&&n<cur.stepDone)?"✓":n;});
+}
+function go(id){
+  curScreen=id;
+  document.querySelectorAll(".screen").forEach(function(s){s.classList.toggle("show",s.id=="screen-"+id)});
+  document.querySelectorAll("#nav button").forEach(function(b){b.classList.toggle("active",b.dataset.screen==id)});
+  $("crumb").textContent=NAMES[id];$("stepper").style.display=(id=="home"||id=="settings")?"none":"grid";
+  paintStepper();window.scrollTo({top:0,behavior:"smooth"});
+}
+function pickT(el){document.querySelectorAll(".tgt").forEach(function(t){t.classList.remove("on")});el.classList.add("on")}
+document.querySelectorAll("#nav button,#stepper .step").forEach(function(b){b.addEventListener("click",function(){go(b.dataset.screen)})});
+document.querySelectorAll(".toggle").forEach(function(t){t.querySelectorAll("button").forEach(function(b){b.addEventListener("click",function(){t.querySelectorAll("button").forEach(function(x){x.classList.remove("on")});b.classList.add("on")})})});
+$("themebtn").onclick=function(){var r=document.documentElement,d=r.getAttribute("data-theme")=="light";r.setAttribute("data-theme",d?"dark":"light");this.textContent=d?"☀":"🌙"};
+document.addEventListener("click",function(e){if(!e.target.closest(".wswrap"))$("wsmenu").classList.remove("open")});
+renderHome();renderWS();go("home");
+</script>
+</body>
+</html>
