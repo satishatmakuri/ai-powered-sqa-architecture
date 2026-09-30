@@ -1,0 +1,1164 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Sol PE AI Solutions Dashboard</title>
+<style>
+:root{
+  --ground:#f0f4f9; --card:#ffffff; --soft:#f8fafc; --soft2:#f1f5f9;
+  --ink:#1e293b; --ink2:#374151; --mute:#64748b; --faint:#94a3b8;
+  --line:#e2e8f0; --line2:#cbd5e1;
+  --acc:#6D4AE0; --acc2:#ede9fe; --accbd:#c4b5fd; --accink:#5B37C9;
+  /* categorical series — validated (light + dark surface, CVD-safe) */
+  --s1:#6D4AE0; --s2:#0E8A62; --s3:#C2560C; --s4:#0E7AC2;
+  /* status / tier ramp — always paired with the tier name, never colour alone */
+  --t1:#166534; --t1bg:#dcfce7; --t1bd:#86efac;
+  --t2:#0369a1; --t2bg:#e0f2fe; --t2bd:#7dd3fc;
+  --t3:#92400e; --t3bg:#fef3c7; --t3bd:#fcd34d;
+  --t4:#9a3412; --t4bg:#ffedd5; --t4bd:#fdba74;
+  --t5:#991b1b; --t5bg:#fee2e2; --t5bd:#fca5a5;
+  --ok:#0E8A62; --warn:#B26B00; --bad:#A3262A;
+  --mono:'Consolas','SFMono-Regular',Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--ground);color:var(--ink);font-size:13px;line-height:1.45}
+.wrap{max-width:100%;overflow:hidden;border:1px solid var(--line);background:var(--ground)}
+
+/* ---------- header ---------- */
+.hdr{background:linear-gradient(135deg,#fff 0%,#f8faff 100%);border-bottom:3px solid var(--line);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.brand{display:flex;align-items:center;gap:11px}
+.mark{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#4f46e5,#7c3aed,#db2777);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.3)}
+.bn{font-size:.95rem;font-weight:700}
+.bs{font-size:.6rem;color:var(--mute);margin-top:2px}
+.htitle{font-size:.9rem;font-weight:700;text-align:center;text-wrap:balance}
+.hsub{font-size:.64rem;color:var(--mute);margin-top:3px;text-align:center}
+.htags{display:flex;gap:6px;flex-wrap:wrap}
+.tg{padding:4px 10px;border-radius:20px;font-size:.6rem;font-weight:600}
+.tg-1{background:#ede9fe;border:1px solid #c4b5fd;color:#6d28d9}
+.tg-2{background:#fce7f3;border:1px solid #f9a8d4;color:#9d174d}
+.tg-3{background:#dcfce7;border:1px solid #86efac;color:#166534}
+.tg-4{background:#e0f2fe;border:1px solid #7dd3fc;color:#0369a1}
+
+/* ---------- tabs + filters ---------- */
+.tabs{background:var(--soft2);border-bottom:1px solid var(--line);padding:0 22px;display:flex;gap:2px;flex-wrap:wrap}
+.tab{padding:10px 14px;font-size:.68rem;font-weight:600;color:#475569;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;font-family:inherit;white-space:nowrap}
+.tab:hover{color:var(--accink)}
+.tab[aria-selected="true"]{color:var(--accink);border-bottom-color:var(--acc);background:var(--card)}
+.tab:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.filters{background:var(--card);border-bottom:1px solid var(--line);padding:9px 22px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:.64rem}
+.flab{font-size:.58rem;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{padding:4px 10px;border-radius:20px;font-size:.62rem;font-weight:600;border:1px solid var(--line2);background:var(--card);color:#475569;cursor:pointer;font-family:inherit}
+.chip[aria-pressed="true"]{background:var(--acc2);border-color:var(--accbd);color:var(--accink)}
+.chip:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.srch{font-family:inherit;font-size:.64rem;padding:5px 9px;border:1px solid var(--line2);border-radius:6px;min-width:190px;color:var(--ink);background:var(--card)}
+.asof{margin-left:auto;font-size:.58rem;color:var(--faint)}
+
+.sample-note{background:#fffbeb;border:1px solid #fcd34d;color:#92400e;font-size:.62rem;padding:7px 14px;margin:12px 22px 0;border-radius:6px}
+
+/* ---------- layout ---------- */
+.view{padding:16px 22px 26px;display:none;flex-direction:column;gap:18px}
+.view.on{display:flex}
+.sec-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+.sec-t{font-size:.86rem;font-weight:700}
+.sec-d{font-size:.63rem;color:var(--mute)}
+.row{display:grid;gap:12px}
+.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.c4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.c23{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.c32{grid-template-columns:minmax(0,1fr) minmax(0,2fr)}
+@media (max-width:1100px){.c3,.c4,.c23,.c32{grid-template-columns:1fr}.c2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px;min-width:0}
+.card h3{font-size:.72rem;font-weight:700;margin-bottom:3px}
+.card .sub{font-size:.58rem;color:var(--mute);margin-bottom:10px}
+
+/* ---------- tiles ---------- */
+.tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.tile .lab{font-size:.56rem;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
+.tile .val{font-family:var(--mono);font-size:1.5rem;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.15}
+.tile .val small{font-size:.7rem;font-weight:700;color:var(--mute);margin-left:3px}
+.tile .cap{font-size:.58rem;color:var(--mute)}
+.tile.hi{border-left:3px solid var(--acc)}
+.tile.warn{border-left:3px solid var(--warn)}
+.tile.bad{border-left:3px solid var(--bad)}
+.tile.good{border-left:3px solid var(--ok)}
+.delta{font-size:.58rem;font-weight:700}
+.up{color:var(--ok)} .down{color:var(--bad)}
+
+/* ---------- pills / badges ---------- */
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:.56rem;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid;white-space:nowrap}
+.p1{background:var(--t1bg);border-color:var(--t1bd);color:var(--t1)}
+.p2{background:var(--t2bg);border-color:var(--t2bd);color:var(--t2)}
+.p3{background:var(--t3bg);border-color:var(--t3bd);color:var(--t3)}
+.p4{background:var(--t4bg);border-color:var(--t4bd);color:var(--t4)}
+.p5{background:var(--t5bg);border-color:var(--t5bd);color:var(--t5)}
+.p0{background:var(--soft2);border-color:var(--line2);color:var(--mute)}
+.gchip{font-family:var(--mono);font-size:.54rem;font-weight:700;padding:1px 5px;border-radius:3px;border:1px solid}
+.g-ok{background:var(--t1bg);border-color:var(--t1bd);color:var(--t1)}
+.g-no{background:var(--t5bg);border-color:var(--t5bd);color:var(--t5)}
+.grp{font-family:var(--mono);font-size:.56rem;font-weight:700;padding:1px 6px;border-radius:3px;border:1px solid var(--line2);background:var(--soft)}
+
+/* ---------- tables ---------- */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.64rem}
+th{position:sticky;top:0;background:var(--soft2);text-align:left;font-size:.56rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.06em;padding:8px 9px;border-bottom:2px solid var(--line2);white-space:nowrap}
+th.srt{cursor:pointer}
+th.srt:hover{color:var(--accink)}
+td{padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:middle;color:var(--ink2)}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--soft)}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.nm{font-weight:700;color:var(--ink)}
+.sub2{font-size:.56rem;color:var(--faint)}
+.linkish{color:var(--accink);font-weight:700;cursor:pointer;background:none;border:none;font-family:inherit;font-size:.64rem;padding:0}
+.linkish:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+/* ---------- bars ---------- */
+.bars{display:flex;flex-direction:column;gap:7px}
+.bar-row{display:grid;grid-template-columns:150px 1fr 54px;gap:9px;align-items:center;font-size:.62rem}
+.bar-lab{color:var(--ink2);line-height:1.25}
+.track{height:14px;background:var(--soft2);border-radius:4px;overflow:hidden;display:flex}
+.fill{height:100%;border-radius:0 4px 4px 0}
+.bar-val{font-family:var(--mono);font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.stack{display:flex;height:22px;border-radius:5px;overflow:hidden;gap:2px;background:var(--soft2)}
+.seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:.54rem;font-weight:800;color:#fff}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.58rem;color:var(--mute);margin-top:9px}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:-1px}
+
+/* dual-scale marker line for target */
+.tgt{position:relative}
+.tgt::after{content:"";position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink);opacity:.45}
+
+/* ---------- coverage matrix ---------- */
+.mx{display:grid;grid-template-columns:150px repeat(4,minmax(96px,1fr));gap:3px;min-width:640px}
+.mx-h{font-size:.56rem;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;padding:4px 6px}
+.mx-p{font-size:.6rem;font-weight:700;padding:7px 6px;background:var(--soft);border-radius:5px;display:flex;align-items:center;gap:6px}
+.mx-n{width:18px;height:18px;border-radius:4px;color:#fff;font-size:.54rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cell{border-radius:5px;padding:6px;font-size:.55rem;line-height:1.3;border:1px solid var(--line);background:var(--card);cursor:pointer;text-align:left;font-family:inherit;color:var(--ink2);min-height:52px}
+.cell:hover{border-color:var(--accbd)}
+.cell:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.cell b{display:block;font-size:.58rem;color:var(--ink)}
+.cell .st{margin-top:3px;display:inline-block}
+.cell.empty{background:var(--soft);color:var(--faint);border-style:dashed;cursor:default}
+
+/* ---------- scatter ---------- */
+.plot{width:100%;height:auto;display:block}
+.plot text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif}
+
+/* ---------- drill-down ---------- */
+.dd-head{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;justify-content:space-between}
+.dd-title{font-size:1rem;font-weight:800}
+.dd-meta{font-size:.62rem;color:var(--mute);margin-top:3px}
+.gate-strip{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.kpi-tbl td:first-child{font-weight:600;color:var(--ink)}
+.score-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:0}
+select.sel{font-family:inherit;font-size:.66rem;padding:5px 9px;border:1px solid var(--line2);border-radius:6px;background:var(--card);color:var(--ink);max-width:100%}
+select.sel:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+
+/* ---------- handoff ---------- */
+.code{font-family:var(--mono);font-size:.6rem;background:#0f172a;color:#e2e8f0;border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.6;white-space:pre}
+.code .k{color:#c4b5fd}.code .s{color:#86efac}.code .c{color:#64748b}
+.tree{font-family:var(--mono);font-size:.6rem;color:var(--ink2);line-height:1.7;white-space:pre}
+
+/* ---------- tooltip ---------- */
+#tip{position:fixed;pointer-events:none;background:#0f172a;color:#f8fafc;font-size:.6rem;padding:6px 9px;border-radius:6px;opacity:0;transition:opacity .12s;z-index:50;max-width:260px;line-height:1.45;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#tip b{color:#fff}
+.foot{background:var(--card);border-top:1px solid var(--line);padding:10px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:.6rem;color:#475569}
+.foot-c{margin-left:auto;font-size:.58rem;color:var(--faint)}
+@media (max-width:560px){.hdr,.tabs,.filters,.view,.foot{padding-left:16px;padding-right:16px}.bar-row{grid-template-columns:110px 1fr 46px}}
+</style>
+
+<div class="wrap">
+
+<div class="hdr">
+  <div class="brand">
+    <div class="mark">Z</div>
+    <div><div class="bn">Zion Quality Platform</div><div class="bs">Sol PE AI Solutions &middot; portfolio, benchmark and value dashboard</div></div>
+  </div>
+  <div>
+    <div class="htitle">Sol PE AI Solutions Dashboard</div>
+    <div class="hsub">Every AI solution across grp1 &middot; grp2 &middot; grp3, scored against the L3 benchmark KPIs</div>
+  </div>
+  <div class="htags">
+    <span class="tg tg-1">Wireframe 6</span>
+    <span class="tg tg-2">Zion module</span>
+    <span class="tg tg-3">Angular-ready</span>
+    <span class="tg tg-4">Exec + engineering</span>
+  </div>
+</div>
+
+<div class="tabs" role="tablist" id="tabs"></div>
+
+<div class="filters">
+  <span class="flab">Group</span>
+  <div class="chips" id="grpChips"></div>
+  <span class="flab">Tier</span>
+  <div class="chips" id="tierChips"></div>
+  <input class="srch" id="srch" type="search" placeholder="Search solution or capability…" aria-label="Search solutions">
+  <span class="asof" id="asof"></span>
+</div>
+
+<div class="sample-note" id="sampleNote">
+  <strong>Wireframe data:</strong> Review Shield carries its real evaluation (composite 49.2, 2 of 6 gates). Every other solution is illustrative sample data, marked <span class="pill p0">sample</span> in the catalogue, so the layout can be reviewed before the live feed is wired.
+</div>
+
+<!-- ============ 1 · EXECUTIVE OVERVIEW ============ -->
+<div class="view" id="v-exec" role="tabpanel">
+  <div class="row c4" id="execTiles"></div>
+
+  <div class="row c23">
+    <div class="card">
+      <h3>Portfolio position — benchmark score against adoption</h3>
+      <div class="sub">Each solution plotted by composite score and the share of eligible teams using it. Hover a point for detail.</div>
+      <svg class="plot" id="scatter" viewBox="0 0 760 320" role="img" aria-label="Scatter of benchmark composite score against adoption share"></svg>
+      <div class="legend" id="scatterLegend"></div>
+    </div>
+    <div class="card">
+      <h3>Certification funnel</h3>
+      <div class="sub">Where the portfolio sits in the eight-step evaluation flow</div>
+      <div class="bars" id="funnel"></div>
+      <div class="legend"><span>Registered solutions that never reach a benchmark run are the leak to watch.</span></div>
+    </div>
+  </div>
+
+  <div class="row c3">
+    <div class="card">
+      <h3>Tier mix by group</h3>
+      <div class="sub">Solutions per group by eligibility tier</div>
+      <div class="bars" id="tierByGroup"></div>
+      <div class="legend" id="tierLegend"></div>
+    </div>
+    <div class="card">
+      <h3>Engineer-hours saved per month</h3>
+      <div class="sub">Reported by certified and conditional solutions</div>
+      <svg class="plot" id="trend" viewBox="0 0 420 200" role="img" aria-label="Monthly engineer-hours saved trend"></svg>
+    </div>
+    <div class="card">
+      <h3>Attention list</h3>
+      <div class="sub">Items a group lead or exec should act on this week</div>
+      <div class="tbl-wrap"><table id="attention"></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2 · SOLUTION CATALOGUE ============ -->
+<div class="view" id="v-cat" role="tabpanel">
+  <div class="card">
+    <div class="sec-h"><span class="sec-t">Solution catalogue</span><span class="sec-d">Every registered AI solution across Sol PE. Click a name to open its benchmark result.</span></div>
+    <div class="tbl-wrap"><table id="catTable"></table></div>
+    <div class="legend"><span>Gates: <span class="gchip g-ok">G1</span> passing &middot; <span class="gchip g-no">G2</span> failing. A solution is eligible only when all six pass.</span></div>
+  </div>
+  <div class="row c3">
+    <div class="card"><h3>Registry hygiene</h3><div class="sub">Governance state of the catalogue</div><div class="bars" id="hygiene"></div></div>
+    <div class="card"><h3>Shared-service adoption</h3><div class="sub">Share of solutions built on each Zion shared service</div><div class="bars" id="svcAdopt"></div></div>
+    <div class="card"><h3>Solution types</h3><div class="sub">What the portfolio is made of</div><div class="bars" id="typeMix"></div></div>
+  </div>
+</div>
+
+<!-- ============ 3 · BENCHMARK RESULT ============ -->
+<div class="view" id="v-bench" role="tabpanel">
+  <div class="card">
+    <div class="dd-head">
+      <div>
+        <div class="dd-title" id="ddName">—</div>
+        <div class="dd-meta" id="ddMeta">—</div>
+        <div class="gate-strip" id="ddGates"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+        <label class="flab" for="solSel">Solution</label>
+        <select class="sel" id="solSel"></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="row c4" id="ddTiles"></div>
+
+  <div class="row c2">
+    <div class="card">
+      <h3>Dimension scores against the portfolio median</h3>
+      <div class="sub">Six weighted dimensions, 0–100. Tier 1 needs a weighted composite of 85 with every gate green.</div>
+      <div class="bars" id="ddDims"></div>
+      <div class="legend"><span><i style="background:var(--s1)"></i>This solution</span><span><i style="background:var(--line2)"></i>Portfolio median</span><span>| Vertical rule = 85-point Tier-1 line</span></div>
+    </div>
+    <div class="card">
+      <h3>Weighted contribution to the composite</h3>
+      <div class="sub">Dimension score × weight. The gap to 100 is where the points are.</div>
+      <div class="bars" id="ddWeighted"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>KPI detail</h3>
+    <div class="sub">Target = Tier-1 value · Min = floor (below it the KPI scores 0; on a D1 KPI it also fails gate G5)</div>
+    <div class="tbl-wrap"><table id="ddKpis"></table></div>
+  </div>
+
+  <div class="row c2">
+    <div class="card"><h3>Score history</h3><div class="sub">Composite at each benchmark round</div><svg class="plot" id="ddHist" viewBox="0 0 420 180" role="img" aria-label="Composite score by benchmark round"></svg></div>
+    <div class="card"><h3>Gap actions</h3><div class="sub">What moves this solution up a tier</div><div class="tbl-wrap"><table id="ddGaps"></table></div></div>
+  </div>
+</div>
+
+<!-- ============ 4 · CAPABILITY COVERAGE ============ -->
+<div class="view" id="v-cov" role="tabpanel">
+  <div class="row c4" id="covTiles"></div>
+  <div class="card">
+    <div class="sec-h"><span class="sec-t">Capability coverage — STLC phases 1–10 × L3 components</span><span class="sec-d">Best solution per capability. Click a cell to open its benchmark result.</span></div>
+    <div style="overflow-x:auto"><div class="mx" id="covMx"></div></div>
+    <div class="legend">
+      <span><span class="pill p1">Tier 1</span> certified standard</span>
+      <span><span class="pill p2">Tier 2</span> conditional</span>
+      <span><span class="pill p3">Tier 3</span> group-local</span>
+      <span><span class="pill p4">Tier 4</span> rework</span>
+      <span><span class="pill p5">Not eligible</span> gate failure</span>
+      <span><span class="pill p0">Open</span> no solution registered</span>
+    </div>
+  </div>
+  <div class="row c2">
+    <div class="card">
+      <h3>Duplication watch</h3>
+      <div class="sub">Capabilities where more than one group is building the same thing — the reason the benchmark exists</div>
+      <div class="tbl-wrap"><table id="dupTable"></table></div>
+    </div>
+    <div class="card">
+      <h3>Coverage by STLC phase</h3>
+      <div class="sub">Capabilities with at least one eligible solution, out of the capabilities defined for that phase</div>
+      <div class="bars" id="phaseCov"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 5 · VALUE & COST ============ -->
+<div class="view" id="v-val" role="tabpanel">
+  <div class="row c4" id="valTiles"></div>
+  <div class="row c2">
+    <div class="card">
+      <h3>Engineer-hours saved per month, by solution</h3>
+      <div class="sub">Self-reported by each solution; only certified and conditional solutions count toward the portfolio total</div>
+      <div class="bars" id="valHours"></div>
+    </div>
+    <div class="card">
+      <h3>Cost per engineer-hour saved</h3>
+      <div class="sub">Compute cost (LLM tokens + GPU) divided by hours saved. Lower is better; the rule is a 2,000-point budget line.</div>
+      <div class="bars" id="valCost"></div>
+    </div>
+  </div>
+  <div class="row c3">
+    <div class="card"><h3>Adoption depth</h3><div class="sub">Teams and repositories actually using each solution</div><div class="tbl-wrap"><table id="adoptTable"></table></div></div>
+    <div class="card"><h3>Trust signals</h3><div class="sub">Do engineers act on what the AI produces?</div><div class="bars" id="trustBars"></div><div class="legend"><span>Accept-without-edit and issue-resolution rates. Below 50% the effort-saving claim does not hold.</span></div></div>
+    <div class="card"><h3>Compute footprint</h3><div class="sub">Monthly LLM spend across the portfolio</div><div class="bars" id="computeBars"></div></div>
+  </div>
+</div>
+
+<!-- ============ 6 · GOVERNANCE ============ -->
+<div class="view" id="v-gov" role="tabpanel">
+  <div class="row c4" id="govTiles"></div>
+  <div class="row c2">
+    <div class="card"><h3>Gate status across the portfolio</h3><div class="sub">How many solutions pass each mandatory gate</div><div class="bars" id="gateBars"></div></div>
+    <div class="card"><h3>Benchmark calendar</h3><div class="sub">Golden-set readiness and the next re-benchmark per solution</div><div class="tbl-wrap"><table id="calTable"></table></div></div>
+  </div>
+  <div class="row c2">
+    <div class="card"><h3>Review board queue</h3><div class="sub">Decisions waiting on grp1 / grp2 / grp3 leads and AI champions</div><div class="tbl-wrap"><table id="queueTable"></table></div></div>
+    <div class="card"><h3>Model and prompt registry</h3><div class="sub">What version is live, and when it last changed</div><div class="tbl-wrap"><table id="regTable"></table></div></div>
+  </div>
+</div>
+
+<!-- ============ 7 · ANGULAR HANDOFF ============ -->
+<div class="view" id="v-dev" role="tabpanel">
+  <div class="row c2">
+    <div class="card">
+      <h3>Component tree</h3>
+      <div class="sub">Each block on this wireframe maps to one reusable Angular component</div>
+      <div class="tree" id="devTree"></div>
+    </div>
+    <div class="card">
+      <h3>Reusable components and their inputs</h3>
+      <div class="sub">Standalone components, OnPush change detection, signals for state</div>
+      <div class="tbl-wrap"><table id="devComp"></table></div>
+    </div>
+  </div>
+  <div class="row c2">
+    <div class="card">
+      <h3>Data contract</h3>
+      <div class="sub">One solution record drives the catalogue, the coverage matrix and the drill-down</div>
+      <div class="code" id="devModel"></div>
+    </div>
+    <div class="card">
+      <h3>API endpoints</h3>
+      <div class="sub">Served by the Zion benchmark service; the Excel workbook is the interim source of truth</div>
+      <div class="tbl-wrap"><table id="devApi"></table></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Implementation notes</h3>
+    <div class="sub">Decisions worth fixing before the build starts</div>
+    <div class="tbl-wrap"><table id="devNotes"></table></div>
+  </div>
+</div>
+
+<div class="foot">
+  <span>AI-Powered Software Quality Architecture &mdash; Multi-Layer AI Agent System &middot; Zion Platform</span>
+  <span>Benchmark v1.0 &middot; 6 dimensions &middot; 6 gates &middot; 5 tiers</span>
+  <span class="foot-c">Companion to wf2b (STLC × 4 layers) &middot; wf2c (L3 benchmark KPIs)</span>
+</div>
+</div>
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script>
+/* =========================================================================
+   DATA — in Angular this is the response of GET /api/solutions etc.
+   ========================================================================= */
+var ASOF = "30 Sep 2026";
+var W = {D1:.30,D2:.20,D3:.15,D4:.10,D5:.15,D6:.10};
+var DIMN = {D1:"Functional efficacy",D2:"Reuse & genericity",D3:"Scalability & performance",D4:"Reliability & trust",D5:"Business value",D6:"Governance & maintainability"};
+var PHASES = [
+ {n:1,name:"Requirements Analysis & Review",color:"#3B82F6",caps:["1.a","1.b","1.c"]},
+ {n:2,name:"Test Planning",color:"#7C5CE6",caps:["2.a","2.b","2.c"]},
+ {n:3,name:"Test Design & Development",color:"#C8307E",caps:["3.a","3.b","3.c","3.d"]},
+ {n:4,name:"Test Environment Setup",color:"#B26B00",caps:["4.a","4.b","4.c"]},
+ {n:5,name:"Test Execution",color:"#0E8A62",caps:["5.a","5.b","5.c"]},
+ {n:6,name:"Defect Management",color:"#C62F2F",caps:["6.a","6.b","6.c"]},
+ {n:7,name:"Test Reporting & Metrics",color:"#0A7F96",caps:["7.a","7.b","7.c"]},
+ {n:8,name:"Test Closure",color:"#16803C",caps:["8.a","8.b","8.c"]},
+ {n:9,name:"Customer Release",color:"#C2560C",caps:["9.a","9.b","9.c"]},
+ {n:10,name:"Post-Release & Monitoring",color:"#6D3FD6",caps:["10.a","10.b","10.c"]}];
+var CAPN = {"1.a":"NL Req Parsing & Classification","1.b":"Feasibility & Quality Analyzer","1.c":"RTM Auto-Gen + Risk Scoring",
+"2.a":"Test Strategy AI Advisor","2.b":"Effort Estimator ML Model","2.c":"Risk Scoring & Plan Generator",
+"3.a":"Scenario + LLM Test Case Gen","3.b":"BDD Writer & Data Synth","3.c":"Script Dev/Review & Coverage","3.d":"AI Code Review Agent",
+"4.a":"IaC Provisioner","4.b":"Env Validator & Drift Detector","4.c":"Access & Security Recommender",
+"5.a":"Test Orchestrator","5.b":"Self-Healing Script Agent","5.c":"Visual AI + Perf Analyzer",
+"6.a":"Defect Classifier & Severity AI","6.b":"Duplicate Detector","6.c":"RCA Analyzer + Pattern Detector",
+"7.a":"Metrics Analytics Intelligence","7.b":"Predictive QA ML Model","7.c":"Auto Report Generator",
+"8.a":"Exit Criteria Evaluator","8.b":"Knowledge Extractor","8.c":"Process Optimizer",
+"9.a":"Release Gate Validator","9.b":"Deployment Verifier","9.c":"Comms Drafter & Rollback",
+"10.a":"Anomaly Detection","10.b":"Customer Feedback Analyzer","10.c":"Hotfix Triage & MLOps"};
+var GROUPS = ["grp1","grp2","grp3","platform"];
+var GCOLOR = {grp1:"var(--s1)",grp2:"var(--s2)",grp3:"var(--s3)",platform:"var(--s4)"};
+var SERVICES = [["LLM","LLM gateway"],["EMB","Embedding service"],["RULE","Rule & policy engine"],["LOG","Log parser"],["DOC","Report generator"],["MLOPS","MLOps & model registry"],["GOLD","Golden set & harness"]];
+
+/* one record per solution */
+var SOL = [
+ {id:"RS", name:"Review Shield", cap:"3.d", group:"platform", owner:"Sol PE platform · Satish", stage:"Benchmarked",
+  dims:{D1:31.8,D2:66.7,D3:52.1,D4:44.0,D5:50.0,D6:65.7}, gates:{G1:0,G2:0,G3:1,G4:1,G5:0,G6:0},
+  hist:[{r:"R1 · Sep 26",c:49.2}], hours:200, costPerHr:1650, teams:4, teamsElig:12, repos:11, reposElig:58,
+  accept:0.00, kpis:34, kpisMeasured:34, tokensM:11.2, lang:"TS, Python, JS, C++", golden:"Missing", next:"Stage-1 exit",
+  sample:false, type:"AI agent",
+  gaps:[["Critical","Build the seeded-defect golden set and harness","+ unlocks G2 and every D1 KPI"],
+        ["Critical","Instrument resolve / dismiss / false-positive on comments","D5 +25"],
+        ["Critical","Deploy system prompt v2 (scope, severity, cap)","D1 +40"],
+        ["High","Add GitHub / GitLab adapters","D2 +17"],
+        ["High","Move to shared LLM gateway and embedding service","D2 +17"]]},
+ {id:"CS", name:"CoverSight", cap:"1.c", group:"platform", owner:"Sol PE platform", stage:"Certified",
+  dims:{D1:88,D2:91,D3:84,D4:86,D5:83,D6:90}, gates:{G1:1,G2:1,G3:1,G4:1,G5:1,G6:1},
+  hist:[{r:"R1 · Mar 26",c:74.2},{r:"R2 · Jun 26",c:81.6},{r:"R3 · Sep 26",c:87.1}], hours:340, costPerHr:820,
+  teams:9, teamsElig:12, repos:41, reposElig:58, accept:0.78, kpis:19, kpisMeasured:19, tokensM:6.4,
+  lang:"Python", golden:"Ready", next:"Dec 2026", sample:true, type:"AI agent + heuristic",
+  gaps:[["Low","Extend coverage model to RTL/HDL repositories","D2 +4"]]},
+ {id:"SS", name:"SpecSpark", cap:"3.a", group:"grp1", owner:"grp1 · test design chapter", stage:"Benchmarked",
+  dims:{D1:77,D2:82,D3:80,D4:74,D5:86,D6:72}, gates:{G1:1,G2:1,G3:1,G4:1,G5:1,G6:1},
+  hist:[{r:"R1 · Jun 26",c:72.4},{r:"R2 · Sep 26",c:79.4}], hours:260, costPerHr:1180, teams:5, teamsElig:12,
+  repos:18, reposElig:58, accept:0.71, kpis:21, kpisMeasured:21, tokensM:9.1, lang:"Python, C", golden:"Ready",
+  next:"Dec 2026", sample:true, type:"AI agent",
+  gaps:[["High","Raise mutation-parity fault detection to 90%","D1 +9"],["Medium","Publish model card and runbook","D6 +14"]]},
+ {id:"TF", name:"TCForge", cap:"3.a", group:"grp3", owner:"grp3 · NVMe V&V", stage:"Benchmarked",
+  dims:{D1:74,D2:58,D3:76,D4:70,D5:73,D6:66}, gates:{G1:1,G2:1,G3:1,G4:1,G5:1,G6:0},
+  hist:[{r:"R1 · Sep 26",c:70.1}], hours:90, costPerHr:1490, teams:1, teamsElig:12, repos:6, reposElig:58,
+  accept:0.62, kpis:21, kpisMeasured:19, tokensM:3.2, lang:"Python", golden:"Ready", next:"Dec 2026",
+  sample:true, type:"AI agent",
+  gaps:[["Critical","Duplicate of 3.a — merge into SpecSpark or justify a second solution","portfolio"],["High","Complete documentation pack","unlocks G6"]]},
+ {id:"SW", name:"ScriptWeaver", cap:"3.c", group:"grp1", owner:"grp1 · automation chapter", stage:"Benchmarked",
+  dims:{D1:79,D2:74,D3:81,D4:72,D5:80,D6:75}, gates:{G1:1,G2:1,G3:1,G4:1,G5:1,G6:1},
+  hist:[{r:"R1 · Jun 26",c:71.8},{r:"R2 · Sep 26",c:77.3}], hours:310, costPerHr:990, teams:6, teamsElig:12,
+  repos:24, reposElig:58, accept:0.69, kpis:20, kpisMeasured:20, tokensM:8.8, lang:"Python, Robot", golden:"Ready",
+  next:"Dec 2026", sample:true, type:"AI agent",
+  gaps:[["High","Lift first-run script pass rate to 85%","D1 +8"],["Medium","Adopt shared log parser","D2 +6"]]},
+ {id:"RL", name:"RootLens", cap:"6.c", group:"platform", owner:"Sol PE platform", stage:"Benchmarked",
+  dims:{D1:76,D2:80,D3:78,D4:81,D5:72,D6:84}, gates:{G1:1,G2:1,G3:1,G4:1,G5:1,G6:1},
+  hist:[{r:"R1 · Jun 26",c:73.0},{r:"R2 · Sep 26",c:77.5}], hours:180, costPerHr:1320, teams:7, teamsElig:12,
+  repos:30, reposElig:58, accept:0.66, kpis:18, kpisMeasured:18, tokensM:5.6, lang:"Python", golden:"Ready",
+  next:"Dec 2026", sample:true, type:"AI agent + knowledge graph",
+  gaps:[["High","Root cause in top-3 is 62% against a 70% target","D1 +11"]]},
+ {id:"EI", name:"EffortIQ", cap:"2.b", group:"grp2", owner:"grp2 · planning", stage:"Benchmarked",
+  dims:{D1:66,D2:62,D3:88,D4:70,D5:58,D6:70}, gates:{G1:1,G2:1,G3:1,G4:1,G5:1,G6:1},
+  hist:[{r:"R1 · Sep 26",c:67.6}], hours:60, costPerHr:640, teams:2, teamsElig:12, repos:0, reposElig:0,
+  accept:0.55, kpis:16, kpisMeasured:16, tokensM:0.4, lang:"Python", golden:"Ready", next:"Dec 2026",
+  sample:true, type:"ML model",
+  gaps:[["High","MMRE is 27% against a 20% target","D1 +12"],["Medium","Adoption in one group only","D2 +10"]]},
+ {id:"RP", name:"RunPilot", cap:"5.a", group:"grp2", owner:"grp2 · execution", stage:"Benchmarked",
+  dims:{D1:54,D2:48,D3:62,D4:58,D5:50,D6:44}, gates:{G1:1,G2:1,G3:1,G4:0,G5:1,G6:0},
+  hist:[{r:"R1 · Sep 26",c:53.1}], hours:70, costPerHr:2100, teams:1, teamsElig:12, repos:9, reposElig:58,
+  accept:0.41, kpis:18, kpisMeasured:15, tokensM:2.1, lang:"Python", golden:"Partial", next:"Nov 2026",
+  sample:true, type:"AI agent + RL",
+  gaps:[["Critical","Auto-cancels runs without human approval — fails G4","unlocks G4"],["High","Suite reduction loses 6% of defect catches","D1 +14"]]},
+ {id:"FW", name:"FieldWatch", cap:"10.a", group:"grp2", owner:"grp2 · field quality", stage:"Benchmarked",
+  dims:{D1:70,D2:60,D3:72,D4:64,D5:56,D6:62}, gates:{G1:1,G2:1,G3:1,G4:1,G5:1,G6:1},
+  hist:[{r:"R1 · Sep 26",c:65.0}], hours:110, costPerHr:1750, teams:2, teamsElig:12, repos:0, reposElig:0,
+  accept:0.58, kpis:17, kpisMeasured:17, tokensM:1.2, lang:"Python", golden:"Ready", next:"Dec 2026",
+  sample:true, type:"ML model",
+  gaps:[["High","Alert precision 0.74 against a 0.85 target","D1 +10"],["Medium","Only one product line covered","D2 +12"]]},
+ {id:"QC", name:"QualityCast", cap:"7.b", group:"grp3", owner:"grp3 · analytics", stage:"In build",
+  dims:null, gates:{G1:1,G2:0,G3:1,G4:1,G5:0,G6:0},
+  hist:[], hours:0, costPerHr:0, teams:0, teamsElig:12, repos:0, reposElig:0, accept:null, kpis:17, kpisMeasured:0,
+  tokensM:0.3, lang:"Python", golden:"In progress", next:"First run Nov 2026", sample:true, type:"ML model",
+  gaps:[["High","Benchmark run not yet possible — golden set incomplete","unlocks G2"]]},
+ {id:"RG", name:"RigGuard", cap:"4.b", group:"grp3", owner:"grp3 · lab infrastructure", stage:"Registered",
+  dims:null, gates:{G1:1,G2:0,G3:1,G4:1,G5:0,G6:0},
+  hist:[], hours:0, costPerHr:0, teams:0, teamsElig:12, repos:0, reposElig:0, accept:null, kpis:15, kpisMeasured:0,
+  tokensM:0, lang:"Python, Go", golden:"Missing", next:"Design review Oct 2026", sample:true, type:"ML model + rules",
+  gaps:[["Medium","Check the registry before building — 4.b overlaps RigGuard and lab tooling in grp1","portfolio"]]},
+ {id:"AR", name:"AutoReport", cap:"7.c", group:"grp1", owner:"grp1 · reporting", stage:"Benchmarked",
+  dims:{D1:85,D2:86,D3:90,D4:82,D5:81,D6:88}, gates:{G1:1,G2:1,G3:1,G4:1,G5:1,G6:1},
+  hist:[{r:"R1 · Jun 26",c:79.9},{r:"R2 · Sep 26",c:85.3}], hours:150, costPerHr:560, teams:8, teamsElig:12,
+  repos:0, reposElig:0, accept:0.82, kpis:18, kpisMeasured:18, tokensM:2.9, lang:"Python", golden:"Ready",
+  next:"Dec 2026", sample:true, type:"AI agent",
+  gaps:[["Low","Add Confluence publishing for customer reports","D2 +3"]]}
+];
+/* services used, per solution */
+var USES = {RS:["LOG"],CS:["LLM","EMB","GOLD","MLOPS"],SS:["LLM","EMB","GOLD"],TF:["LLM","GOLD"],SW:["LLM","GOLD","DOC"],
+ RL:["LLM","EMB","LOG","GOLD"],EI:["MLOPS","GOLD"],RP:["RULE","LOG"],FW:["MLOPS","GOLD"],QC:["MLOPS"],RG:[],AR:["LLM","DOC","GOLD"]};
+/* KPI detail — full set held server-side; the wireframe carries a representative slice per solution */
+var KPI = {
+ RS:[["D1","Critical/High defect detection recall","recall","≥0.85","0.70","0.60",0],
+     ["D1","Comment precision","precision","≥0.80","0.65","0.40",0],
+     ["D1","Severity agreement with SME rubric","agreement","≥0.85","0.70","0.45",0],
+     ["D1","Scope compliance (allowed categories)","%","≥95%","85%","36%",0],
+     ["D1","Findings carrying a concrete fix","%","≥90%","75%","85%",87],
+     ["D2","SCM platforms supported","count","≥3","2","1",0],
+     ["D2","Uses Zion shared services","Yes/No","Yes","—","No",0],
+     ["D3","Average review latency","min","≤5","10","2",100],
+     ["D3","LLM tokens per review","tokens","≤50,000","75,000","87,500",0],
+     ["D4","Findings with exact file, line, severity","%","100%","95%","95%",60],
+     ["D5","Human review effort saved","%","≥60%","40%","97.7%",100],
+     ["D5","Issue resolution rate in merged PRs","%","≥70%","50%","0%",0],
+     ["D5","Repositories onboarded","%","≥50%","30%","19%",0],
+     ["D6","Documentation pack complete","Yes/No","Yes","—","No",0],
+     ["D6","Golden set and harness in place","Yes/No","Yes","—","No",0]],
+ DEFAULT:[["D1","Primary efficacy KPI","ratio","≥0.90","0.80","—","—"],
+     ["D1","Secondary efficacy KPI","%","≥95%","85%","—","—"],
+     ["D2","Product lines supported","count","≥3","2","—","—"],
+     ["D3","p95 latency","s","≤5","10","—","—"],
+     ["D4","Run-to-run consistency","%","≥95%","90%","—","—"],
+     ["D5","Effort saved vs manual","%","≥60%","40%","—","—"],
+     ["D6","Documentation pack complete","Yes/No","Yes","—","—","—"]]
+};
+var QUEUE = [["Waiver","Review Shield · retrospective registration (G1)","Review board","Blocking eligibility"],
+ ["Duplicate","3.a — SpecSpark (grp1) vs TCForge (grp3)","grp1 + grp3 leads","Merge decision overdue"],
+ ["Certification","CoverSight R3 result 87.1 — confirm Tier 1","Review board","Ready to sign"],
+ ["Gate","RunPilot · G4 human-in-the-loop breach","grp2 lead","Stop-use until fixed"],
+ ["Registration","RigGuard (4.b) — duplicate check not recorded","grp3 lead","Before build starts"]];
+var REG = [["Review Shield","prompt v2 (drafted)","not deployed","—","Sol PE platform"],
+ ["CoverSight","cs-graph-1.4 + prompt v3","deployed","12 Sep 2026","Sol PE platform"],
+ ["SpecSpark","ss-gen-2.1 + prompt v4","deployed","19 Sep 2026","grp1"],
+ ["ScriptWeaver","sw-code-1.2 + prompt v2","deployed","02 Sep 2026","grp1"],
+ ["EffortIQ","eff-gbm-3.0","deployed","28 Aug 2026","grp2"],
+ ["RunPilot","rp-rl-0.9","deployed","24 Sep 2026","grp2"],
+ ["FieldWatch","fw-lstm-1.1","deployed","15 Sep 2026","grp2"]];
+var TREND = [["Apr",420],["May",560],["Jun",720],["Jul",910],["Aug",1080],["Sep",1240]];
+
+/* ========================== helpers ========================== */
+var $ = function(s){return document.querySelector(s)}, $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+function el(t,c,h){var e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;}
+function composite(d){ if(!d) return null; var s=0; for(var k in W) s+=d[k]*W[k]; return Math.round(s*10)/10; }
+function gatesPass(g){ return ["G1","G2","G3","G4","G5","G6"].every(function(k){return g[k]===1}); }
+function tierOf(s){
+  var c=composite(s.dims);
+  if(c===null) return {k:"p0",n:s.stage==="Registered"?"Registered":"In build"};
+  if(!gatesPass(s.gates)||c<45) return {k:"p5",n:"Not eligible"};
+  if(c>=85) return {k:"p1",n:"Tier 1 · Certified"};
+  if(c>=75) return {k:"p2",n:"Tier 2 · Conditional"};
+  if(c>=60) return {k:"p3",n:"Tier 3 · Group-local"};
+  return {k:"p4",n:"Tier 4 · Rework"};
+}
+function pill(t){ return '<span class="pill '+t.k+'">'+t.n+'</span>'; }
+function pct(v){ return v==null?"—":Math.round(v*100)+"%"; }
+function num(v){ return v==null?"—":v.toLocaleString("en-IN"); }
+function med(arr){ if(!arr.length) return 0; var a=arr.slice().sort(function(x,y){return x-y}); var m=Math.floor(a.length/2);
+  return a.length%2?a[m]:(a[m-1]+a[m])/2; }
+
+/* tooltip */
+var tip=$("#tip");
+function bindTip(node,html){
+  node.addEventListener("mouseenter",function(){tip.innerHTML=html;tip.style.opacity=1});
+  node.addEventListener("mousemove",function(e){
+    var x=Math.min(e.clientX+14,window.innerWidth-270), y=Math.max(e.clientY-12,8);
+    tip.style.left=x+"px";tip.style.top=y+"px";});
+  node.addEventListener("mouseleave",function(){tip.style.opacity=0});
+  node.addEventListener("focus",function(){tip.innerHTML=html;tip.style.opacity=1});
+  node.addEventListener("blur",function(){tip.style.opacity=0});
+}
+
+/* filters */
+var F={group:"all",tier:"all",q:""};
+function visible(){
+  return SOL.filter(function(s){
+    if(F.group!=="all" && s.group!==F.group) return false;
+    if(F.tier!=="all" && tierOf(s).n.indexOf(F.tier)!==0) return false;
+    if(F.q){ var q=F.q.toLowerCase();
+      if((s.name+" "+s.cap+" "+CAPN[s.cap]+" "+s.owner).toLowerCase().indexOf(q)<0) return false; }
+    return true;});
+}
+
+/* ========================== tiles ========================== */
+function tile(lab,val,unit,cap,cls,delta){
+  return '<div class="tile '+(cls||"")+'"><span class="lab">'+lab+'</span><span class="val">'+val+
+    (unit?'<small>'+unit+'</small>':'')+'</span><span class="cap">'+(delta||"")+cap+'</span></div>';
+}
+function renderExec(){
+  var V=visible(), scored=V.filter(function(s){return s.dims});
+  var cert=V.filter(function(s){return tierOf(s).k==="p1"}).length;
+  var elig=V.filter(function(s){var t=tierOf(s);return ["p1","p2","p3","p4"].indexOf(t.k)>=0}).length;
+  var hours=V.reduce(function(a,s){return a+s.hours},0);
+  var caps={}; V.forEach(function(s){caps[s.cap]=1});
+  var dup=dupCaps().length;
+  var notElig=V.filter(function(s){return tierOf(s).k==="p5"}).length;
+  var avg=scored.length?Math.round(scored.reduce(function(a,s){return a+composite(s.dims)},0)/scored.length*10)/10:0;
+  $("#execTiles").innerHTML =
+    tile("Solutions in portfolio",V.length,"", Object.keys(caps).length+" of 31 L3 capabilities covered","hi")+
+    tile("Certified (Tier 1)",cert,"", elig+" eligible &middot; "+notElig+" blocked by a gate","good")+
+    tile("Engineer-hours saved / month",num(hours),"h","across certified and conditional solutions","good",'<span class="delta up">▲ 15% vs Aug</span> &middot; ')+
+    tile("Duplicate capability builds",dup,"", dup?"same capability built by more than one group":"no duplication detected",dup?"warn":"good")+
+    tile("Average composite",avg,"/100","of "+scored.length+" benchmarked solutions","hi")+
+    tile("Awaiting first benchmark",V.filter(function(s){return !s.dims}).length,"", "registered or in build, no measured result","warn")+
+    tile("Portfolio trust score",pct(med(scored.map(function(s){return s.accept||0}))),"", "median accept / resolution rate across solutions","warn")+
+    tile("Review board queue",QUEUE.length,"", "decisions waiting on group leads","warn");
+  drawScatter(V); drawFunnel(V); drawTierByGroup(V); drawTrend(); drawAttention(V);
+}
+
+/* ========================== scatter ========================== */
+function drawScatter(V){
+  var svg=$("#scatter"); svg.innerHTML="";
+  var W_=760,H=320,L=48,R=16,T=14,B=38;
+  var pts=V.filter(function(s){return s.dims});
+  function x(v){ return L+(v/100)*(W_-L-R); }
+  function y(v){ return H-B-(v)*(H-T-B); }
+  var g='';
+  /* quadrant shading + Tier-1 line */
+  g+='<rect x="'+x(85)+'" y="'+T+'" width="'+(W_-R-x(85))+'" height="'+(H-T-B)+'" fill="#f5f3ff"/>';
+  [0,25,50,75,100].forEach(function(v){
+    g+='<line x1="'+x(v)+'" y1="'+T+'" x2="'+x(v)+'" y2="'+(H-B)+'" stroke="#e2e8f0" stroke-width="1"/>'+
+       '<text x="'+x(v)+'" y="'+(H-B+16)+'" font-size="10" fill="#94a3b8" text-anchor="middle">'+v+'</text>';
+  });
+  [0,.25,.5,.75,1].forEach(function(v){
+    g+='<line x1="'+L+'" y1="'+y(v)+'" x2="'+(W_-R)+'" y2="'+y(v)+'" stroke="#e2e8f0" stroke-width="1"/>'+
+       '<text x="'+(L-8)+'" y="'+(y(v)+4)+'" font-size="10" fill="#94a3b8" text-anchor="end">'+Math.round(v*100)+'%</text>';
+  });
+  g+='<line x1="'+x(85)+'" y1="'+T+'" x2="'+x(85)+'" y2="'+(H-B)+'" stroke="#6D4AE0" stroke-width="2" stroke-dasharray="4 3"/>';
+  g+='<text x="'+(x(85)+6)+'" y="'+(T+12)+'" font-size="10" fill="#6D4AE0" font-weight="700">Tier 1 line</text>';
+  g+='<text x="'+(W_/2)+'" y="'+(H-6)+'" font-size="10" fill="#64748b" text-anchor="middle">Benchmark composite score</text>';
+  g+='<text x="14" y="'+(H/2)+'" font-size="10" fill="#64748b" text-anchor="middle" transform="rotate(-90 14 '+(H/2)+')">Teams using it</text>';
+  svg.innerHTML=g;
+  var placed=[];
+  pts.slice().sort(function(a,b){return composite(b.dims)-composite(a.dims)}).forEach(function(s){
+    var c=composite(s.dims), a=s.teamsElig?s.teams/s.teamsElig:0;
+    var col=GCOLOR[s.group];
+    var grp=document.createElementNS("http://www.w3.org/2000/svg","g");
+    grp.setAttribute("tabindex","0"); grp.setAttribute("role","img");
+    grp.setAttribute("aria-label",s.name+", composite "+c+", used by "+s.teams+" of "+s.teamsElig+" teams, "+tierOf(s).n);
+    var ly=y(a)+4, anchor="start", lx=x(c)+11;
+    function hits(px,py,an){
+      var w=s.name.length*5.8, x0=an==="end"?px-w:px, x1=an==="end"?px:px+w;
+      return placed.some(function(p2){
+        return Math.abs(p2.y-py)<11 && !(x1<p2.x0-6 || x0>p2.x1+6);});
+    }
+    if(lx+s.name.length*5.8>W_-R){ lx=x(c)-11; anchor="end"; }
+    if(hits(lx,ly,anchor)){
+      var altX=anchor==="start"?x(c)-11:x(c)+11, altA=anchor==="start"?"end":"start";
+      if(!hits(altX,ly,altA) && altX-s.name.length*5.8>L){ lx=altX; anchor=altA; }
+      else { var t=0; while(hits(lx,ly,anchor) && t<4){ ly += (t%2?-1:1)*(14+t*2); t++; } }
+    }
+    var w_=s.name.length*5.8;
+    placed.push({y:ly, x0:(anchor==="end"?lx-w_:lx), x1:(anchor==="end"?lx:lx+w_)});
+    grp.innerHTML='<circle cx="'+x(c)+'" cy="'+y(a)+'" r="7" fill="'+col+'" stroke="#ffffff" stroke-width="2"/>'+
+      (Math.abs(ly-(y(a)+4))>6 ? '<line x1="'+(x(c)+(anchor==="end"?-8:8))+'" y1="'+y(a)+'" x2="'+(lx+(anchor==="end"?3:-3))+'" y2="'+(ly-3)+'" stroke="#cbd5e1" stroke-width="1"/>' : '')+
+      '<text x="'+lx+'" y="'+ly+'" font-size="10" fill="#374151" font-weight="600" text-anchor="'+anchor+'">'+s.name+'</text>';
+    bindTip(grp,'<b>'+s.name+'</b><br>'+s.group+' · '+s.cap+' '+CAPN[s.cap]+'<br>Composite '+c+' · '+tierOf(s).n+
+      '<br>'+s.teams+' of '+s.teamsElig+' teams · '+num(s.hours)+' h/month saved');
+    svg.appendChild(grp);
+  });
+  $("#scatterLegend").innerHTML=GROUPS.map(function(g2){
+    return '<span><i style="background:'+GCOLOR[g2]+'"></i>'+(g2==="platform"?"Sol PE platform":g2)+'</span>';}).join("")+
+    '<span>Points are direct-labelled; colour marks the owning group only.</span>';
+}
+
+/* ========================== funnel ========================== */
+function drawFunnel(V){
+  var steps=[["Registered",V.length],["In build or later",V.filter(function(s){return s.stage!=="Registered"}).length],
+   ["Benchmarked",V.filter(function(s){return s.dims}).length],
+   ["All gates pass",V.filter(function(s){return gatesPass(s.gates)}).length],
+   ["Tier 2 or better",V.filter(function(s){var k=tierOf(s).k;return k==="p1"||k==="p2"}).length],
+   ["Tier 1 certified",V.filter(function(s){return tierOf(s).k==="p1"}).length]];
+  var max=steps[0][1]||1;
+  $("#funnel").innerHTML=steps.map(function(s,i){
+    var w=Math.round(s[1]/max*100);
+    return '<div class="bar-row"><span class="bar-lab">'+s[0]+'</span>'+
+      '<span class="track"><span class="fill" style="width:'+w+'%;background:var(--s1);opacity:'+(1-i*.12)+'"></span></span>'+
+      '<span class="bar-val">'+s[1]+'</span></div>';}).join("");
+}
+
+/* ========================== tier by group ========================== */
+function drawTierByGroup(V){
+  var tiers=[["Tier 1 · Certified","p1","#166534"],["Tier 2 · Conditional","p2","#0369a1"],["Tier 3 · Group-local","p3","#92400e"],
+    ["Tier 4 · Rework","p4","#9a3412"],["Not eligible","p5","#991b1b"],["Not benchmarked","p0","#94a3b8"]];
+  var html="";
+  GROUPS.forEach(function(g){
+    var rows=V.filter(function(s){return s.group===g});
+    if(!rows.length) return;
+    var counts=tiers.map(function(t){return rows.filter(function(s){
+      var n=tierOf(s).n; return t[0]==="Not benchmarked" ? (tierOf(s).k==="p0") : n===t[0];}).length;});
+    var tot=rows.length;
+    html+='<div style="margin-bottom:9px"><div style="font-size:.62rem;font-weight:700;margin-bottom:4px">'+
+      (g==="platform"?"Sol PE platform":g)+' <span class="sub2">'+tot+' solutions</span></div><div class="stack">';
+    counts.forEach(function(c,i){ if(!c) return;
+      html+='<span class="seg" style="width:'+(c/tot*100)+'%;background:'+tiers[i][2]+'" title="'+tiers[i][0]+': '+c+'">'+c+'</span>';});
+    html+='</div></div>';
+  });
+  $("#tierByGroup").innerHTML=html;
+  $("#tierLegend").innerHTML=tiers.map(function(t){return '<span><i style="background:'+t[2]+'"></i>'+t[0]+'</span>'}).join("");
+}
+
+/* ========================== trend ========================== */
+function drawTrend(){
+  var svg=$("#trend"); var W_=420,H=200,L=40,R=12,T=12,B=28;
+  var raw=Math.max.apply(null,TREND.map(function(d){return d[1]}))*1.15;
+  var max=Math.ceil(raw/200)*200;
+  function x(i){ return L+i*(W_-L-R)/(TREND.length-1); }
+  function y(v){ return H-B-(v/max)*(H-T-B); }
+  var g='';
+  [0,max/2,max].forEach(function(v){
+    g+='<line x1="'+L+'" y1="'+y(v)+'" x2="'+(W_-R)+'" y2="'+y(v)+'" stroke="#e2e8f0"/>'+
+       '<text x="'+(L-6)+'" y="'+(y(v)+4)+'" font-size="9" fill="#94a3b8" text-anchor="end">'+Math.round(v)+'</text>';});
+  var d="M"+TREND.map(function(p,i){return x(i)+" "+y(p[1])}).join(" L");
+  g+='<path d="'+d+' L'+x(TREND.length-1)+' '+y(0)+' L'+x(0)+' '+y(0)+' Z" fill="#6D4AE0" opacity="0.10"/>';
+  g+='<path d="'+d+'" fill="none" stroke="#6D4AE0" stroke-width="2"/>';
+  TREND.forEach(function(p,i){
+    g+='<circle cx="'+x(i)+'" cy="'+y(p[1])+'" r="'+(i===TREND.length-1?5:3.5)+'" fill="#6D4AE0" stroke="#fff" stroke-width="2"/>';
+    g+='<text x="'+x(i)+'" y="'+(H-10)+'" font-size="9" fill="#94a3b8" text-anchor="middle">'+p[0]+'</text>';});
+  var last=TREND[TREND.length-1];
+  g+='<text x="'+(x(TREND.length-1)-4)+'" y="'+(y(last[1])-10)+'" font-size="11" fill="#1e293b" font-weight="700" text-anchor="end">'+num(last[1])+' h</text>';
+  svg.innerHTML=g;
+}
+
+/* ========================== attention ========================== */
+function drawAttention(V){
+  var items=[];
+  V.forEach(function(s){
+    var t=tierOf(s);
+    if(t.k==="p5") items.push([s.name,"Blocked","Fails "+["G1","G2","G3","G4","G5","G6"].filter(function(k){return !s.gates[k]}).join(", ")]);
+    if(s.accept!=null && s.accept<0.5 && s.dims) items.push([s.name,"Low trust","Accept / resolution rate "+pct(s.accept)]);
+    if(s.golden==="Missing") items.push([s.name,"No golden set","Efficacy cannot be measured"]);
+  });
+  dupCaps().forEach(function(c){ items.push([CAPN[c.cap]+" ("+c.cap+")","Duplicate",c.names.join(" vs ")]); });
+  var rows=items.slice(0,8).map(function(i){
+    var cls=i[1]==="Blocked"?"p5":i[1]==="Duplicate"?"p3":"p4";
+    return '<tr><td class="nm">'+i[0]+'</td><td><span class="pill '+cls+'">'+i[1]+'</span></td><td>'+i[2]+'</td></tr>';}).join("");
+  $("#attention").innerHTML='<thead><tr><th>Solution / capability</th><th>Flag</th><th>Detail</th></tr></thead><tbody>'+
+    (rows||'<tr><td colspan="3">Nothing needs attention in this filter.</td></tr>')+'</tbody>';
+}
+function dupCaps(){
+  var by={}; SOL.forEach(function(s){ (by[s.cap]=by[s.cap]||[]).push(s); });
+  return Object.keys(by).filter(function(c){return by[c].length>1})
+    .map(function(c){return {cap:c,names:by[c].map(function(s){return s.name+" ("+s.group+")"}),sols:by[c]};});
+}
+
+/* ========================== catalogue ========================== */
+var sortKey="composite", sortDir=-1;
+function renderCat(){
+  var V=visible().slice();
+  V.sort(function(a,b){
+    var va,vb;
+    if(sortKey==="composite"){va=composite(a.dims)||-1;vb=composite(b.dims)||-1;}
+    else if(sortKey==="hours"){va=a.hours;vb=b.hours;}
+    else if(sortKey==="accept"){va=a.accept==null?-1:a.accept;vb=b.accept==null?-1:b.accept;}
+    else {va=(a[sortKey]||"").toString();vb=(b[sortKey]||"").toString();}
+    return va<vb?-sortDir:va>vb?sortDir:0;});
+  var head='<thead><tr>'+
+    '<th class="srt" data-k="name">Solution</th><th>Capability</th><th class="srt" data-k="group">Group</th><th>Owner</th>'+
+    '<th class="srt" data-k="composite" class="num">Composite</th><th>Tier</th><th>Gates</th>'+
+    '<th class="srt num" data-k="hours">Hours / mo</th><th class="srt num" data-k="accept">Trust</th>'+
+    '<th class="num">Adoption</th><th>Golden set</th><th>Next</th></tr></thead>';
+  var body=V.map(function(s){
+    var c=composite(s.dims), t=tierOf(s);
+    var gates=["G1","G2","G3","G4","G5","G6"].map(function(k){
+      return '<span class="gchip '+(s.gates[k]?"g-ok":"g-no")+'">'+k+'</span>'}).join(" ");
+    return '<tr>'+
+      '<td><button class="linkish" data-sol="'+s.id+'">'+s.name+'</button>'+(s.sample?' <span class="pill p0">sample</span>':'')+
+        '<div class="sub2">'+s.type+'</div></td>'+
+      '<td>'+s.cap+' · '+CAPN[s.cap]+'<div class="sub2">Phase '+s.cap.split(".")[0]+'</div></td>'+
+      '<td><span class="grp" style="color:'+GCOLOR[s.group]+'">'+(s.group==="platform"?"platform":s.group)+'</span></td>'+
+      '<td>'+s.owner+'</td>'+
+      '<td class="num"><b>'+(c==null?"—":c.toFixed(1))+'</b></td>'+
+      '<td>'+pill(t)+'</td><td>'+gates+'</td>'+
+      '<td class="num">'+(s.hours?num(s.hours):"—")+'</td>'+
+      '<td class="num">'+pct(s.accept)+'</td>'+
+      '<td class="num">'+s.teams+'/'+s.teamsElig+' teams'+(s.reposElig?'<div class="sub2">'+s.repos+'/'+s.reposElig+' repos</div>':'')+'</td>'+
+      '<td>'+s.golden+'</td><td>'+s.next+'</td></tr>';}).join("");
+  $("#catTable").innerHTML=head+'<tbody>'+(body||'<tr><td colspan="12">No solutions match this filter.</td></tr>')+'</tbody>';
+  $$("#catTable th.srt").forEach(function(th){
+    th.addEventListener("click",function(){
+      var k=th.getAttribute("data-k");
+      if(sortKey===k) sortDir=-sortDir; else {sortKey=k;sortDir=-1;}
+      renderCat();});});
+  $$("#catTable [data-sol]").forEach(function(b){
+    b.addEventListener("click",function(){ openSolution(b.getAttribute("data-sol")); });});
+
+  /* hygiene */
+  var V2=visible();
+  var hy=[["Registered in the capability registry",V2.length,V2.length],
+    ["Named owner recorded",V2.length,V2.length],
+    ["Golden set ready",V2.filter(function(s){return s.golden==="Ready"}).length,V2.length],
+    ["Documentation pack complete",V2.filter(function(s){return s.gates.G6===1}).length,V2.length],
+    ["Benchmarked in the last two quarters",V2.filter(function(s){return s.hist.length}).length,V2.length]];
+  $("#hygiene").innerHTML=hy.map(function(h){
+    var p=Math.round(h[1]/h[2]*100);
+    return '<div class="bar-row"><span class="bar-lab">'+h[0]+'</span><span class="track"><span class="fill" style="width:'+p+'%;background:'+(p>=80?"var(--s2)":p>=50?"var(--s3)":"var(--t5)")+'"></span></span><span class="bar-val">'+h[1]+'/'+h[2]+'</span></div>';}).join("");
+
+  /* shared services */
+  $("#svcAdopt").innerHTML=SERVICES.map(function(sv){
+    var used=V2.filter(function(s){return (USES[s.id]||[]).indexOf(sv[0])>=0}).length;
+    var p=Math.round(used/(V2.length||1)*100);
+    return '<div class="bar-row"><span class="bar-lab">'+sv[1]+'</span><span class="track"><span class="fill" style="width:'+p+'%;background:var(--s1)"></span></span><span class="bar-val">'+used+'/'+V2.length+'</span></div>';}).join("");
+
+  /* type mix */
+  var types={}; V2.forEach(function(s){types[s.type]=(types[s.type]||0)+1});
+  var mx=Math.max.apply(null,Object.keys(types).map(function(k){return types[k]}))||1;
+  $("#typeMix").innerHTML=Object.keys(types).map(function(k){
+    return '<div class="bar-row"><span class="bar-lab">'+k+'</span><span class="track"><span class="fill" style="width:'+(types[k]/mx*100)+'%;background:var(--s4)"></span></span><span class="bar-val">'+types[k]+'</span></div>';}).join("");
+}
+
+/* ========================== benchmark drill-down ========================== */
+var currentSol="RS";
+function openSolution(id){ currentSol=id; $("#solSel").value=id; showTab("bench"); renderBench(); }
+function renderBench(){
+  var s=SOL.filter(function(x){return x.id===currentSol})[0]; if(!s) return;
+  var c=composite(s.dims), t=tierOf(s);
+  $("#ddName").innerHTML=s.name+' '+pill(t)+(s.sample?' <span class="pill p0">sample data</span>':'');
+  $("#ddMeta").textContent=s.cap+" · "+CAPN[s.cap]+"  ·  "+s.owner+"  ·  "+s.type+"  ·  golden set: "+s.golden;
+  $("#ddGates").innerHTML=["G1","G2","G3","G4","G5","G6"].map(function(k,i){
+    var names=["Registered first","Reproducible benchmark","Data on-prem","Human in the loop","Efficacy floors","Documentation"];
+    return '<span class="gchip '+(s.gates[k]?"g-ok":"g-no")+'" title="'+names[i]+'">'+k+' '+names[i]+'</span>';}).join("");
+  var scored=SOL.filter(function(x){return x.dims});
+  $("#ddTiles").innerHTML=
+    tile("Composite",(c==null?"—":c.toFixed(1)),"/100",t.n,(t.k==="p1"?"good":t.k==="p5"?"bad":"hi"))+
+    tile("Gates passing",["G1","G2","G3","G4","G5","G6"].filter(function(k){return s.gates[k]}).length,"/6",
+      gatesPass(s.gates)?"eligible for certification":"not eligible until all six pass",gatesPass(s.gates)?"good":"bad")+
+    tile("KPIs measured",s.kpisMeasured,"/"+s.kpis,"of the benchmark KPI set","hi")+
+    tile("Trust signal",pct(s.accept),"","accept / resolution rate",(s.accept!=null&&s.accept>=.7)?"good":(s.accept!=null&&s.accept<.5)?"bad":"warn");
+  /* dimension bars vs median */
+  var dims=Object.keys(W);
+  $("#ddDims").innerHTML=dims.map(function(d){
+    var v=s.dims?s.dims[d]:0;
+    var m=med(scored.map(function(x){return x.dims[d]}));
+    return '<div class="bar-row"><span class="bar-lab">'+d+' · '+DIMN[d]+'<div class="sub2">weight '+Math.round(W[d]*100)+'%</div></span>'+
+      '<span class="track tgt" style="position:relative">'+
+        '<span class="fill" style="width:'+v+'%;background:var(--s1)"></span>'+
+        '<span style="position:absolute;left:'+m+'%;top:0;bottom:0;width:2px;background:var(--line2)"></span>'+
+        '<span style="position:absolute;left:85%;top:-2px;bottom:-2px;width:2px;background:#1e293b;opacity:.45"></span>'+
+      '</span><span class="bar-val">'+(s.dims?v.toFixed(0):"—")+'</span></div>';}).join("");
+  $("#ddWeighted").innerHTML=dims.map(function(d){
+    var v=s.dims?s.dims[d]*W[d]:0, mx=100*W[d];
+    return '<div class="bar-row"><span class="bar-lab">'+d+' · '+DIMN[d]+'</span>'+
+      '<span class="track"><span class="fill" style="width:'+(v/30*100)+'%;background:var(--s1)"></span>'+
+      '<span class="fill" style="width:'+((mx-v)/30*100)+'%;background:var(--soft2);border:1px dashed var(--line2)"></span></span>'+
+      '<span class="bar-val">'+v.toFixed(1)+'</span></div>';}).join("")+
+    '<div class="bar-row" style="margin-top:6px;border-top:1px solid var(--line);padding-top:6px"><span class="bar-lab"><b>Composite</b></span><span class="track"><span class="fill" style="width:'+(c||0)+'%;background:var(--s1)"></span></span><span class="bar-val"><b>'+(c==null?"—":c.toFixed(1))+'</b></span></div>';
+  /* KPI table */
+  var rows=(KPI[s.id]||KPI.DEFAULT);
+  $("#ddKpis").innerHTML='<thead><tr><th>Dim</th><th>KPI</th><th>Unit</th><th class="num">Target</th><th class="num">Min</th><th class="num">Measured</th><th class="num">Score</th><th>Status</th></tr></thead><tbody>'+
+    rows.map(function(k){
+      var sc=k[6], col=sc==="—"?"var(--faint)":sc===0?"var(--bad)":sc>=90?"var(--ok)":"var(--warn)";
+      var st=sc==="—"?"Not measured":sc===0?"Below floor":sc>=100?"Meets target":sc>=80?"Near target":"Above floor";
+      return '<tr><td>'+k[0]+'</td><td class="nm">'+k[1]+'</td><td>'+k[2]+'</td><td class="num">'+k[3]+'</td><td class="num">'+k[4]+
+        '</td><td class="num">'+k[5]+'</td><td class="num"><span class="score-dot" style="background:'+col+'"></span>'+sc+'</td><td>'+st+'</td></tr>';}).join("")+
+    '</tbody>';
+  if(!KPI[s.id]) $("#ddKpis").insertAdjacentHTML("afterend","");
+  /* history */
+  var svg=$("#ddHist"), W_=420,H=180,L=36,R=14,T=14,B=26;
+  if(!s.hist.length){ svg.innerHTML='<text x="'+(W_/2)+'" y="'+(H/2)+'" font-size="12" fill="#94a3b8" text-anchor="middle">No benchmark round completed yet</text>'; }
+  else{
+    var g='';
+    [0,45,60,75,85,100].forEach(function(v){
+      var yy=H-B-(v/100)*(H-T-B);
+      g+='<line x1="'+L+'" y1="'+yy+'" x2="'+(W_-R)+'" y2="'+yy+'" stroke="'+(v===85?"#6D4AE0":"#e2e8f0")+'" stroke-width="'+(v===85?1.5:1)+'"'+(v===85?' stroke-dasharray="4 3"':'')+'/>'+
+         '<text x="'+(L-6)+'" y="'+(yy+4)+'" font-size="9" fill="#94a3b8" text-anchor="end">'+v+'</text>';});
+    var n=s.hist.length;
+    function hx(i){ return n===1 ? (L+(W_-L-R)/2) : L+i*(W_-L-R)/(n-1); }
+    function hy(v){ return H-B-(v/100)*(H-T-B); }
+    if(n>1) g+='<path d="M'+s.hist.map(function(p,i){return hx(i)+" "+hy(p.c)}).join(" L")+'" fill="none" stroke="#6D4AE0" stroke-width="2"/>';
+    s.hist.forEach(function(p,i){
+      g+='<circle cx="'+hx(i)+'" cy="'+hy(p.c)+'" r="5" fill="#6D4AE0" stroke="#fff" stroke-width="2"/>'+
+         '<text x="'+hx(i)+'" y="'+(hy(p.c)-11)+'" font-size="10" fill="#1e293b" font-weight="700" text-anchor="middle">'+p.c.toFixed(1)+'</text>'+
+         '<text x="'+hx(i)+'" y="'+(H-8)+'" font-size="9" fill="#94a3b8" text-anchor="middle">'+p.r+'</text>';});
+    svg.innerHTML=g;
+  }
+  /* gaps */
+  $("#ddGaps").innerHTML='<thead><tr><th>Priority</th><th>Action</th><th>Impact</th></tr></thead><tbody>'+
+    s.gaps.map(function(g2){
+      var cls=g2[0]==="Critical"?"p5":g2[0]==="High"?"p4":g2[0]==="Medium"?"p3":"p0";
+      return '<tr><td><span class="pill '+cls+'">'+g2[0]+'</span></td><td class="nm">'+g2[1]+'</td><td>'+g2[2]+'</td></tr>';}).join("")+'</tbody>';
+}
+
+/* ========================== coverage ========================== */
+function renderCov(){
+  var byCap={}; SOL.forEach(function(s){ (byCap[s.cap]=byCap[s.cap]||[]).push(s); });
+  var totalCaps=PHASES.reduce(function(a,p){return a+p.caps.length},0);
+  var covered=Object.keys(byCap).length;
+  var certified=Object.keys(byCap).filter(function(c){
+    return byCap[c].some(function(s){return tierOf(s).k==="p1"})}).length;
+  $("#covTiles").innerHTML=
+    tile("Capabilities defined",totalCaps,"","across STLC phases 1–10","hi")+
+    tile("Capabilities with a solution",covered,"", Math.round(covered/totalCaps*100)+"% of the map","hi")+
+    tile("Certified standards",certified,"","capability has a Tier-1 solution","good")+
+    tile("Open capabilities",totalCaps-covered,"","no registered solution yet","warn");
+  var mx=$("#covMx"); mx.innerHTML="";
+  mx.appendChild(el("div","mx-h","STLC phase"));
+  ["Capability a","Capability b","Capability c","Capability d"].forEach(function(h){mx.appendChild(el("div","mx-h",h))});
+  PHASES.forEach(function(p){
+    var pd=el("div","mx-p",'<span class="mx-n" style="background:'+p.color+'">'+p.n+'</span>'+p.name);
+    mx.appendChild(pd);
+    for(var i=0;i<4;i++){
+      var cap=p.caps[i];
+      if(!cap){ mx.appendChild(el("div","cell empty","—")); continue; }
+      var sols=byCap[cap]||[];
+      if(!sols.length){
+        var e=el("button","cell empty",'<b>'+cap+'</b>'+CAPN[cap]+'<span class="st pill p0">Open</span>');
+        e.disabled=true; mx.appendChild(e); continue;
+      }
+      var best=sols.slice().sort(function(a,b){return (composite(b.dims)||0)-(composite(a.dims)||0)})[0];
+      var t=tierOf(best);
+      var btn=el("button","cell",'<b>'+cap+'</b>'+best.name+(sols.length>1?' <span class="pill p3">+'+(sols.length-1)+' more</span>':'')+
+        '<span class="st pill '+t.k+'">'+t.n.replace(" · ","·")+'</span>');
+      btn.setAttribute("data-sol",best.id);
+      bindTip(btn,'<b>'+CAPN[cap]+'</b> ('+cap+')<br>'+sols.map(function(s){
+        return s.name+" ("+s.group+") — "+(composite(s.dims)==null?"not benchmarked":composite(s.dims)+" · "+tierOf(s).n);}).join("<br>"));
+      btn.addEventListener("click",function(){ openSolution(this.getAttribute("data-sol")); });
+      mx.appendChild(btn);
+    }
+  });
+  /* duplicates */
+  var dups=dupCaps();
+  $("#dupTable").innerHTML='<thead><tr><th>Capability</th><th>Solutions</th><th>Best</th><th>Recommended action</th></tr></thead><tbody>'+
+    (dups.length?dups.map(function(d){
+      var best=d.sols.slice().sort(function(a,b){return (composite(b.dims)||0)-(composite(a.dims)||0)})[0];
+      return '<tr><td class="nm">'+d.cap+' · '+CAPN[d.cap]+'</td><td>'+d.names.join('<br>')+'</td>'+
+        '<td>'+best.name+' ('+(composite(best.dims)||"—")+')</td>'+
+        '<td>Merge into '+best.name+' or record a justification for a second solution</td></tr>';}).join("")
+      :'<tr><td colspan="4">No capability has more than one active solution.</td></tr>')+'</tbody>';
+  /* phase coverage */
+  $("#phaseCov").innerHTML=PHASES.map(function(p){
+    var have=p.caps.filter(function(c){return (byCap[c]||[]).some(function(s){
+      return ["p1","p2","p3","p4"].indexOf(tierOf(s).k)>=0})}).length;
+    var pc=Math.round(have/p.caps.length*100);
+    return '<div class="bar-row"><span class="bar-lab">'+p.n+' · '+p.name+'</span><span class="track">'+
+      '<span class="fill" style="width:'+pc+'%;background:'+p.color+'"></span></span><span class="bar-val">'+have+'/'+p.caps.length+'</span></div>';}).join("");
+}
+
+/* ========================== value ========================== */
+function renderVal(){
+  var V=visible(), eligible=V.filter(function(s){var k=tierOf(s).k;return k==="p1"||k==="p2"});
+  var hours=V.reduce(function(a,s){return a+s.hours},0);
+  var eligHours=eligible.reduce(function(a,s){return a+s.hours},0);
+  var tokens=V.reduce(function(a,s){return a+s.tokensM},0);
+  var costTotal=V.reduce(function(a,s){return a+s.hours*s.costPerHr},0);
+  $("#valTiles").innerHTML=
+    tile("Hours saved / month",num(hours),"h","reported across the portfolio","good",'<span class="delta up">▲ 15%</span> &middot; ')+
+    tile("Hours from certified solutions",num(eligHours),"h",Math.round(eligHours/(hours||1)*100)+"% of the total is from eligible solutions","hi")+
+    tile("Compute cost / month","₹"+num(Math.round(costTotal/1000))+"K","","LLM tokens and GPU across all solutions","hi")+
+    tile("LLM tokens / month",tokens.toFixed(1),"M","average cost ₹"+num(Math.round(costTotal/(hours||1)))+" per hour saved","hi");
+  var mxh=Math.max.apply(null,V.map(function(s){return s.hours}))||1;
+  $("#valHours").innerHTML=V.slice().sort(function(a,b){return b.hours-a.hours}).map(function(s){
+    var t=tierOf(s);
+    return '<div class="bar-row"><span class="bar-lab">'+s.name+'<div class="sub2">'+t.n+'</div></span>'+
+      '<span class="track"><span class="fill" style="width:'+(s.hours/mxh*100)+'%;background:'+GCOLOR[s.group]+'"></span></span>'+
+      '<span class="bar-val">'+num(s.hours)+'</span></div>';}).join("");
+  var mxc=Math.max(2600,Math.max.apply(null,V.map(function(s){return s.costPerHr})));
+  $("#valCost").innerHTML=V.filter(function(s){return s.costPerHr}).sort(function(a,b){return a.costPerHr-b.costPerHr}).map(function(s){
+    var over=s.costPerHr>2000;
+    return '<div class="bar-row"><span class="bar-lab">'+s.name+'</span>'+
+      '<span class="track" style="position:relative"><span class="fill" style="width:'+(s.costPerHr/mxc*100)+'%;background:'+(over?"var(--t5)":"var(--s2)")+'"></span>'+
+      '<span style="position:absolute;left:'+(2000/mxc*100)+'%;top:-2px;bottom:-2px;width:2px;background:#1e293b;opacity:.45"></span></span>'+
+      '<span class="bar-val">₹'+num(s.costPerHr)+'</span></div>';}).join("")+
+    '<div class="legend"><span>| Budget line ₹2,000 per engineer-hour saved</span></div>';
+  $("#adoptTable").innerHTML='<thead><tr><th>Solution</th><th class="num">Teams</th><th class="num">Repos</th><th class="num">Reach</th></tr></thead><tbody>'+
+    V.slice().sort(function(a,b){return b.teams-a.teams}).map(function(s){
+      return '<tr><td class="nm">'+s.name+'</td><td class="num">'+s.teams+'/'+s.teamsElig+'</td>'+
+        '<td class="num">'+(s.reposElig?s.repos+'/'+s.reposElig:"—")+'</td>'+
+        '<td class="num">'+Math.round(s.teams/s.teamsElig*100)+'%</td></tr>';}).join("")+'</tbody>';
+  $("#trustBars").innerHTML=V.filter(function(s){return s.accept!=null}).sort(function(a,b){return b.accept-a.accept}).map(function(s){
+    var c=s.accept>=.7?"var(--s2)":s.accept>=.5?"var(--s3)":"var(--t5)";
+    return '<div class="bar-row"><span class="bar-lab">'+s.name+'</span><span class="track" style="position:relative">'+
+      '<span class="fill" style="width:'+(s.accept*100)+'%;background:'+c+'"></span>'+
+      '<span style="position:absolute;left:70%;top:-2px;bottom:-2px;width:2px;background:#1e293b;opacity:.45"></span></span>'+
+      '<span class="bar-val">'+pct(s.accept)+'</span></div>';}).join("")+
+    '<div class="legend"><span>| Benchmark target 70%</span></div>';
+  var mxt=Math.max.apply(null,V.map(function(s){return s.tokensM}))||1;
+  $("#computeBars").innerHTML=V.filter(function(s){return s.tokensM>0}).sort(function(a,b){return b.tokensM-a.tokensM}).map(function(s){
+    return '<div class="bar-row"><span class="bar-lab">'+s.name+'</span><span class="track"><span class="fill" style="width:'+(s.tokensM/mxt*100)+'%;background:var(--s4)"></span></span>'+
+      '<span class="bar-val">'+s.tokensM.toFixed(1)+'M</span></div>';}).join("");
+}
+
+/* ========================== governance ========================== */
+function renderGov(){
+  var V=visible();
+  var gateNames={G1:"Registered first",G2:"Reproducible benchmark",G3:"Data stays on-prem",G4:"Human in the loop",G5:"Efficacy floors met",G6:"Documentation complete"};
+  var failing=V.filter(function(s){return !gatesPass(s.gates)}).length;
+  $("#govTiles").innerHTML=
+    tile("Solutions failing a gate",failing,"/"+V.length,"cannot be certified until closed",failing?"bad":"good")+
+    tile("Golden sets ready",V.filter(function(s){return s.golden==="Ready"}).length,"/"+V.length,"prerequisite for gate G2","warn")+
+    tile("Re-benchmark due this quarter",V.filter(function(s){return /Dec|Nov/.test(s.next)}).length,"","champion vs challenger round","hi")+
+    tile("Board decisions pending",QUEUE.length,"","waiting on grp1 / grp2 / grp3 leads","warn");
+  $("#gateBars").innerHTML=Object.keys(gateNames).map(function(k){
+    var pass=V.filter(function(s){return s.gates[k]===1}).length, p=Math.round(pass/(V.length||1)*100);
+    return '<div class="bar-row"><span class="bar-lab">'+k+' · '+gateNames[k]+'</span><span class="track">'+
+      '<span class="fill" style="width:'+p+'%;background:'+(p===100?"var(--s2)":p>=60?"var(--s3)":"var(--t5)")+'"></span></span>'+
+      '<span class="bar-val">'+pass+'/'+V.length+'</span></div>';}).join("");
+  $("#calTable").innerHTML='<thead><tr><th>Solution</th><th>Golden set</th><th>Last round</th><th>Next milestone</th></tr></thead><tbody>'+
+    V.map(function(s){
+      var g=s.golden, cls=g==="Ready"?"p1":g==="Missing"?"p5":"p3";
+      return '<tr><td class="nm">'+s.name+'</td><td><span class="pill '+cls+'">'+g+'</span></td>'+
+        '<td>'+(s.hist.length?s.hist[s.hist.length-1].r:"—")+'</td><td>'+s.next+'</td></tr>';}).join("")+'</tbody>';
+  $("#queueTable").innerHTML='<thead><tr><th>Type</th><th>Item</th><th>Decision owner</th><th>Note</th></tr></thead><tbody>'+
+    QUEUE.map(function(q){return '<tr><td><span class="pill p3">'+q[0]+'</span></td><td class="nm">'+q[1]+'</td><td>'+q[2]+'</td><td>'+q[3]+'</td></tr>';}).join("")+'</tbody>';
+  $("#regTable").innerHTML='<thead><tr><th>Solution</th><th>Model / prompt version</th><th>State</th><th>Changed</th><th>Owner</th></tr></thead><tbody>'+
+    REG.map(function(r){
+      var cls=r[2]==="deployed"?"p1":"p3";
+      return '<tr><td class="nm">'+r[0]+'</td><td>'+r[1]+'</td><td><span class="pill '+cls+'">'+r[2]+'</span></td><td>'+r[3]+'</td><td>'+r[4]+'</td></tr>';}).join("")+'</tbody>';
+}
+
+/* ========================== dev handoff ========================== */
+function renderDev(){
+  $("#devTree").textContent =
+"zion-solpe-dashboard/                      route: /ai/solutions\n"+
+"├── SolutionsShellComponent               tabs, filter state (signals), route sync\n"+
+"│   ├── FilterBarComponent                group · tier · search  → filterChange\n"+
+"│   ├── ExecOverviewComponent\n"+
+"│   │   ├── KpiTileComponent  ×8          label, value, unit, caption, trend, tone\n"+
+"│   │   ├── ScorePlotComponent            score × adoption scatter, Tier-1 rule\n"+
+"│   │   ├── FunnelComponent               certification funnel\n"+
+"│   │   ├── StackedBarComponent           tier mix by group\n"+
+"│   │   ├── TrendChartComponent           hours saved per month\n"+
+"│   │   └── AttentionListComponent        derived flags\n"+
+"│   ├── SolutionCatalogComponent\n"+
+"│   │   ├── DataTableComponent            sort · paginate · column pick\n"+
+"│   │   ├── TierBadgeComponent            tier → pill\n"+
+"│   │   └── GateStripComponent            G1–G6 chips\n"+
+"│   ├── BenchmarkDetailComponent          route: /ai/solutions/:id\n"+
+"│   │   ├── DimensionBarsComponent        score vs portfolio median vs 85 line\n"+
+"│   │   ├── WeightedContribComponent      score × weight\n"+
+"│   │   ├── KpiTableComponent             target · min · measured · score\n"+
+"│   │   ├── ScoreHistoryComponent         composite by round\n"+
+"│   │   └── GapActionsComponent\n"+
+"│   ├── CapabilityCoverageComponent\n"+
+"│   │   ├── CoverageMatrixComponent       10 phases × 4 capabilities\n"+
+"│   │   └── DuplicationWatchComponent\n"+
+"│   ├── ValueCostComponent                hours · cost/hour · adoption · trust\n"+
+"│   └── GovernanceComponent               gates · calendar · board queue · registry\n"+
+"└── shared/\n"+
+"    ├── benchmark.service.ts              HTTP + caching, 5-minute TTL\n"+
+"    ├── scoring.ts                        composite(), tierOf(), gatesPass() — pure\n"+
+"    └── zion-chart.tokens.scss            palette, spacing, type scale";
+  var comps=[["KpiTileComponent","label, value, unit, caption, tone, delta","Any figure on any tab; the tone drives the left rule colour"],
+   ["TierBadgeComponent","tier","One source of tier colour and wording across the app"],
+   ["GateStripComponent","gates: Record<GateId, boolean>, compact?","Catalogue row and detail header"],
+   ["DimensionBarsComponent","dims, median, targetLine = 85","Detail view and any comparison page"],
+   ["DataTableComponent","columns, rows, sort, rowClick","Catalogue, adoption, calendar, registry, queue"],
+   ["CoverageMatrixComponent","phases, solutionsByCapability","Capability map; emits capabilityClick"],
+   ["ScorePlotComponent","points {x, y, label, group}","Portfolio view; also reusable for cost vs value"],
+   ["TrendChartComponent","series, valueFormat","Hours saved, tokens, any monthly measure"],
+   ["FunnelComponent","steps","Certification funnel; reusable for onboarding funnels"],
+   ["FilterBarComponent","groups, tiers, query","Emits a single FilterState; shell owns the signal"]];
+  $("#devComp").innerHTML='<thead><tr><th>Component</th><th>Inputs</th><th>Where it is reused</th></tr></thead><tbody>'+
+    comps.map(function(c){return '<tr><td class="nm">'+c[0]+'</td><td><code>'+c[1]+'</code></td><td>'+c[2]+'</td></tr>'}).join("")+'</tbody>';
+  $("#devModel").innerHTML =
+'<span class="c">// shared/benchmark.model.ts</span>\n'+
+'<span class="k">export interface</span> Solution {\n'+
+'  id: <span class="s">string</span>; name: <span class="s">string</span>; capabilityId: <span class="s">string</span>;   <span class="c">// "3.d"</span>\n'+
+'  group: <span class="s">\'grp1\'|\'grp2\'|\'grp3\'|\'platform\'</span>;\n'+
+'  owner: <span class="s">string</span>; type: <span class="s">string</span>; stage: <span class="s">\'Registered\'|\'In build\'|\'Benchmarked\'|\'Certified\'</span>;\n'+
+'  dimensions: Record&lt;<span class="s">\'D1\'|\'D2\'|\'D3\'|\'D4\'|\'D5\'|\'D6\'</span>, number&gt; | <span class="k">null</span>;\n'+
+'  gates: Record&lt;<span class="s">\'G1\'</span>..<span class="s">\'G6\'</span>, <span class="k">boolean</span>&gt;;\n'+
+'  history: { round: <span class="s">string</span>; composite: <span class="k">number</span>; date: <span class="s">string</span> }[];\n'+
+'  value:  { hoursSavedPerMonth: <span class="k">number</span>; costPerHourSaved: <span class="k">number</span>; tokensPerMonthM: <span class="k">number</span> };\n'+
+'  adoption:{ teams: <span class="k">number</span>; teamsEligible: <span class="k">number</span>; repos: <span class="k">number</span>; reposEligible: <span class="k">number</span>;\n'+
+'            acceptanceRate: <span class="k">number</span> | <span class="k">null</span> };\n'+
+'  governance:{ goldenSet: <span class="s">\'Ready\'|\'Partial\'|\'In progress\'|\'Missing\'</span>;\n'+
+'            kpiCount: <span class="k">number</span>; kpisMeasured: <span class="k">number</span>; nextMilestone: <span class="s">string</span>;\n'+
+'            modelVersion: <span class="s">string</span>; sharedServices: <span class="s">string</span>[] };\n'+
+'  gaps: { priority: <span class="s">\'Critical\'|\'High\'|\'Medium\'|\'Low\'</span>; action: <span class="s">string</span>; impact: <span class="s">string</span> }[];\n'+
+'  isSample?: <span class="k">boolean</span>;\n'+
+'}\n\n'+
+'<span class="c">// scoring.ts — the only place the benchmark rules live</span>\n'+
+'<span class="k">export const</span> WEIGHTS = { D1:.30, D2:.20, D3:.15, D4:.10, D5:.15, D6:.10 };\n'+
+'<span class="k">export const</span> composite = (d) =&gt; d ? sum(k =&gt; d[k]*WEIGHTS[k]) : <span class="k">null</span>;\n'+
+'<span class="k">export const</span> tierOf   = (s) =&gt; !allGatesPass(s) ? <span class="s">\'Not eligible\'</span> : byScore(composite(s.dimensions));';
+  var api=[["GET /api/v1/solutions","?group=&tier=&q=","Solution[] — drives catalogue, coverage, exec tiles"],
+   ["GET /api/v1/solutions/{id}","—","Solution + full KPI rows for the detail view"],
+   ["GET /api/v1/solutions/{id}/kpis","?round=","KPI rows: dimension, target, min, measured, score, evidence"],
+   ["GET /api/v1/capabilities","—","31 L3 capabilities with phase, name, definition"],
+   ["GET /api/v1/portfolio/summary","?period=","Tiles, funnel counts, duplication list, monthly trend"],
+   ["GET /api/v1/portfolio/value","?period=","Hours saved, compute cost, adoption and trust series"],
+   ["GET /api/v1/governance/queue","—","Board decisions, gate failures, re-benchmark calendar"],
+   ["POST /api/v1/solutions/{id}/measurements","round payload","Harness posts a benchmark run; server recomputes scores"],
+   ["POST /api/v1/solutions","registration payload","Capability registry entry — runs the duplicate check"]];
+  $("#devApi").innerHTML='<thead><tr><th>Endpoint</th><th>Params</th><th>Returns / effect</th></tr></thead><tbody>'+
+    api.map(function(a){return '<tr><td class="nm"><code>'+a[0]+'</code></td><td>'+a[1]+'</td><td>'+a[2]+'</td></tr>'}).join("")+'</tbody>';
+  var notes=[["Scoring lives on the server","The harness posts measurements; the API returns dimension scores, composite and tier. The Angular app never recomputes a tier from raw KPI values — it renders what the service returns, so the dashboard and the benchmark workbook can never disagree."],
+   ["Interim data source","Until the benchmark service exists, a nightly job can read L3_Agent_Benchmark_KPIs_A-E.xlsx (E_Scorecard and E_Summary sheets) and publish the same JSON, so the UI can be built against real numbers now."],
+   ["Two audiences, one page","Members land on the catalogue and their own group's solutions; executives land on the portfolio tab. Same components, a different default tab and filter by role claim."],
+   ["Refresh cadence","Portfolio and value figures refresh nightly; gate and registry state refresh on write. A visible \"as of\" stamp beats a spinner."],
+   ["Sample data must be visible","Any record not backed by a measured benchmark run carries a sample or not-benchmarked marker, in the API and in the UI, so no one quotes an illustrative number in a review."],
+   ["Accessibility","Tier is always the badge text as well as its colour; charts carry aria-labels and every chart has a table equivalent on the same tab."],
+   ["Drill path","Portfolio → capability cell → solution detail → KPI row → evidence link. Every screen keeps the filter state in the URL so a link can be pasted into a review."]];
+  $("#devNotes").innerHTML='<thead><tr><th>Decision</th><th>Detail</th></tr></thead><tbody>'+
+    notes.map(function(n){return '<tr><td class="nm" style="width:26%">'+n[0]+'</td><td>'+n[1]+'</td></tr>'}).join("")+'</tbody>';
+}
+
+/* ========================== tabs & filters ========================== */
+var TABS=[["exec","Executive overview"],["cat","Solution catalogue"],["bench","Benchmark result"],
+ ["cov","Capability coverage"],["val","Value & cost"],["gov","Governance & pipeline"],["dev","Angular handoff"]];
+function showTab(id){
+  $$(".view").forEach(function(v){v.classList.remove("on")});
+  $("#v-"+id).classList.add("on");
+  $$(".tab").forEach(function(t){t.setAttribute("aria-selected", t.getAttribute("data-t")===id ? "true":"false")});
+  $("#sampleNote").style.display = (id==="dev") ? "none" : "block";
+  try{localStorage.setItem("solpe-tab",id)}catch(e){}
+  render(id);
+}
+function render(id){
+  if(id==="exec") renderExec(); else if(id==="cat") renderCat(); else if(id==="bench") renderBench();
+  else if(id==="cov") renderCov(); else if(id==="val") renderVal(); else if(id==="gov") renderGov(); else renderDev();
+}
+function renderAllForFilter(){
+  var cur=$$(".tab").filter(function(t){return t.getAttribute("aria-selected")==="true"})[0];
+  render(cur?cur.getAttribute("data-t"):"exec");
+}
+(function init(){
+  $("#asof").textContent="Data as of "+ASOF+" · benchmark v1.0";
+  TABS.forEach(function(t,i){
+    var b=el("button","tab",t[1]); b.setAttribute("data-t",t[0]); b.setAttribute("role","tab");
+    b.setAttribute("aria-selected", i===0?"true":"false");
+    b.addEventListener("click",function(){showTab(t[0])});
+    $("#tabs").appendChild(b);});
+  var gc=$("#grpChips");
+  [["all","All groups"]].concat(GROUPS.map(function(g){return [g,g==="platform"?"Sol PE platform":g]})).forEach(function(g,i){
+    var b=el("button","chip",g[1]); b.setAttribute("aria-pressed", i===0?"true":"false");
+    b.addEventListener("click",function(){
+      F.group=g[0]; Array.prototype.forEach.call(gc.children,function(c){c.setAttribute("aria-pressed", c===b?"true":"false")});
+      renderAllForFilter();});
+    gc.appendChild(b);});
+  var tc=$("#tierChips");
+  [["all","All tiers"],["Tier 1","Tier 1"],["Tier 2","Tier 2"],["Tier 3","Tier 3"],["Tier 4","Tier 4"],["Not eligible","Not eligible"]].forEach(function(t,i){
+    var b=el("button","chip",t[1]); b.setAttribute("aria-pressed", i===0?"true":"false");
+    b.addEventListener("click",function(){
+      F.tier=t[0]; Array.prototype.forEach.call(tc.children,function(c){c.setAttribute("aria-pressed", c===b?"true":"false")});
+      renderAllForFilter();});
+    tc.appendChild(b);});
+  $("#srch").addEventListener("input",function(e){F.q=e.target.value;renderAllForFilter()});
+  SOL.forEach(function(s){
+    var o=document.createElement("option"); o.value=s.id; o.textContent=s.name+"  ·  "+s.cap+" "+CAPN[s.cap]; $("#solSel").appendChild(o);});
+  $("#solSel").value=currentSol;
+  $("#solSel").addEventListener("change",function(e){currentSol=e.target.value;renderBench()});
+  var saved="exec"; try{saved=localStorage.getItem("solpe-tab")||"exec"}catch(e){}
+  if(!TABS.some(function(t){return t[0]===saved})) saved="exec";
+  showTab(saved);
+})();
+</script>
+
+</body></html>
