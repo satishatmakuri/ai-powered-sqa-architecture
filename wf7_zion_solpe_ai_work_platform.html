@@ -1,0 +1,1662 @@
+<title>Sol PE AI Work Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: app shell for Zion — top bar (search, role, site), left rail of views, one scanning-first main column.
+   Palette continues the Zion wireframe family (wf1–wf6): cool slate neutrals biased toward the Zion violet. */
+:root{
+  --bg:#eef1f7; --panel:#ffffff; --soft:#f6f7fb; --soft2:#eceff6;
+  --ink:#1a2135; --ink2:#384157; --mute:#636d86; --faint:#949db2;
+  --line:#e0e4ee; --line2:#cbd2e0;
+  --acc:#5b3fd6; --acc-soft:#ece8fd; --acc-ink:#4a2fc0; --on-acc:#ffffff;
+  --la:#2563c9; --lb:#0b7f5a; --lc:#b8520b; --lf:#5b3fd6;
+  --la-s:#e3ecfb; --lb-s:#ddf3ea; --lc-s:#fbeadc; --lf-s:#ece8fd;
+  --ok:#0b7f5a; --ok-s:#dcf3e9; --warn:#a46200; --warn-s:#fdf0d8; --bad:#b3261e; --bad-s:#fde3e1; --info:#0b6fb0; --info-s:#e0effa;
+  --smp:#a46200;
+  --ly1:#4f46e5; --ly1s:#e6e5fb; --ly2:#0b6fb0; --ly2s:#e0effa; --ly3:#6d3fd6; --ly3s:#ece5fb; --ly4:#0b7f5a; --ly4s:#dcf3e9; --ly5:#475569; --ly5s:#e8ebf0; --on-ly:#ffffff;
+  --scrim:rgba(10,14,26,.38);
+  --shadow:0 1px 2px rgba(26,33,53,.06),0 6px 24px rgba(26,33,53,.06);
+  --f-body:'IBM Plex Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-disp:'IBM Plex Sans Condensed','IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+  --f-mono:'IBM Plex Mono',Consolas,'SFMono-Regular',Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1220; --panel:#161b2b; --soft:#1b2132; --soft2:#22293c;
+  --ink:#e7eaf3; --ink2:#c2c8d8; --mute:#8e97ae; --faint:#646d85;
+  --line:#283048; --line2:#38415b;
+  --acc:#9f8fff; --acc-soft:#2a2552; --acc-ink:#bcb0ff; --on-acc:#120d2b;
+  --la:#72a3ff; --lb:#3cc394; --lc:#f2914f; --lf:#9f8fff;
+  --la-s:#1c2a48; --lb-s:#153328; --lc-s:#3a2617; --lf-s:#2a2552;
+  --ok:#3cc394; --ok-s:#153328; --warn:#e6a53e; --warn-s:#3a2c12; --bad:#f2766c; --bad-s:#3d1b1a; --info:#55b4f2; --info-s:#14304a;
+  --smp:#e6a53e;
+  --ly1:#8b85ff; --ly1s:#22234a; --ly2:#55b4f2; --ly2s:#14304a; --ly3:#b199ff; --ly3s:#2a2552; --ly4:#3cc394; --ly4s:#153328; --ly5:#a3aec2; --ly5s:#232a3b; --on-ly:#0e1220;
+  --scrim:rgba(0,0,0,.55);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.25); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1220; --panel:#161b2b; --soft:#1b2132; --soft2:#22293c;
+  --ink:#e7eaf3; --ink2:#c2c8d8; --mute:#8e97ae; --faint:#646d85;
+  --line:#283048; --line2:#38415b;
+  --acc:#9f8fff; --acc-soft:#2a2552; --acc-ink:#bcb0ff; --on-acc:#120d2b;
+  --la:#72a3ff; --lb:#3cc394; --lc:#f2914f; --lf:#9f8fff;
+  --la-s:#1c2a48; --lb-s:#153328; --lc-s:#3a2617; --lf-s:#2a2552;
+  --ok:#3cc394; --ok-s:#153328; --warn:#e6a53e; --warn-s:#3a2c12; --bad:#f2766c; --bad-s:#3d1b1a; --info:#55b4f2; --info-s:#14304a;
+  --smp:#e6a53e;
+  --ly1:#8b85ff; --ly1s:#22234a; --ly2:#55b4f2; --ly2s:#14304a; --ly3:#b199ff; --ly3s:#2a2552; --ly4:#3cc394; --ly4s:#153328; --ly5:#a3aec2; --ly5s:#232a3b; --on-ly:#0e1220;
+  --scrim:rgba(0,0,0,.55);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.25); color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
+h1,h2,h3,h4{margin:0;font-family:var(--f-disp);text-wrap:balance;letter-spacing:.005em}
+p{margin:0}
+.mono{font-family:var(--f-mono)}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- top bar ---------- */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--panel);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:14px;padding:10px 20px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.zmark{width:34px;height:34px;border-radius:8px;background:var(--acc);color:var(--on-acc);display:grid;place-items:center;font-family:var(--f-disp);font-weight:700;font-size:19px;flex:none}
+.bn{font-family:var(--f-disp);font-weight:700;font-size:15px;line-height:1.1}
+.bs{font-size:11.5px;color:var(--mute);line-height:1.2}
+.gsearch{flex:1 1 320px;min-width:0;position:relative}
+.gsearch input{width:100%;border:1px solid var(--line2);background:var(--soft);border-radius:8px;padding:8px 12px 8px 34px}
+.gsearch svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--mute);fill:none}
+.ctrls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctl{display:flex;flex-direction:column;gap:1px}
+.ctl label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600}
+select,.inp{border:1px solid var(--line2);background:var(--panel);border-radius:7px;padding:6px 9px;font-size:13px;min-width:0}
+textarea.inp{width:100%;resize:vertical}
+.btn{border:1px solid var(--line2);background:var(--panel);border-radius:8px;padding:7px 12px;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--acc);color:var(--acc-ink)}
+.btn-p{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.btn-p:hover{color:var(--on-acc);filter:brightness(1.08)}
+.btn-s{padding:4px 9px;font-size:12px}
+.theme{display:inline-flex;border:1px solid var(--line2);border-radius:8px;overflow:hidden;background:var(--soft)}
+.theme button{border:0;background:none;padding:6px 10px;font-size:12.5px;font-weight:600;color:var(--mute);cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.theme button+button{border-left:1px solid var(--line2)}
+.theme button svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.theme button[aria-pressed="true"]{background:var(--acc);color:var(--on-acc)}
+.theme button:not([aria-pressed="true"]):hover{color:var(--ink)}
+.swatch{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:11.5px}
+.swatch i{width:22px;height:16px;border-radius:4px;border:1px solid var(--line2);flex:none}
+.tmap td{vertical-align:middle}
+.tmap .pv{display:flex;gap:6px;flex-wrap:wrap}
+.tm-cell{border-radius:6px;padding:8px 10px;border:1px solid}
+@media (max-width:640px){.theme button span{display:none}}
+
+/* ---------- shell ---------- */
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:calc(100% - 60px)}
+.side{border-right:1px solid var(--line);background:var(--panel);padding:16px 10px;position:sticky;top:61px;align-self:start;height:calc(100vh - 61px);overflow:auto}
+.side h4{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-family:var(--f-body);font-weight:600;padding:10px 10px 4px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:7px;color:var(--ink2);text-decoration:none;font-weight:500;font-size:13.5px}
+.nav a .nk{font-family:var(--f-mono);font-size:10.5px;color:var(--faint);width:18px}
+.nav a .nc{margin-left:auto;font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
+.nav a:hover{background:var(--soft)}
+.nav a.on{background:var(--acc-soft);color:var(--acc-ink)}
+.nav a.on .nk{color:var(--acc-ink)}
+.nav a.sug::after{content:"for you";font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--acc-ink);border:1px solid var(--acc);border-radius:99px;padding:0 6px;margin-left:6px}
+.nav a.sug .nc{display:none}
+.side-note{margin:16px 8px 0;padding:10px;border:1px dashed var(--line2);border-radius:8px;font-size:11.5px;color:var(--mute)}
+.main{padding-block:22px 48px;padding-inline:28px;min-width:0}
+
+/* ---------- generic ---------- */
+.view{display:flex;flex-direction:column;gap:20px}
+.vh{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc-ink);font-weight:600}
+.vh h1{font-size:28px;font-weight:700;line-height:1.15;margin-top:2px}
+.lede{color:var(--ink2);max-width:70ch;margin-top:6px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--mute);align-items:center}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;min-width:0}
+.card h3{font-size:16px;font-weight:600}
+.card .cs{font-size:12.5px;color:var(--mute);margin-top:2px}
+.ch{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.g21{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px}
+.g12{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:16px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;border-radius:99px;padding:2px 8px;white-space:nowrap;line-height:1.5}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.st-live{background:var(--ok-s);color:var(--ok)} .st-pilot{background:var(--info-s);color:var(--info)}
+.st-build{background:var(--warn-s);color:var(--warn)} .st-planned{background:var(--soft2);color:var(--mute)}
+.chip{display:inline-flex;align-items:center;font-size:11px;border:1px solid var(--line2);border-radius:5px;padding:1px 6px;color:var(--ink2);background:var(--soft);white-space:nowrap}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.smp{border-bottom:1px dashed var(--smp)}
+.smpk{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--smp);border:1px dashed var(--smp);border-radius:4px;padding:0 4px;font-weight:600;white-space:nowrap}
+.fill{font-family:var(--f-mono);color:var(--warn);background:var(--warn-s);border-radius:3px;padding:0 3px;font-size:.92em}
+.real{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ok);border:1px solid var(--ok);border-radius:4px;padding:0 4px;font-weight:600;white-space:nowrap}
+.muted{color:var(--mute)} .small{font-size:12px}
+.link{color:var(--acc-ink);cursor:pointer;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--acc) 40%,transparent);text-underline-offset:2px;background:none;border:0;padding:0;font-weight:600}
+.banner{display:flex;gap:10px 18px;flex-wrap:wrap;align-items:center;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:8px;padding:9px 14px;font-size:12.5px;color:var(--ink2)}
+.banner b{color:var(--ink)}
+.scroll-x{overflow-x:auto}
+ul.clean{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+ul.dots{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+
+/* lane colors */
+.lA{--lc0:var(--la);--lcs:var(--la-s)} .lB{--lc0:var(--lb);--lcs:var(--lb-s)} .lC{--lc0:var(--lc);--lcs:var(--lc-s)} .lF{--lc0:var(--lf);--lcs:var(--lf-s)}
+
+/* ---------- overview ---------- */
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:13px 14px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.kpi .kl{font-size:11px;color:var(--mute);font-weight:600;letter-spacing:.02em}
+.kpi .kval{font-family:var(--f-disp);font-size:30px;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums}
+.kpi .kval small{font-size:15px;color:var(--mute);font-weight:600}
+.kpi .kn{font-size:11.5px;color:var(--mute)}
+.kpi .kt{margin-top:auto;padding-top:6px}
+.lanes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.lane{border-radius:var(--r);background:var(--lcs);padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.lane-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.lane-h b{font-family:var(--f-disp);font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--lc0)}
+.lane-h span{font-size:11px;color:var(--mute);font-family:var(--f-mono)}
+.solc{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:5px;text-align:left;width:100%}
+.solc:hover{border-color:var(--lc0)}
+.solc-t{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.solc-t b{font-family:var(--f-disp);font-size:15.5px}
+.solc p{font-size:12.5px;color:var(--ink2)}
+.solc .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:11px;color:var(--mute)}
+.found{background:var(--lf-s);border-radius:var(--r);padding:12px 14px;display:grid;grid-template-columns:220px minmax(0,1fr);gap:14px;align-items:center}
+.found .fb b{font-family:var(--f-disp);font-size:19px;color:var(--lf)}
+.found .fb p{font-size:12px;color:var(--ink2)}
+.blocks{display:flex;flex-wrap:wrap;gap:6px}
+.blk{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:5px 9px;font-size:12px;font-weight:500}
+.blk i{font-style:normal;color:var(--mute);font-size:10.5px;margin-right:5px;font-family:var(--f-mono)}
+.att li{display:grid;grid-template-columns:66px minmax(0,1fr);gap:10px;align-items:start;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.att li:last-child{border-bottom:0;padding-bottom:0}
+.sev{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;padding:2px 0;text-align:center}
+.sev-c{background:var(--bad-s);color:var(--bad)} .sev-h{background:var(--warn-s);color:var(--warn)} .sev-m{background:var(--info-s);color:var(--info)} .sev-i{background:var(--soft2);color:var(--mute)}
+.att b{font-weight:600}
+.att p{font-size:12.5px;color:var(--mute)}
+.yr h4{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-family:var(--f-body);font-weight:700;margin-bottom:8px}
+.yr ul li{font-size:13px;padding-left:14px;position:relative}
+.yr ul li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:1px;background:var(--line2)}
+
+/* bars */
+.bars{display:flex;flex-direction:column;gap:7px}
+.bar{display:grid;grid-template-columns:120px minmax(0,1fr) 54px;gap:10px;align-items:center;font-size:12.5px}
+.bar .bt{height:14px;background:var(--soft2);border-radius:3px;overflow:hidden;position:relative}
+.bar .bf{height:100%;background:var(--acc);border-radius:3px}
+.bar .bf.hatch{background:repeating-linear-gradient(-45deg,var(--line2) 0 4px,transparent 4px 8px)}
+.bar .bv{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink2);font-weight:600}
+.colbars{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;align-items:end;height:130px;padding-top:6px}
+.cb{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.cb .cbf{width:100%;max-width:34px;background:var(--acc);border-radius:3px 3px 0 0}
+.cb .cbf.zero{background:transparent;border:1px dashed var(--line2);height:6px!important}
+.cb span{font-size:11px;font-variant-numeric:tabular-nums;font-weight:600}
+.cbl{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;border-top:1px solid var(--line2);padding-top:5px;font-size:10.5px;color:var(--mute);text-align:center}
+
+/* ---------- discover ---------- */
+.ask{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.ask label{font-family:var(--f-disp);font-size:19px;font-weight:600}
+.askrow{display:flex;gap:8px}
+.askrow input{flex:1;min-width:0;border:1.5px solid var(--line2);border-radius:9px;padding:11px 14px;font-size:15px;background:var(--soft)}
+.askrow input:focus{border-color:var(--acc);outline:none}
+.tasks{display:flex;gap:6px;flex-wrap:wrap}
+.task{border:1px solid var(--line2);background:var(--soft);border-radius:99px;padding:4px 11px;font-size:12.5px;cursor:pointer}
+.task:hover,.task.on{border-color:var(--acc);color:var(--acc-ink);background:var(--acc-soft)}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.typebar{display:flex;gap:4px;flex-wrap:wrap}
+.tb{border:1px solid var(--line2);background:var(--panel);border-radius:7px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-weight:500}
+.tb .c{color:var(--mute);font-size:11px;margin-left:4px;font-variant-numeric:tabular-nums}
+.tb.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.tb.on .c{color:inherit;opacity:.7}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.ac{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:13px 14px;display:flex;flex-direction:column;gap:8px;min-width:0;position:relative}
+.ac::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:var(--lc0)}
+.ac-h{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.ty{font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--mute)}
+.ac h3{font-size:15.5px;font-weight:600;font-family:var(--f-disp);line-height:1.2}
+.ac .par{font-size:11.5px;color:var(--mute)}
+.ac p.d{font-size:12.5px;color:var(--ink2)}
+.ac-f{display:flex;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid var(--line);padding-top:8px;margin-top:auto;flex-wrap:wrap}
+.surf{display:flex;gap:3px;flex-wrap:wrap}
+.surf span{font-size:10px;font-family:var(--f-mono);color:var(--mute);border:1px solid var(--line);border-radius:3px;padding:0 4px}
+.empty{border:1px dashed var(--line2);border-radius:var(--r);padding:28px;text-align:center;color:var(--mute)}
+
+/* ---------- matrix ---------- */
+table.mx{border-collapse:separate;border-spacing:0;width:100%;min-width:860px;font-size:12.5px}
+.mx th,.mx td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:center}
+.mx th{font-size:11px;color:var(--mute);font-weight:600;vertical-align:bottom}
+.mx th small{display:block;font-weight:500;color:var(--faint)}
+.mx td.n,.mx th.n{text-align:left;white-space:nowrap}
+.mx td.n button{background:none;border:0;padding:0;font-weight:600;cursor:pointer;text-align:left;color:var(--ink)}
+.mx td.n button:hover{color:var(--acc-ink)}
+.dot{display:inline-block;width:16px;height:16px;border-radius:50%;vertical-align:middle}
+.dot.p{background:var(--lc0)} .dot.s{border:2px solid var(--lc0);background:transparent}
+.dot.z{width:100%;height:6px;border-radius:3px;background:var(--lf-s);border:1px dashed var(--lf)}
+.mx tr.tot td{font-weight:700;font-variant-numeric:tabular-nums;border-bottom:0}
+.mx td.hot{background:var(--warn-s)} .mx td.gap{background:var(--soft2);color:var(--mute)}
+.capgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.capph{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:9px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.capph h4{font-size:12px;font-family:var(--f-body);font-weight:700;color:var(--ink2)}
+.cap{border-radius:6px;padding:6px 8px;font-size:11.5px;border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;gap:2px}
+.cap .ci{font-family:var(--f-mono);font-size:10px;color:var(--faint)}
+.cap.has{border-color:var(--lc0);background:var(--lcs)}
+.cap.has b{color:var(--lc0);font-size:11px}
+.cap.open{border-style:dashed;color:var(--mute)}
+
+/* ---------- flows ---------- */
+.flow{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.flow-h{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.flow-h h3{font-size:16.5px}
+.flow-h p{font-size:12.5px;color:var(--mute)}
+.chain{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:4px}
+.node{flex:0 0 auto;min-width:132px;max-width:170px;border:1px solid var(--lc0);background:var(--lcs);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.node .ns{font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--lc0)}
+.node b{font-size:12.5px;font-weight:600;line-height:1.25}
+.node code{font-family:var(--f-mono);font-size:10px;color:var(--mute);word-break:break-all}
+.node.gate{border:1.5px dashed var(--warn);background:var(--warn-s)}
+.node.gate .ns{color:var(--warn)}
+.node.out{border-color:var(--line2);background:var(--soft)}
+.node.out .ns{color:var(--mute)}
+.arr{flex:0 0 22px;display:grid;place-items:center;color:var(--faint);font-size:14px}
+.surfaces{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.sf{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--soft);display:flex;flex-direction:column;gap:3px}
+.sf b{font-size:13px}
+.sf p{font-size:12px;color:var(--mute)}
+.sf code{font-family:var(--f-mono);font-size:11px;color:var(--acc-ink);background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:2px 5px;margin-top:4px;word-break:break-word}
+
+/* ---------- onboarding ---------- */
+
+.kan{display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:10px;min-width:1100px}
+.kcol{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.kcol h4{font-size:11.5px;font-family:var(--f-body);font-weight:700;display:flex;justify-content:space-between;color:var(--ink2)}
+.kcol h4 span{color:var(--mute);font-variant-numeric:tabular-nums}
+.kcol .kg{font-size:10px;font-family:var(--f-mono);color:var(--faint)}
+.kc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--lc0);border-radius:6px;padding:7px 9px;font-size:12px;display:flex;flex-direction:column;gap:2px;cursor:pointer;text-align:left;width:100%}
+.kc b{font-size:12.5px}
+.kc span{color:var(--mute);font-size:11px}
+
+/* ---------- value ---------- */
+.ladder{display:flex;flex-direction:column;gap:6px}
+.rung{display:grid;grid-template-columns:150px 92px minmax(0,1fr) 44px;gap:10px;align-items:center;font-size:12.5px;padding:7px 10px;border-radius:7px;background:var(--soft);border:1px solid var(--line)}
+.rung b{font-weight:600}
+.rung .rc{font-family:var(--f-disp);font-size:20px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.t1{color:var(--ok)} .t2{color:var(--info)} .t3{color:var(--warn)} .t4{color:var(--lc)} .t5{color:var(--bad)}
+.dims{display:flex;flex-direction:column;gap:6px}
+.dim{display:grid;grid-template-columns:150px minmax(0,1fr) 44px;gap:10px;align-items:center;font-size:12.5px}
+.dim .bt{height:12px;background:var(--soft2);border-radius:3px;position:relative}
+.dim .bt i{display:block;height:100%;border-radius:3px;background:var(--lb)}
+.dim .bt::after{content:"";position:absolute;left:85%;top:-3px;bottom:-3px;width:2px;background:var(--ok)}
+.gates{display:flex;gap:5px;flex-wrap:wrap}
+.gt{font-family:var(--f-mono);font-size:11px;font-weight:600;border-radius:4px;padding:2px 6px;border:1px solid}
+.gt.y{color:var(--ok);border-color:var(--ok);background:var(--ok-s)} .gt.n{color:var(--bad);border-color:var(--bad);background:var(--bad-s)} .gt.u{color:var(--mute);border-color:var(--line2);background:var(--soft)}
+table.tbl{border-collapse:collapse;width:100%;font-size:12.5px}
+.tbl th{font-size:11px;font-weight:600;color:var(--mute);text-align:left;border-bottom:1px solid var(--line2);padding:6px 8px;white-space:nowrap}
+.tbl td{border-bottom:1px solid var(--line);padding:7px 8px;vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.c{text-align:center}
+.svc-y{color:var(--lb);font-weight:700} .svc-p{color:var(--warn);font-weight:700}
+
+/* ---------- sites ---------- */
+.sites{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.site{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.site h3{font-size:16px}
+.site .loc{font-size:11.5px;color:var(--mute);font-family:var(--f-mono)}
+.site.add{border-style:dashed;background:transparent;align-items:center;justify-content:center;text-align:center;color:var(--mute)}
+.quad{display:grid;grid-template-columns:110px minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto 1fr 1fr;gap:8px}
+.qh{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);display:flex;align-items:center;justify-content:center;text-align:center;padding:4px}
+.qc{border-radius:9px;padding:12px;display:flex;flex-direction:column;gap:6px;border:1px solid var(--line)}
+.qc h4{font-size:15px}
+.qc p{font-size:12px;color:var(--ink2)}
+.q1{background:var(--lb-s)} .q2{background:var(--la-s)} .q3{background:var(--lf-s)} .q4{background:var(--lc-s)}
+.steps4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.s4{border-top:3px solid var(--acc);background:var(--soft);border-radius:0 0 8px 8px;padding:10px 12px;display:flex;flex-direction:column;gap:3px}
+.s4 i{font-style:normal;font-family:var(--f-mono);font-size:11px;color:var(--acc-ink)}
+.s4 b{font-size:13.5px}
+.s4 p{font-size:12px;color:var(--mute)}
+
+/* ---------- platform ---------- */
+.stack{display:flex;flex-direction:column;gap:6px}
+.layer{display:grid;grid-template-columns:170px minmax(0,1fr);gap:10px;align-items:stretch}
+.layer .ln{border-radius:7px;padding:8px 10px;color:var(--on-ly);font-weight:700;font-size:12.5px;display:flex;flex-direction:column;justify-content:center;background:var(--lc0)}
+.layer .ln small{font-weight:500;opacity:.85;font-size:10.5px}
+.layer .lb{display:flex;flex-wrap:wrap;gap:5px;align-content:center;background:var(--lcs);border-radius:7px;padding:7px}
+.l1{--lc0:var(--ly1);--lcs:var(--ly1s)} .l2{--lc0:var(--ly2);--lcs:var(--ly2s)} .l3{--lc0:var(--ly3);--lcs:var(--ly3s)} .l4{--lc0:var(--ly4);--lcs:var(--ly4s)} .l5{--lc0:var(--ly5);--lcs:var(--ly5s)}
+.xcut{display:flex;flex-wrap:wrap;gap:5px;border:1px dashed var(--line2);border-radius:7px;padding:7px;align-items:center}
+.xcut b{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-right:4px}
+
+/* ---------- roadmap ---------- */
+.rm{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.q{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.q h3{font-size:15px;display:flex;justify-content:space-between;align-items:baseline}
+.qdone{background:var(--soft)}
+.q h3 small{font-family:var(--f-mono);font-size:11px;color:var(--mute);font-weight:500}
+.q li{font-size:12.5px}
+.ms{display:flex;gap:6px;align-items:flex-start}
+.ms i{font-style:normal;font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:3px;padding:1px 4px;flex:none;margin-top:2px}
+.ms i.p{background:var(--acc-soft);color:var(--acc-ink)} .ms i.z{background:var(--lf-s);color:var(--lf)} .ms i.s{background:var(--lb-s);color:var(--lb)} .ms i.h{background:var(--la-s);color:var(--la)}
+
+/* ---------- build spec ---------- */
+pre.code{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:11.5px;line-height:1.55;overflow-x:auto;margin:0;color:var(--ink2)}
+pre.code .k{color:var(--acc-ink)} pre.code .c{color:var(--faint)}
+.ep{display:grid;grid-template-columns:62px minmax(0,1fr);gap:8px;font-size:12px;padding:5px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.ep:last-child{border-bottom:0}
+.ep b{font-family:var(--f-mono);font-size:10.5px;text-align:center;border-radius:3px;padding:1px 0}
+.ep b.get{background:var(--info-s);color:var(--info)} .ep b.post{background:var(--ok-s);color:var(--ok)} .ep b.put{background:var(--warn-s);color:var(--warn)}
+.ep code{font-family:var(--f-mono);font-size:11.5px}
+.ep span{display:block;color:var(--mute);font-size:11.5px}
+
+
+/* ---------- register modal ---------- */
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.f > label,.f > .fl{font-size:12px;font-weight:600;color:var(--ink2)}
+.f .hint{font-size:11px;color:var(--mute)}
+.f.full{grid-column:1/-1}
+.ck{display:flex;gap:5px;flex-wrap:wrap}
+.ck label{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line2);border-radius:6px;padding:3px 8px;font-size:12px;cursor:pointer;background:var(--soft)}
+.ck input{accent-color:var(--acc);margin:0}
+.mscrim{position:fixed;inset:0;background:var(--scrim);z-index:50}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(1060px,calc(100% - 32px));height:min(880px,calc(100% - 32px));background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 24px 80px rgba(0,0,0,.28);z-index:51;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}
+.mh{padding:16px 22px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px;position:relative}
+.mh h2{font-size:22px}
+.mh .msub{font-size:12.5px;color:var(--mute)}
+.mclose{position:absolute;right:16px;top:14px}
+.stepper{display:flex;gap:2px;overflow-x:auto;margin:0;padding:0;list-style:none}
+.stp{display:flex;align-items:center;gap:7px;padding:9px 12px 11px;border:0;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;color:var(--mute);font-weight:500;font-size:13px}
+.stp i{font-style:normal;width:21px;height:21px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;border:1.5px solid var(--line2);background:var(--panel)}
+.stp small{font-family:var(--f-mono);font-size:10px;color:var(--faint)}
+.stp.on{color:var(--ink);border-bottom-color:var(--acc)}
+.stp.on i{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.stp.done i{border-color:var(--ok);color:var(--ok)}
+.stp.bad i{border-color:var(--bad);color:var(--bad)}
+.mb{display:grid;grid-template-columns:minmax(0,1fr) 300px;min-height:0}
+.mform{overflow:auto;padding:18px 22px 26px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.mrail{overflow:auto;background:var(--soft);border-left:1px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:16px}
+.mrail h4{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-family:var(--f-body);font-weight:700;color:var(--mute);margin-bottom:8px}
+.mf{border-top:1px solid var(--line);padding:12px 22px calc(12px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.mf .mfl,.mf .mfr{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fsec{display:flex;flex-direction:column;gap:12px}
+.fsec > h4{font-size:13px;font-family:var(--f-body);font-weight:700;color:var(--ink);display:flex;justify-content:space-between;gap:8px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:6px}
+.fsec > h4 span{font-weight:500;font-size:11.5px;color:var(--mute)}
+.req::after{content:" *";color:var(--bad)}
+.err{font-size:11.5px;color:var(--bad);font-weight:500}
+.inp[aria-invalid="true"],select[aria-invalid="true"],.ck[aria-invalid="true"],.tcards[aria-invalid="true"],.tagin[aria-invalid="true"]{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad);border-radius:8px}
+.ck[aria-invalid="true"],.tcards[aria-invalid="true"]{padding:4px}
+input.inp{width:100%}
+.cnt{font-size:11px;color:var(--faint);text-align:right;font-variant-numeric:tabular-nums}
+.tcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.tcard{position:relative;border:1px solid var(--line2);border-radius:9px;padding:9px 11px;cursor:pointer;display:flex;flex-direction:column;gap:2px;background:var(--panel)}
+.tcard input{position:absolute;opacity:0;pointer-events:none}
+.tcard b{font-size:13px}
+.tcard span{font-size:11.5px;color:var(--mute);line-height:1.35}
+.tcard:has(input:checked){border-color:var(--acc);background:var(--acc-soft);box-shadow:0 0 0 1px var(--acc)}
+.tcard:has(input:focus-visible){outline:2px solid var(--acc);outline-offset:2px}
+.ck label:has(input:checked){border-color:var(--acc);background:var(--acc-soft);color:var(--acc-ink)}
+.tagin{display:flex;flex-wrap:wrap;gap:5px;align-items:center;border:1px solid var(--line2);border-radius:7px;padding:5px 7px;background:var(--panel)}
+.tagin input{border:0;outline:0;background:none;flex:1;min-width:140px;padding:2px;font-size:13px}
+.tagx{display:inline-flex;align-items:center;gap:4px;background:var(--acc-soft);color:var(--acc-ink);border-radius:5px;padding:1px 4px 1px 7px;font-size:12px}
+.tagx button{border:0;background:none;color:inherit;cursor:pointer;padding:0 3px;font-size:13px;line-height:1}
+.note{font-size:12px;color:var(--ink2);background:var(--soft);border:1px solid var(--line);border-radius:7px;padding:8px 11px}
+.note.acc{background:var(--acc-soft);border-color:var(--acc)}
+.note.warn{background:var(--warn-s);border-color:var(--warn)}
+.tog{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;cursor:pointer}
+.tog input{accent-color:var(--acc);margin-top:3px;width:16px;height:16px;flex:none}
+.dupi{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border-radius:8px;background:var(--panel);border:1px solid var(--line)}
+.dupi .dt{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.dupi b{font-size:12.5px}
+.dupi .pc{font-family:var(--f-mono);font-weight:700;font-size:12px}
+.dupi .sm{font-size:11px;color:var(--mute)}
+.dupi.hi{border-color:var(--bad)} .dupi.hi .pc{color:var(--bad)}
+.dupi.md{border-color:var(--warn)} .dupi.md .pc{color:var(--warn)}
+.rdy{display:flex;flex-direction:column;gap:6px}
+.rdy li{display:grid;grid-template-columns:40px minmax(0,1fr);gap:8px;align-items:start;font-size:12px}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:4px}
+.prog i{display:block;height:100%;background:var(--acc);border-radius:3px}
+.rev{display:flex;flex-direction:column;gap:12px}
+.revs{border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.revs h5{margin:0;font-size:12.5px;display:flex;justify-content:space-between;align-items:center;background:var(--soft);padding:7px 12px;border-bottom:1px solid var(--line)}
+.revs dl{margin:0;padding:8px 12px;display:grid;grid-template-columns:150px minmax(0,1fr);gap:4px 12px;font-size:12.5px}
+.revs dt{color:var(--mute)} .revs dd{margin:0;word-break:break-word}
+.revs dd.miss{color:var(--faint);font-style:italic}
+.okpanel{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:36px 24px;grid-column:1/-1;overflow:auto}
+.okpanel .big{width:54px;height:54px;border-radius:50%;background:var(--ok-s);color:var(--ok);display:grid;place-items:center;font-size:26px;font-weight:700}
+.okpanel h3{font-size:22px}
+.okpanel .rid{font-family:var(--f-mono);font-size:14px;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:3px 10px}
+.okpanel ol{text-align:left;font-size:13px;color:var(--ink2);max-width:520px;display:flex;flex-direction:column;gap:5px}
+.rsteps{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.rst{background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.rst i{font-style:normal;font-family:var(--f-mono);font-size:11px;color:var(--acc-ink)}
+.rst b{font-size:13.5px}
+.rst p{font-size:12px;color:var(--mute)}
+.rst span{margin-top:auto;font-family:var(--f-mono);font-size:10.5px;color:var(--faint)}
+@media (max-width:1100px){.rsteps{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){
+  .modal{inset:0;top:0;left:0;transform:none;width:100%;height:100%;border-radius:0;border:0}
+  .mh{padding-top:calc(14px + env(safe-area-inset-top,0px))}
+  .mclose{top:calc(12px + env(safe-area-inset-top,0px))}
+  .mb{grid-template-columns:minmax(0,1fr);overflow:auto}
+  .mform{overflow:visible}
+  .mrail{overflow:visible;border-left:0;border-top:1px solid var(--line)}
+  .stp span{display:none}
+  .revs dl{grid-template-columns:minmax(0,1fr)}
+  .rsteps{grid-template-columns:minmax(0,1fr)}
+}
+
+/* ---------- drawer & toast ---------- */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:var(--panel);z-index:41;box-shadow:-10px 0 40px rgba(0,0,0,.18);display:flex;flex-direction:column;border-left:1px solid var(--line)}
+.dh{padding:calc(16px + env(safe-area-inset-top,0px)) 20px 14px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:6px;position:relative}
+.dh h2{font-size:24px}
+.dclose{position:absolute;right:14px;top:calc(12px + env(safe-area-inset-top,0px))}
+.db{padding:16px 20px 30px;overflow:auto;display:flex;flex-direction:column;gap:16px}
+.ds h4{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-family:var(--f-body);font-weight:700;color:var(--mute);margin-bottom:7px}
+.kv{display:grid;grid-template-columns:120px minmax(0,1fr);gap:5px 12px;font-size:12.5px}
+.kv dt{color:var(--mute)} .kv dd{margin:0}
+.how{display:flex;flex-direction:column;gap:6px;counter-reset:h}
+.how li{list-style:none;display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;font-size:12.5px}
+.how li::before{counter-increment:h;content:counter(h);width:20px;height:20px;border-radius:50%;background:var(--lcs);color:var(--lc0);font-weight:700;font-size:11px;display:grid;place-items:center}
+.how li b{font-weight:600}
+.tgts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tg{background:var(--soft);border-radius:7px;padding:8px 10px;border:1px solid var(--line)}
+.tg b{font-family:var(--f-disp);font-size:20px;display:block;line-height:1.1}
+.tg span{font-size:11px;color:var(--mute)}
+.dact{display:flex;gap:8px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--panel);padding:9px 16px;border-radius:8px;font-size:13px;z-index:60;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+
+.foot{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--mute);border-top:1px solid var(--line);padding-top:14px;margin-top:10px}
+.foot span:last-child{margin-left:auto}
+
+/* ---------- responsive ---------- */
+@media (max-width:1200px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.sites{grid-template-columns:repeat(2,minmax(0,1fr))}.surfaces{grid-template-columns:repeat(3,minmax(0,1fr))}.capgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:980px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{position:sticky;top:0;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:6px 10px;z-index:20;overflow-x:auto}
+  .side h4,.side-note{display:none}
+  .nav{flex-direction:row;gap:4px}
+  .nav a{white-space:nowrap}
+  .nav a .nc{display:none}
+  .top{position:relative;top:0}
+  .g2,.g3,.g21,.g12,.lanes,.rm,.steps4{grid-template-columns:minmax(0,1fr)}
+  .found{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  .main{padding-inline:16px}
+  .top{padding:10px 16px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sites,.surfaces,.capgrid{grid-template-columns:minmax(0,1fr)}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .quad{grid-template-columns:minmax(0,1fr)}
+  .quad .qh.corner,.quad .qh.row{display:none}
+  .bar{grid-template-columns:96px minmax(0,1fr) 44px}
+  .rung{grid-template-columns:minmax(0,1fr) 40px}
+  .rung .rx,.rung .rt{display:none}
+  .dim{grid-template-columns:110px minmax(0,1fr) 38px}
+  .layer{grid-template-columns:minmax(0,1fr)}
+  .dup-r{grid-template-columns:minmax(0,1fr) 60px}
+  .dup-r .sim{display:none}
+  .vh h1{font-size:23px}
+  .tgts{grid-template-columns:minmax(0,1fr)}
+  .foot span:last-child{margin-left:0}
+}
+@media (prefers-reduced-motion:no-preference){.drawer{animation:slin .18s ease-out}@keyframes slin{from{transform:translateX(24px);opacity:.6}to{transform:none;opacity:1}}}
+</style>
+
+<header class="top">
+  <div class="brand">
+    <div class="zmark" aria-hidden="true">Z</div>
+    <div><div class="bn">Sol PE AI Work Platform</div><div class="bs">Zion · find, use and reuse every Sol PE AI function</div></div>
+  </div>
+  <div class="gsearch">
+    <svg viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="gq" type="search" placeholder="Search by task: decode a host log, find coverage gaps, triage failed runs…" aria-label="Search the AI catalog by task">
+  </div>
+  <div class="ctrls">
+    <div class="ctl"><label for="role">View as</label>
+      <select id="role"><option value="exec">Executive / VP</option><option value="lead">Engineering lead</option><option value="eng">Engineer</option><option value="owner">Solution owner</option></select></div>
+    <div class="ctl"><label for="site">Site</label>
+      <select id="site"><option value="all">All Sol PE sites</option><option value="SSIR">SSIR · Bengaluru</option><option value="HQ">HQ · Korea</option><option value="DSK">DSK-PE</option></select></div>
+    <div class="ctl"><span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600" id="thLbl">Theme</span>
+      <div class="theme" role="group" aria-labelledby="thLbl">
+        <button type="button" data-theme-set="light" aria-pressed="false" title="Light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span>Light</span></button>
+        <button type="button" data-theme-set="system" aria-pressed="true" title="Follow system setting"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><span>System</span></button>
+        <button type="button" data-theme-set="dark" aria-pressed="false" title="Dark theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><span>Dark</span></button>
+      </div></div>
+    <button class="btn btn-p" data-reg="new" type="button">+ Register AI asset</button>
+  </div>
+</header>
+
+<div class="app">
+  <nav class="side" aria-label="Views">
+    <h4>Leadership</h4>
+    <div class="nav" id="nav1"></div>
+    <h4>Engineering</h4>
+    <div class="nav" id="nav2"></div>
+    <h4>Platform</h4>
+    <div class="nav" id="nav3"></div>
+    <div class="side-note"><b>Wireframe 7</b> · the hub above wf6 (benchmark), wf2b (STLC × layers) and wf2c (L3 KPIs). Click any solution or asset to open its detail.</div>
+  </nav>
+
+  <main class="main" id="main">
+    <div class="banner" id="dataBanner">
+      <span><b>Wireframe data.</b></span>
+      <span><span class="real">Real</span> from solution deep dives, the L3 benchmark and the Review Shield evaluation</span>
+      <span><span class="smpk">Sample</span> illustrative usage and placement, shown so the layout can be reviewed</span>
+      <span><span class="fill">[__]</span> baseline still to fill</span>
+    </div>
+
+    <!-- ================= 01 OVERVIEW ================= -->
+    <section class="view" id="v-overview" hidden>
+      <div class="vh">
+        <div>
+          <div class="eyebrow">Executive overview · live portfolio</div>
+          <h1>Every Sol PE AI solution, one work platform</h1>
+          <p class="lede">Connect our dispersed AI tools, skills and analysis logic around Sol PE tasks, so every engineer can discover, use and reuse the right AI function, improving efficiency and the quality of results together.</p>
+        </div>
+        <div class="legend"><span class="pill st-live">Live</span><span class="pill st-pilot">Pilot</span><span class="pill st-build">Build</span><span class="pill st-planned">Planned</span></div>
+      </div>
+      <div class="kpis" id="kpis"></div>
+
+      <div class="card">
+        <div class="ch"><div><h3>Portfolio by stage of the work</h3><div class="cs">Where each solution helps, from spec to root cause. Click a solution for its deep dive.</div></div>
+          <div class="legend"><span>Specs NVMe · SATA · UFS · eMMC · NVMe-MI · OAM · OCP · SPDM · PLDM · MCTP · TCG</span></div></div>
+        <div class="lanes" id="lanes"></div>
+        <div class="found" style="margin-top:12px" id="found"></div>
+      </div>
+
+      <div class="g21">
+        <div class="card">
+          <div class="ch"><div><h3>Needs attention</h3><div class="cs">What an exec or group lead should act on this cycle</div></div></div>
+          <ul class="clean att" id="att"></ul>
+        </div>
+        <div class="card">
+          <div class="ch"><div><h3>Primary solutions per STLC phase</h3><div class="cs">Crowded phases need convergence; empty ones are white space</div></div></div>
+          <div class="colbars" id="phbars"></div>
+          <div class="cbl" id="phlbl"></div>
+          <p class="small muted" style="margin-top:10px">P3 has 5 and P6 has 3, so converge on one certified function each. P2, P4, P7, P8 and P9 have none: reuse from HQ or co-build.</p>
+        </div>
+      </div>
+
+      <div class="g3">
+        <div class="card yr"><h4 style="color:var(--ok)">Delivered</h4><ul class="clean">
+          <li>10 AI solutions across the STLC</li><li>Review Shield: ~2-min AI review per MR, live on 11 of 58 repos</li><li>L3 benchmark defined and first run (Review Shield 49.2)</li><li>Zion architecture: 10 phases, 76 activities, 15 components</li></ul></div>
+        <div class="card yr"><h4 style="color:var(--acc-ink)">In progress · next</h4><ul class="clean">
+          <li>One AI work platform: find, use, reuse</li><li>Converge failure analysis: SHIELD · iUTA · RootLens</li><li>Scale to all 6 product lines on Zion</li><li>Every solution measured on the L3 benchmark</li></ul></div>
+        <div class="card yr"><h4 style="color:var(--lc)">Open asks &amp; dependencies</h4><ul class="clean">
+          <li>Joint collaborate / reuse backlog with partner sites</li><li>GPU, LLM and storage capacity for AI</li><li>Access to partner-site spec and defect data</li></ul>
+          <button class="link small" style="margin-top:10px" data-go="sites" type="button">Open the global collaboration view →</button></div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="ch"><div><h3>What engineers look for <span class="smpk">Sample</span></h3><div class="cs">Top task searches this month, all sites</div></div></div>
+          <div class="bars" id="topTasks"></div>
+        </div>
+        <div class="card">
+          <div class="ch"><div><h3>What the catalog holds</h3><div class="cs">Registered AI assets by type. Sub-assets are the reusable parts inside each solution.</div></div></div>
+          <div class="bars" id="assetMix"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 02 DISCOVER ================= -->
+    <section class="view" id="v-discover" hidden>
+      <div class="vh"><div><div class="eyebrow">Discover · AI catalog</div><h1>Find the right AI for the task</h1>
+        <p class="lede">One catalog of every Sol PE AI solution, agent, skill, prompt pack, analysis logic, tool and dataset. Search by what you need to do; each entry shows its owner, benchmark state and how to use it.</p></div><button class="btn" data-reg="new" type="button">+ Register AI asset</button></div>
+      <div class="ask">
+        <label for="q">What do you need to do?</label>
+        <div class="askrow"><input id="q" type="search" placeholder="e.g. decode an NVMe host log and summarise the failure"><button class="btn btn-p" id="qgo" type="button">Search</button></div>
+        <div class="tasks" id="taskChips"></div>
+      </div>
+      <div class="filters">
+        <div class="typebar" id="typebar"></div>
+        <div class="ctl"><label for="fPh">STLC phase</label><select id="fPh"></select></div>
+        <div class="ctl"><label for="fProd">Product line</label><select id="fProd"></select></div>
+        <div class="ctl"><label for="fSt">Status</label><select id="fSt"><option value="">Any status</option><option>Live</option><option>Pilot</option><option>Build</option><option>Planned</option></select></div>
+        <div class="ctl"><label for="fSort">Sort</label><select id="fSort"><option value="reuse">Most reused</option><option value="az">A–Z</option><option value="status">Most mature</option></select></div>
+      </div>
+      <div class="small muted" id="resCount"></div>
+      <div class="cards" id="cards"></div>
+    </section>
+
+    <!-- ================= 03 STLC MAP ================= -->
+    <section class="view" id="v-stlc" hidden>
+      <div class="vh"><div><div class="eyebrow">STLC alignment</div><h1>Ten solutions across the ten STLC phases</h1>
+        <p class="lede">Primary means the solution does the core work of that phase; supporting means it feeds or consumes it. Zion runs underneath every phase.</p></div>
+        <div class="legend"><span><span class="dot p lA"></span> Primary</span><span><span class="dot s lA"></span> Supporting</span><span style="background:var(--warn-s);padding:0 6px;border-radius:3px">Crowded</span><span style="background:var(--soft2);padding:0 6px;border-radius:3px">White space</span></div></div>
+      <div class="card scroll-x"><table class="mx" id="mx"></table></div>
+      <div class="card">
+        <div class="ch"><div><h3>L3 capability coverage · 30 components</h3><div class="cs">Each phase has three L3 agent capabilities from the benchmark (wf2c). Coloured cells have a Sol PE solution; dashed cells are open for HQ reuse or co-build.</div></div>
+          <span class="smpk">Mapping for UFS Forge and Combinatorial is proposed</span></div>
+        <div class="capgrid" id="capgrid"></div>
+      </div>
+    </section>
+
+    <!-- ================= 04 TASK FLOWS ================= -->
+    <section class="view" id="v-flows" hidden>
+      <div class="vh"><div><div class="eyebrow">Use · task flows</div><h1>Chain AI functions into Sol PE task flows</h1>
+        <p class="lede">Skills from different solutions are joined into one flow around a real PE task. Dashed steps are human approvals, required for anything irreversible (gate G4).</p></div>
+        <div class="legend"><span><span class="dot p lA"></span> Design</span><span><span class="dot p lB"></span> Build &amp; run</span><span><span class="dot p lC"></span> Root cause</span><span><span class="dot p lF"></span> Zion</span></div></div>
+      <div id="flowList" class="view" style="gap:14px"></div>
+      <div class="card">
+        <div class="ch"><div><h3>Use it where the work happens</h3><div class="cs">One Zion sign-on across every surface. The same skill is callable from each.</div></div></div>
+        <div class="surfaces">
+          <div class="sf"><b>Zion portal</b><p>Catalog, flows and dashboards in the browser</p><code>zion/ai/flows/fa-chain</code></div>
+          <div class="sf"><b>Chat assistant</b><p>Ask in plain language; the assistant picks the skill</p><code>@shield decode run_4471.log</code></div>
+          <div class="sf"><b>IDE (VS Code)</b><p>On-prem LLM side panel with Sol PE skills</p><code>&gt; Sol PE: Find coverage gaps</code></div>
+          <div class="sf"><b>Zion consoles</b><p>AI side panels inside UTH, LaaS and Robotics</p><code>UTH › Run › Triage with iUTA</code></div>
+          <div class="sf"><b>API &amp; MCP</b><p>Agents and scripts call skills as tools</p><code>mcp: shield.decode_host_log</code></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 05 ONBOARD ================= -->
+    <section class="view" id="v-onboard" hidden>
+      <div class="vh"><div><div class="eyebrow">Register &amp; onboard</div><h1>Register before you build</h1>
+        <p class="lede">Every AI asset is registered in the Zion capability registry before development starts (gate G1). The duplicate check points owners to what already exists, so grp1, grp2 and grp3 extend one function instead of building three.</p></div>
+        <button class="btn btn-p" data-reg="new" type="button">+ Register AI asset</button></div>
+      <div class="card">
+        <div class="ch"><div><h3>The registration form</h3><div class="cs">Six short steps, about five minutes. Each step maps to a gate, so a registered asset is already part-way to being listed. The form checks for duplicates as you type.</div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-reg="example" type="button">Try with an example</button><button class="btn btn-p" data-reg="new" type="button">Open registration form</button></div></div>
+        <div class="rsteps" id="rsteps"></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div><h3>Onboarding pipeline</h3><div class="cs">Where each asset sits on its way to the catalog and to certification. Target: a new group onboards an existing asset in 2 days or less.</div></div><span class="smpk">Sample placement</span></div>
+        <div class="scroll-x"><div class="kan" id="kan"></div></div>
+      </div>
+    </section>
+
+    <!-- ================= 06 REUSE & VALUE ================= -->
+    <section class="view" id="v-value" hidden>
+      <div class="vh"><div><div class="eyebrow">Reuse &amp; value</div><h1>Build once, reuse everywhere, and prove it</h1>
+        <p class="lede">Reused functions are benchmarked and certified, not copied. Value is counted only where it is measured. Full scoring lives in the benchmark dashboard (wf6).</p></div></div>
+      <div class="kpis" id="vkpis"></div>
+      <div class="g2">
+        <div class="card">
+          <div class="ch"><div><h3>Certification ladder</h3><div class="cs">Composite of six weighted dimensions; every gate must pass. Highest composite that passes all gates becomes the Sol PE standard.</div></div></div>
+          <div class="ladder" id="ladder"></div>
+        </div>
+        <div class="card">
+          <div class="ch"><div><h3>Review Shield · first benchmark round <span class="real">Real</span></h3><div class="cs">Composite 49.2 · 2 of 6 gates · green rule is the 85-point Tier-1 line</div></div>
+            <button class="btn btn-s" data-open="RS" type="button">Open</button></div>
+          <div class="dims" id="rsDims"></div>
+          <div style="margin-top:10px" class="gates" id="rsGates"></div>
+          <ul class="dots small" style="margin-top:10px">
+            <li><b>Critical:</b> build the seeded-defect golden set and harness (unlocks G2 and every D1 KPI)</li>
+            <li><b>Critical:</b> track resolve / dismiss on every comment; deploy system prompt v2</li>
+            <li><b>High:</b> GitHub / GitLab adapters; move to the shared LLM gateway</li></ul>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="ch"><div><h3>Engineer-hours saved per month</h3><div class="cs">Hatched bars are not instrumented yet. Instrumenting every solution is on the roadmap (Now).</div></div></div>
+          <div class="bars" id="hrs"></div>
+        </div>
+        <div class="card">
+          <div class="ch"><div><h3>Benchmark calendar</h3><div class="cs">Golden set and next round per solution</div></div><span class="smpk">Horizons proposed</span></div>
+          <div class="scroll-x"><table class="tbl" id="bcal"></table></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div><h3>Shared services each solution uses</h3><div class="cs">A solution that re-implements a shared service scores 0 on the D2 reuse KPI. ● uses today · ○ planned</div></div></div>
+        <div class="scroll-x"><table class="tbl" id="svcmx"></table></div>
+      </div>
+    </section>
+
+    <!-- ================= 07 GLOBAL SITES ================= -->
+    <section class="view" id="v-sites" hidden>
+      <div class="vh"><div><div class="eyebrow">Global collaboration</div><h1>One map of AI capabilities across Sol PE sites</h1>
+        <p class="lede">Agree one map with HQ and the other sites, then decide capability by capability: offer, converge, co-develop, or reuse from each other. Each decision becomes a task with an owner on both sides.</p></div></div>
+      <div class="sites" id="siteList"></div>
+      <div class="g12">
+        <div class="card">
+          <div class="ch"><div><h3>From alignment to tasks</h3></div></div>
+          <div class="view" style="gap:8px">
+            <div class="s4"><i>1</i><b>Share both maps</b><p>Sol PE STLC × AI map beside HQ's 7-layer agent map (CAST, WingMate, MAGMA, SOLAR-A, SALT)</p></div>
+            <div class="s4"><i>2</i><b>Place each capability</b><p>One quadrant per capability, agreed by both sites</p></div>
+            <div class="s4"><i>3</i><b>Turn into tasks</b><p>Joint backlog: owner on each side, date, L3 benchmark target</p></div>
+            <div class="s4"><i>4</i><b>Review quarterly</b><p>Promote Tier-1 functions to both sites' platforms</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ch"><div><h3>Collaborate or reuse</h3><div class="cs">Click a candidate to filter the joint backlog</div></div></div>
+          <div class="quad" id="quad"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div><h3>Joint backlog</h3><div class="cs" id="jbNote">Candidate items for cross-site work, ready for owners and dates</div></div>
+          <button class="btn btn-s" id="jbAll" type="button">Show all</button></div>
+        <div class="scroll-x"><table class="tbl" id="jb"></table></div>
+      </div>
+    </section>
+
+    <!-- ================= 08 PLATFORM ================= -->
+    <section class="view" id="v-platform" hidden>
+      <div class="vh"><div><div class="eyebrow">Platform &amp; governance</div><h1>Built on Zion, governed by the L3 benchmark</h1>
+        <p class="lede">Zion stays the execution substrate (labs, devices, robots, test runs); the AI layers are the reasoning on top. The work platform is the L2 entry point to all of it.</p></div></div>
+      <div class="g21">
+        <div class="card">
+          <div class="ch"><div><h3>Zion architecture</h3><div class="cs">Four AI layers over the execution substrate</div></div></div>
+          <div class="stack">
+            <div class="layer l1"><div class="ln">L1 · Work process<small>governance</small></div><div class="lb"><span class="blk">QA workflows</span><span class="blk">Quality gates</span><span class="blk">Human approvals</span><span class="blk">Review board</span><span class="blk">AI Champion network</span></div></div>
+            <div class="layer l2"><div class="ln">L2 · Application<small>viewer</small></div><div class="lb"><span class="blk" style="border-color:var(--acc)"><b>AI work platform (this hub)</b></span><span class="blk">Benchmark dashboard</span><span class="blk">Review Shield dashboard</span><span class="blk">Chat · IDE · consoles</span></div></div>
+            <div class="layer l3"><div class="ln">L3 · Agent<small>controller</small></div><div class="lb" id="l3blk"></div></div>
+            <div class="layer l4"><div class="ln">L4 · Data<small>model</small></div><div class="lb"><span class="blk">Spec knowledge graph</span><span class="blk">Code knowledge graph</span><span class="blk">RCA knowledge graph</span><span class="blk">Test repositories</span><span class="blk">Telemetry lake</span><span class="blk">Golden sets</span><span class="blk">Model &amp; prompt registry</span></div></div>
+            <div class="layer l5"><div class="ln">Execution<small>Zion substrate</small></div><div class="lb"><span class="blk"><i>UTH</i>automation hub</span><span class="blk"><i>LaaS</i>lab as a service</span><span class="blk"><i>DSA</i>analytics</span><span class="blk"><i>Robotics</i>zero-touch racks</span></div></div>
+            <div class="xcut"><b>Cross-cutting</b><span class="chip">On-prem LLM gateway</span><span class="chip">Zion SSO &amp; RBAC</span><span class="chip">UTH-MCP</span><span class="chip">LaaS-MCP</span><span class="chip">Robotics-MCP</span><span class="chip">DSA Insights agent</span><span class="chip">Observability &amp; cost metering</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ch"><div><h3>Mandatory gates</h3><div class="cs">Every certified asset passes all six</div></div></div>
+          <ul class="clean" id="gatesList"></ul>
+        </div>
+      </div>
+      <div class="g3">
+        <div class="card">
+          <div class="ch"><div><h3>AI Champion network</h3><div class="cs">Curators of the catalog</div></div></div>
+          <div class="kv"><dt>Champions</dt><dd><b>9</b>, one per team</dd><dt>Groups</dt><dd>grp1 · grp2 · grp3</dd><dt>Forum</dt><dd>Monthly, plus biweekly sync</dd></div>
+          <ul class="dots small" style="margin-top:10px"><li>First-line review of new registrations and duplicate decisions</li><li>Publish 1–2 use cases per quarter as catalog entries</li><li>Curate prompts and skills into the shared library</li><li>Report adoption and hours saved per team</li></ul>
+        </div>
+        <div class="card">
+          <div class="ch"><div><h3>Compute &amp; capacity</h3><div class="cs">Capacity the platform depends on</div></div></div>
+          <div class="kv"><dt>LLM route</dt><dd>On-prem only, through the Zion LLM gateway (G3)</dd><dt>Metering</dt><dd>Tokens and GPU-hours per skill call, at the gateway</dd><dt>Review Shield</dt><dd><b>11.2 M</b> tokens / month</dd><dt>Others</dt><dd>Metered once on the gateway</dd><dt>Storage</dt><dd>All-flash scale-out proposal, phased rollout for ~1,000 engineers</dd><dt>GPU</dt><dd>Capacity plan <span class="fill">[__]</span></dd></div>
+        </div>
+        <div class="card">
+          <div class="ch"><div><h3>Responsible AI &amp; security</h3><div class="cs">Applies to every asset in the catalog</div></div></div>
+          <ul class="dots small"><li>Customer specs, logs and telemetry stay on-prem</li><li>Confidential codename redaction on generated text</li><li>Evidence or a citation attached to every output</li><li>Human approval for closing defects, granting access, release Go and committing healed scripts</li><li>Audit trail per skill call: who, what input, which model and prompt version</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 09 ROADMAP ================= -->
+    <section class="view" id="v-roadmap" hidden>
+      <div class="vh"><div><div class="eyebrow">Roadmap</div><h1>From catalog to cross-site standards</h1>
+        <p class="lede">A rolling view: owners move items from Later to Next to Now as they land, and finished items drop into Recently delivered. Aligned with the Zion H1–H3 horizons; confirm placement with group leads and partner sites.</p></div>
+        <div class="legend"><span class="ms"><i class="p">Platform</i></span><span class="ms"><i class="z">Zion</i></span><span class="ms"><i class="s">Solution</i></span><span class="ms"><i class="h">HQ</i></span></div></div>
+      <div class="rm" id="rm"></div>
+      <div class="card">
+        <div class="ch"><div><h3>Solution plans and targets</h3><div class="cs">From each solution's deep dive</div></div></div>
+        <div class="scroll-x"><table class="tbl" id="soltgt"></table></div>
+      </div>
+    </section>
+
+    <!-- ================= 10 BUILD SPEC ================= -->
+    <section class="view" id="v-spec" hidden>
+      <div class="vh"><div><div class="eyebrow">For builders</div><h1>How the hub is built</h1>
+        <p class="lede">One asset record drives the catalog, the STLC map, the onboarding pipeline and the value views. The benchmark service (wf6) and the Excel workbook stay the source of truth for scores until the live feed is wired.</p></div></div>
+      <div class="g2">
+        <div class="card"><div class="ch"><div><h3>Asset record</h3><div class="cs">Registry schema, one per solution, agent, skill, prompt pack, logic, tool or dataset</div></div></div>
+<pre class="code"><span class="k">AiAsset</span> {
+  id: <span class="c">"shield.decode_host_log"</span>, type: <span class="c">"skill"</span>, version: <span class="c">"1.4.0"</span>
+  name, summary, tasks: [<span class="c">"decode a host log"</span>, …]
+  parent: <span class="c">"SH"</span>, contains: [ids], relatedTo: [ids]
+  owner: { group, site, person, aiChampion }
+  stlc: { primary: [6], supporting: [5] }, l3Capability: <span class="c">"6.c"</span>
+  products: [eMMC|UFS|Client SSD|PSSD|Enterprise SSD|DC SSD]
+  specs: [NVMe|SATA|UFS|eMMC|NVMe-MI|OAM|OCP|SPDM|PLDM|MCTP|TCG]
+  interfaces: { portal, chat, ide, api: openapiUrl, mcp: toolName }
+  dependsOn: [<span class="c">"llm-gateway"</span>, <span class="c">"log-parser"</span>, …]
+  data: { classes: [...], llmRoute: <span class="c">"zion-gateway"</span>, humanGate: true }
+  lifecycle: registered|dup-check|contract|integration|listed
+  status: Live|Pilot|Build|Planned
+  benchmark: { goldenSet, round, composite, gates: {G1..G6}, tier }
+  value: { hoursPerMonth, acceptRate, mau, groupsUsing, sitesUsing }
+  docs: { readme, ioContract, modelCard, runbook, benchmarkReport }
+}</pre></div>
+        <div class="card"><div class="ch"><div><h3>API</h3><div class="cs">Served by the Zion registry service; federation for other sites is read-only first</div></div></div>
+          <div class="ep"><b class="get">GET</b><div><code>/v1/assets?q=&amp;type=&amp;phase=&amp;product=&amp;site=</code><span>Task search and filters behind Discover</span></div></div>
+          <div class="ep"><b class="get">GET</b><div><code>/v1/assets/{id}</code><span>Detail drawer: contract, benchmark, relations, versions</span></div></div>
+          <div class="ep"><b class="post">POST</b><div><code>/v1/assets</code><span>Register (G1); returns duplicate candidates with similarity</span></div></div>
+          <div class="ep"><b class="put">PUT</b><div><code>/v1/assets/{id}/lifecycle</code><span>Move through the onboarding pipeline; review-board decisions</span></div></div>
+          <div class="ep"><b class="get">GET</b><div><code>/v1/flows</code> · <b class="post" style="display:inline;padding:0 4px">POST</b> <code>/v1/flows/{id}/runs</code><span>Task flows and their runs, with human-gate state</span></div></div>
+          <div class="ep"><b class="get">GET</b><div><code>/v1/benchmark/{id}/rounds</code><span>Proxied from the benchmark service (wf6)</span></div></div>
+          <div class="ep"><b class="get">GET</b><div><code>/v1/metrics/value?by=solution|group|site</code><span>Hours saved, accept-without-edit, MAU; from gateway metering and solution telemetry</span></div></div>
+          <div class="ep"><b class="get">GET</b><div><code>/v1/sites/{site}/catalog</code><span>Federated catalog of another Sol PE site (HQ first)</span></div></div>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="card"><div class="ch"><div><h3>Integrations</h3></div></div>
+          <table class="tbl"><tr><th>System</th><th>Used for</th></tr>
+            <tr><td>Zion IAM</td><td>SSO and RBAC; agents inherit the caller's permissions</td></tr>
+            <tr><td>Zion LLM gateway</td><td>Every model call; token and GPU metering per skill</td></tr>
+            <tr><td>UTH · LaaS · Robotics MCP</td><td>Flows that run tests, reserve rigs and handle devices</td></tr>
+            <tr><td>DSA Insights agent</td><td>Anomaly and test-optimisation scores for flows</td></tr>
+            <tr><td>Bitbucket → GitHub · GitLab</td><td>Review Shield, CoverSight gap PRs, asset source links</td></tr>
+            <tr><td>Jira</td><td>Defects opened or linked by flows; joint backlog with HQ</td></tr>
+            <tr><td>Confluence</td><td>Embedding hub views; asset documentation pack</td></tr>
+            <tr><td>Model &amp; prompt registry</td><td>Live version shown on every asset; rollback</td></tr>
+          </table></div>
+        <div class="card"><div class="ch"><div><h3>Build notes</h3></div></div>
+          <ul class="dots small">
+            <li>Each view on this page maps to one route; each card, matrix and pipeline is a reusable component fed by <span class="mono">AiAsset</span>.</li>
+            <li>Duplicate check on register: embedding similarity on name, summary and tasks, plus same L3 capability and STLC phase. Over 70% similarity routes to the review board.</li>
+            <li>Value numbers only appear when the asset reports them; unmeasured assets show a hatched bar, never an estimate.</li>
+            <li>Site federation starts read-only: HQ's catalog appears in Discover with a site badge; reuse requests become joint backlog items.</li>
+            <li>Confluence: Insert → Other Macros → HTML, paste this file. Filters, drawer and wizard need scripts enabled in the macro.</li>
+            <li>Framework follows the Zion portal standard; the layout uses no external libraries.</li>
+          </ul></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div><h3>Theme token mapping</h3><div class="cs">Every colour on this page is a token with a light and a dark value. The switch in the top bar, or the system setting, picks the column. Read live from the stylesheet, so this table cannot drift from the page.</div></div>
+          <div class="legend" id="thNow"></div></div>
+        <div class="scroll-x"><table class="tbl tmap" id="tmap"></table></div>
+      </div>
+    </section>
+
+    <div class="foot">
+      <span>AI-Powered Software Quality Architecture · Multi-Layer AI Agent System · Zion Platform</span>
+      <span>Wireframe 7 · Sol PE AI Work Platform</span>
+      <span>Companion to wf2b (STLC × layers) · wf2c (L3 KPIs) · wf6 (benchmark dashboard)</span>
+    </div>
+  </main>
+</div>
+
+<div id="drawerRoot"></div>
+<div id="regRoot"></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+"use strict";
+var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+var CAPN_G={};
+var PH=["Req analysis","Test planning","Test design","Env setup","Execution","Defect mgmt","Reporting","Closure","Release","Post release"];
+var PRODS=["eMMC","UFS","Client SSD","PSSD","Enterprise SSD","DC SSD"];
+var ALLP=PRODS.slice();
+var LANES={A:["Design the tests","STLC P1–P3"],B:["Build & run them","STLC P3–P5"],C:["Find root cause","STLC P5–P6"],F:["Foundation","STLC P1–P10"]};
+
+/* ---------------- solutions (from each solution deep dive) ---------------- */
+var SOL=[
+ {id:"SS",name:"SpecSpark",lane:"A",tag:"Spec → requirements → tests → scripts",long:"Turns a memory-protocol spec into a 100%-traced test suite and working scripts.",
+  ph:[1,3],sup:[5],spec:"NVMe · SATA · UFS · eMMC",prod:ALLP,zion:"UTH · LaaS · LLM gateway",st:"Pilot",grp:"grp1",smpG:true,cap:["1.a","3.a"],gold:"L3-3.a",
+  how:[["Ingest spec","Layout-aware parse of specs and PRDs into a knowledge graph"],["Requirements","SHALL/SHOULD clauses split into atomic, cited requirements"],["Design tests","EP, BVA, state-transition and negative scenarios per requirement"],["Coverage gate","Two-way RTM; test architect approves at 100% coverage"],["Script & heal","Template scripts run on Test PC or QEMU and self-heal on failure"]],
+  now:["8-agent pipeline designed end to end, with two human approval gates","One spec-agnostic flow for NVMe, SATA, UFS and eMMC workspaces","Pilot on [spec]: [__] requirements and [__] test cases generated"],
+  nxt:["Move from pilot to production on NVMe 2.x and UFS 4.x programs","Delta mode: redesign only the clauses changed by ECNs and errata","Certify on the L3-3.a golden set; retire duplicate test-gen builds"],
+  tg:[["≥95%","Requirements covered by generated tests"],["≥95%","Requirement extraction recall"],["−60%","Test-design effort per spec release"]]},
+ {id:"CT",name:"Combinatorial Testing",lane:"A",tag:"T-way cross-spec tests · 7 clusters",long:"Cross-spec compliance: t-way testing finds interaction defects without exhaustive runs.",
+  ph:[3],sup:[2],spec:"NVMe · NVMe-MI · OAM · OCP · SPDM · PLDM · MCTP · TCG",prod:["Enterprise SSD","DC SSD","Client SSD"],smpP:true,zion:"UTH · LaaS",st:"Live",grp:"grp2",smpG:true,cap:["3.a"],capP:true,gold:"—",
+  how:[["Model specs","Parameters, values and constraints from 8 specifications"],["Cluster","Group interacting features into 7 functional clusters"],["Generate","Constraint-aware pairwise (t=2) or higher-t arrays per cluster"],["Cross-spec links","Cover where specs meet, e.g. SPDM and NVMe-MI over MCTP"],["Run & measure","Execute through Zion; track t-way coverage and defects found"]],
+  now:["T-pairwise model in place across 8 specifications and 7 clusters","Covers manageability and security: NVMe-MI, OCP, SPDM, PLDM, TCG","[__] test configurations vs [__] exhaustive: [__]% fewer runs"],
+  nxt:["Raise to 3-way interactions on the highest-risk clusters","Feed t-way designs into SpecSpark and CoverSight traceability","Track defects found per test run to prove efficiency to programs"],
+  tg:[["100%","Pair coverage within each cluster"],["8","Specifications in one interaction model"],["≤5%","Duplicate test cases"]]},
+ {id:"CS",name:"CoverSight",lane:"A",tag:"Coverage gaps found and auto-closed",long:"Shows which spec requirements are tested and which are not, then closes the gaps.",
+  ph:[1,3],sup:[7],spec:"NVMe · SATA · UFS · eMMC",prod:ALLP,zion:"LLM gateway",st:"Pilot",grp:"platform",cap:["1.c"],gold:"L3-1.c",
+  how:[["Spec graph","Graph-RAG over the spec; an agent extracts atomic requirements"],["Script graph","Ingest test repositories; infer each test's purpose and scenario"],["Map coverage","Score every requirement against tests: full, partial or gap"],["Close gaps","Generate a scenario and script for each gap as a pull request"],["Re-verify","Re-map on merge so the RTM and coverage stay current"]],
+  now:["A–D pipeline built; golden prompt library v2 for all three agents","One shared ontology spans NVMe, SATA, eMMC, UFS, SPDM, OCP, PLDM","Baseline: [__]% coverage over [__] requirements, [__] open gaps"],
+  nxt:["Onboard the test repositories of every product line","Use coverage as a release gate with an auto-generated RTM","Certify on L3-1.c and publish as the Sol PE coverage standard"],
+  tg:[["≥0.90","Trace-link precision"],["≥0.85","Trace-link recall"],["100%","Orphan requirements and tests detected"]]},
+ {id:"RS",name:"Review Shield",lane:"B",tag:"Unified AI code review on every MR",long:"One centralized AI reviewer on every merge request: ~400 developers, ~100 MRs a day.",
+  ph:[3],sup:[],spec:"Python · C/C++ · JS/TS code",prod:ALLP,zion:"AI review dashboard · LLM gateway (planned)",st:"Live",grp:"platform",cap:["3.d"],gold:"Seeded-defect set (to build)",bench:{c:49.2,g:[0,0,1,1,0,0],round:"R1 · Sep 2026"},
+  hrs:214,
+  how:[["MR trigger","Webhook fires on every merge request create, update and merge"],["Graph RAG","Code knowledge graph of the destination branch as context"],["AI review","Diff-aware review: file, line, severity and a concrete fix"],["Acceptance","Second agent checks fixes landed and computes acceptance"],["Zion dashboard","Effort saved, issues found vs fixed, trends per repository"]],
+  now:["Live on Bitbucket: 11 of 58 repos; ~2 min per review vs 11–62 min","97.7% review effort saved; 50 engineer-hours saved in 7 days","First L3 benchmark: 49.2; gaps are evidence and acceptance, not speed"],
+  nxt:["Deploy prompt v2: in-scope defects only, calibrated severity","Seeded-defect golden set; track resolve and dismiss on every comment","GitHub/GitLab adapters; firmware C/C++ repos first; aim for Tier 1"],
+  tg:[["≥85%","Critical/High defect recall"],["≥80%","Comment precision"],["≥70%","Issues resolved in merged PRs"]]},
+ {id:"KZ",name:"KAIzen",lane:"B",tag:"Create, run and self-heal scripts",long:"Creates, runs and repairs test scripts on its own: days of testing, in real time.",
+  ph:[3,5],sup:[],spec:"Framework APIs per protocol",prod:ALLP,zion:"UTH · LaaS · LLM gateway",st:"Live",grp:"grp2",smpG:true,cap:["5.b"],gold:"L3-5.b",
+  how:[["Create","Generate scripts from test intent using the framework's own APIs"],["Execute","Run immediately on Zion rigs and stream results live"],["Detect","Classify each failure as script, environment or device"],["Recover","Patch the script or re-provision the rig, then re-run"],["Report","Results and suspected device defects handed to triage"]],
+  now:["Closed loop working: create, execute and recover with no manual step","Testing that took days now runs in real time: [__] days → [__] hours","[__] scripts generated; [__]% of failures recovered automatically"],
+  nxt:["Scale across product lines on shared Zion rigs and the LLM gateway","Human approval on heals; never mask a real device defect","Converge with SpecSpark phase 2 into one certified L3-5.b agent"],
+  tg:[["≥80%","Heal success on true script breaks"],["≤1%","False heals that mask a device defect"],["≥85%","Generated scripts pass on first run"]]},
+ {id:"UF",name:"UFS Forge",lane:"B",tag:"On-device AI stress & UFS workloads",long:"An Android app that stresses UFS with real on-device AI models and generated workloads.",
+  ph:[5],sup:[],spec:"UFS",prod:["UFS"],zion:"UFS harness · DSA",st:"Live",grp:"grp3",smpG:true,cap:["5.c"],capP:true,gold:"—",
+  how:[["Deploy app","Android app installed on UFS-based target devices"],["AI workloads","Run on-device AI models that load storage like real apps"],["Generate I/O","Synthetic stress and mixed read/write patterns on demand"],["Capture","Latency, throughput and error telemetry for every run"],["Feed harness","Results flow to the UFS test harness and Zion analytics"]],
+  now:["Android app delivered for the UFS test harness","On-device AI model stress plus configurable workload generation","[__] AI models and [__] workload profiles in the library"],
+  nxt:["Workloads for next-generation UFS (4.x → 5.0) readiness","Correlate run telemetry with SHIELD logs and Zion DSA anomalies","Scale to a device farm of [__] phones under LaaS scheduling"],
+  tg:[["UFS 5.0","Workload set ready for next-gen UFS"],["[__]","AI-model workloads in the library"],["[__]","Devices in nightly stress runs"]]},
+ {id:"SH",name:"SHIELD",lane:"C",tag:"Host event & log decoder + AI agent",long:"Samsung Host Intelligent Event and Log Decoder: raw host logs to a diagnosis and report.",
+  ph:[6],sup:[5],spec:"Host events and logs",prod:ALLP,zion:"Log parser · LLM gateway",st:"Live",grp:"grp1",smpG:true,cap:[],gold:"Log-decode set (to define)",
+  how:[["Rules","Rule engine decodes host events and log codes"],["Timeline","Events from every source aligned on one timeline"],["Agent analysis","AI agent reasons over the timeline to flag likely causes"],["Summary","Plain-language account of what happened and when"],["Report","Standard report ready for triage and customer response"]],
+  now:["All five stages delivered: rules, timeline, agent, summary, report","[__] log and event formats decoded by the rule engine","Log review time per failure: [__] hours → [__] minutes"],
+  nxt:["Become the shared log-parser and failure-signature service on Zion","Pass decoded timelines straight into iUTA and RootLens","Add device-side sources: firmware trace and UART"],
+  tg:[["100%","Report numbers match source logs"],["≥98%","Report template compliance"],["[__]","Minutes from log upload to summary"]]},
+ {id:"IU",name:"iUTA",lane:"C",tag:"AI-enabled failure analysis",long:"AI-enabled failure analysis: every failed run classified, de-duplicated and routed.",
+  ph:[6],sup:[5],spec:"Automation run failures",prod:ALLP,zion:"UTH results · DSA",st:"Live",grp:"grp3",smpG:true,cap:["6.a","6.b"],gold:"L3-6.a · 6.b",
+  how:[["Collect","Failed runs, logs and context pulled from test automation"],["Classify","Script, environment or device failure, with confidence"],["De-duplicate","Match known issues and duplicates by log signature"],["Route","Set severity and owner team; open or link the defect"],["Escalate","Novel device failures go to RootLens for deep RCA"]],
+  now:["AI failure analysis running on [program / product] automation","[__]% of failures classified without manual triage","Triage time per failure: [__] → [__] minutes"],
+  nxt:["Share one failure taxonomy with SHIELD, KAIzen and RootLens","Extend to the regression pipelines of all six product lines","Certify on the L3-6.a and 6.b golden sets"],
+  tg:[["≥98%","Critical (S1) failure recall"],["≥90%","Duplicate found in top 5"],["≥85%","Correct owner team assigned"]]},
+ {id:"RL",name:"RootLens",lane:"C",tag:"Unified failure-analysis workflow",long:"One failure-analysis workflow for every memory product, from logs to ranked root cause.",
+  ph:[6,10],sup:[],spec:"FW trace · dmesg · NVMe error log · UART",prod:ALLP,zion:"Knowledge graph · DSA",st:"Live",grp:"platform",cap:["6.c"],gold:"L3-6.c",
+  how:[["Intake","Failure plus FW trace, host dmesg, NVMe error log and UART"],["Normalize","Shared parsers turn each product's logs into one schema"],["Recall","Search the RCA knowledge graph for similar past failures"],["Hypothesize","Rank likely root causes with evidence for each"],["Learn","Engineer confirms; the RCA is written back to the graph"]],
+  now:["One FA workflow spanning all six memory product lines","RCA knowledge graph seeded with [__] past failure cases","[__]% of new failures matched to a known RCA pattern"],
+  nxt:["Anchor one FA stack: SHIELD decodes, iUTA triages, RootLens explains","Close the loop: field failure → Zion lab repro → verified fix","Certify on the L3-6.c golden set as the Sol PE RCA standard"],
+  tg:[["≥70%","Correct root cause in the top 3"],["≥85%","RCA category accuracy"],["−40%","Time from defect open to RCA"]]},
+ {id:"ZN",name:"Zion",lane:"F",tag:"One platform under all ten",long:"One platform under all ten: governed workflows, one portal, shared agents and data.",
+  ph:[],sup:[1,2,3,4,5,6,7,8,9,10],spec:"All",prod:ALLP,zion:"UTH · LaaS · DSA · Robotics",st:"Live",grp:"platform",cap:[],gold:"—",
+  how:[["Work process","Governed QA workflows, quality gates and human approvals"],["Application","One portal and dashboards for every role and phase"],["Agents","The nine solutions plus orchestration on one runtime"],["Data","Knowledge mesh: specs, tests, defects, telemetry, RAG"],["Execution","UTH automation, LaaS labs, DSA analytics, Robotics"]],
+  now:["Architecture set: 10 STLC phases, 76 activities, 15 components","Execution substrate already automating labs: UTH, LaaS, DSA, Robotics","L3 benchmark, capability registry and AI solutions dashboard"],
+  nxt:["H1: agent runtime, LLM gateway, knowledge mesh; MVP by day 90","H2: zero-touch execution and AI defect intelligence in shadow mode","H3: field → lab → fix closed loop across all six product lines"],
+  tg:[["84%+","Lifecycle activities AI-driven"],["6","Product lines on one platform"],["Day 90","MVP live on pilot programs"]]}
+];
+var SMAP={}; SOL.forEach(function(s){SMAP[s.id]=s});
+
+/* ---------------- reusable sub-assets ---------------- */
+// [id,type,name,parent,desc,phases,status,reuse(groups using, sample),surfaces,tasks]
+var SUB=[
+ ["ss.req","agent","Requirement Extractor agent","SS","Splits SHALL/SHOULD clauses into atomic, cited requirements",[1],"Pilot",2,"PA","extract requirements from a spec"],
+ ["ss.scn","agent","Test Scenario Designer agent","SS","EP, BVA, state-transition and negative scenarios per requirement",[3],"Pilot",2,"PA","generate tests from a spec design test cases"],
+ ["ss.scr","agent","Script Generator agent","SS","Template scripts using the framework's own APIs, Test PC or QEMU",[3,5],"Pilot",1,"PAI","generate test scripts"],
+ ["cs.a","agent","Spec Graph agent","CS","Graph-RAG over the spec; extracts atomic requirements",[1],"Pilot",2,"A","spec knowledge graph requirements"],
+ ["cs.c","agent","Coverage Mapper agent","CS","Scores each requirement against tests: full, partial or gap",[3,7],"Pilot",2,"PA","find coverage gaps rtm traceability"],
+ ["cs.d","agent","Gap Closer agent","CS","Generates scenario and script for a gap and opens a pull request",[3],"Pilot",1,"A","close coverage gaps generate script pr"],
+ ["rs.rev","agent","Diff Reviewer agent","RS","Diff-aware review: file, line, severity and a concrete fix",[3],"Live",3,"PA","review my merge request code review"],
+ ["rs.acc","agent","Acceptance agent","RS","Checks that suggested fixes landed; computes acceptance",[3],"Live",3,"A","review acceptance fix tracking"],
+ ["kz.rec","agent","Self-healing Recovery agent","KZ","Patches a broken script or re-provisions the rig, then re-runs",[5],"Live",2,"AM","heal a broken script self heal recover"],
+ ["sh.ag","agent","Timeline Analysis agent","SH","Reasons over the decoded timeline to flag likely causes",[6],"Live",2,"PA","analyse host log timeline likely cause"],
+ ["iu.cls","agent","Failure Classifier","IU","Script, environment or device failure, with confidence",[6],"Live",3,"PAM","triage failed runs classify failures"],
+ ["iu.dup","agent","Duplicate Matcher","IU","Matches known issues by log signature",[6],"Live",2,"AM","duplicate defect match known issue"],
+ ["rl.hyp","agent","Root-cause Hypothesis Ranker","RL","Ranks likely root causes with evidence for each",[6],"Live",2,"PA","find root cause rank hypotheses"],
+
+ ["sk.decode","skill","Decode a host log","SH","Rule engine plus agent: raw host events and logs to a timeline and summary",[5,6],"Live",3,"PCIAM","decode a host log nvme error log summarise failure"],
+ ["sk.triage","skill","Triage a failed run","IU","Classify, de-duplicate and route one failed automation run",[6],"Live",3,"PCAM","triage failed runs regression failures"],
+ ["sk.similar","skill","Find similar past failures","RL","Search the RCA knowledge graph by failure signature",[6,10],"Live",2,"PCAM","find similar failures root cause field failure"],
+ ["sk.gaps","skill","Find coverage gaps","CS","Requirement-to-test coverage for a spec and a test repository",[3,7],"Pilot",2,"PCIA","find coverage gaps for a spec"],
+ ["sk.req","skill","Extract requirements from a spec","SS","Atomic, cited requirements from a spec PDF or PRD",[1],"Pilot",2,"PCIA","extract requirements from a spec generate tests"],
+ ["sk.tway","skill","Generate a t-way test array","CT","Constraint-aware pairwise or 3-way configurations per cluster",[3],"Live",2,"PCA","pairwise combinatorial nvme-mi spdm configurations"],
+ ["sk.review","skill","Review a merge request","RS","Run Review Shield on demand for a branch or MR",[3],"Live",3,"PCIA","review my merge request"],
+ ["sk.heal","skill","Heal a broken script","KZ","Detect script breaks and propose a patch for approval",[5],"Live",2,"PIAM","heal a broken script"],
+ ["sk.ufs","skill","Run an on-device AI workload","UF","Launch an AI-model stress profile on UFS target devices",[5],"Live",1,"PA","stress ufs with ai workloads"],
+ ["sk.rig","skill","Reserve a lab rig","ZN","LaaS reservation by product, FW build and host config",[4,5],"Live",3,"PCAM","reserve a lab rig laas"],
+ ["sk.run","skill","Trigger a UTH run","ZN","Start, monitor and fetch results of a UTH test run",[5],"Live",3,"PCAM","trigger a test run uth execute"],
+
+ ["pp.cs","prompt","CoverSight golden prompts v2","CS","Golden prompt library for agents A, C and D",[1,3],"Pilot",2,"A","prompts coverage requirements"],
+ ["pp.rs","prompt","Review Shield system prompt v2","RS","In-scope defects only, calibrated severity, comment cap",[3],"Build",1,"A","prompt code review"],
+ ["pp.rscat","prompt","Code-review issue taxonomy","RS","Issue categories and severity definitions used in reviews",[3],"Live",3,"A","code review categories severity taxonomy"],
+ ["pp.ss","prompt","Requirement extraction prompt pack","SS","Per-spec prompts for NVMe, SATA, UFS and eMMC workspaces",[1],"Pilot",1,"A","prompts requirements spec"],
+
+ ["lg.rules","logic","SHIELD rule packs","SH","Decoding rules for host events and log codes",[5,6],"Live",2,"AM","log decode rules host event codes"],
+ ["lg.tax","logic","Shared failure taxonomy","IU","One script / environment / device taxonomy for SHIELD, KAIzen, iUTA and RootLens",[5,6],"Build",1,"AM","failure taxonomy classification"],
+ ["lg.norm","logic","Log normalizers","RL","FW trace, host dmesg, NVMe error log and UART into one schema",[6],"Live",2,"AM","parse logs uart fw trace dmesg"],
+ ["lg.ct","logic","Cross-spec constraint models","CT","Parameters and constraints for 8 specifications in 7 clusters",[2,3],"Live",1,"A","combinatorial constraints spdm ocp tcg"],
+ ["lg.l3","logic","L3 benchmark scoring model","ZN","6 dimensions, 6 gates, 5 tiers for ranking AI solutions",[8],"Live",3,"P","benchmark score rank solutions"],
+
+ ["tl.uth","tool","UTH-MCP server","ZN","Plan CRUD, run trigger, status and metrics as MCP tools",[4,5,7],"Build",0,"M","uth mcp run tests"],
+ ["tl.laas","tool","LaaS-MCP server","ZN","Lab reservation, OS provisioning, release and capability query",[4,5],"Build",0,"M","laas mcp reserve rig provision"],
+ ["tl.rob","tool","Robotics-MCP server","ZN","Device insertion, removal, power-cycle and inventory",[5,10],"Planned",0,"M","robotics power cycle device insertion"],
+ ["tl.dsa","tool","DSA Insights agent","ZN","predict_anomaly, optimize_tests and forecast_endurance for other agents",[5,7,10],"Build",1,"AM","anomaly detection telemetry dsa"],
+ ["tl.llm","tool","Zion LLM gateway","ZN","On-prem model access with routing, metering and audit",[1,2,3,4,5,6,7,8,9,10],"Build",3,"AM","llm gateway on-prem model"],
+ ["tl.emb","tool","Embedding service","ZN","Shared embeddings for RAG and duplicate checks",[1,3,6,8],"Planned",0,"A","embedding rag search"],
+
+ ["ds.spec","data","Spec knowledge graph","CS","Shared ontology over NVMe, SATA, eMMC, UFS, SPDM, OCP and PLDM",[1,3],"Pilot",2,"A","spec knowledge graph ontology"],
+ ["ds.code","data","Code knowledge graph","RS","Destination-branch code graph used as review context",[3],"Live",1,"A","code graph rag"],
+ ["ds.rca","data","RCA knowledge graph","RL","Confirmed past failures and their root causes",[6,10],"Live",2,"A","rca knowledge graph past failures"],
+ ["ds.gold","data","L3 golden sets","ZN","Shared, versioned benchmark sets: 1.c, 3.a, 5.b, 6.a, 6.b, 6.c",[8],"Build",0,"A","golden set benchmark dataset"],
+ ["ds.seed","data","Seeded-defect golden set","RS","Known defects planted in real MRs to measure review recall",[3],"Planned",0,"A","golden set code review defects"],
+ ["ds.ufs","data","UFS AI workload library","UF","AI-model and synthetic I/O profiles for UFS stress",[5],"Live",1,"A","ufs workload profiles"]
+];
+var TYPES=[["all","All"],["sol","Solutions"],["agent","Agents"],["skill","Skills"],["prompt","Prompt packs"],["logic","Analysis logic"],["tool","Tools & MCP"],["data","Data & knowledge"]];
+var TYN={sol:"Solution",agent:"Agent",skill:"Skill",prompt:"Prompt pack",logic:"Analysis logic",tool:"Tool · MCP",data:"Data · knowledge"};
+var SURF={P:"Portal",C:"Chat",I:"IDE",A:"API",M:"MCP"};
+var STRANK={Live:4,Pilot:3,Build:2,Planned:1};
+
+var ASSETS=[];
+SOL.forEach(function(s){ASSETS.push({id:s.id,type:"sol",name:s.name,parent:null,desc:s.long,ph:s.ph.concat(s.sup),st:s.st,reuse:{ZN:3,RS:3,CS:2,RL:2,SH:2,IU:2,KZ:2,SS:2,CT:1,UF:1}[s.id],surf:"PCA",tasks:(s.tag+" "+s.long).toLowerCase(),prod:s.prod,lane:s.lane})});
+SUB.forEach(function(a){var p=SMAP[a[3]];ASSETS.push({id:a[0],type:a[1],name:a[2],parent:a[3],desc:a[4],ph:a[5],st:a[6],reuse:a[7],surf:a[8],tasks:(a[9]+" "+a[2]+" "+a[4]).toLowerCase(),prod:p.prod,lane:p.lane})});
+var AMAP={}; ASSETS.forEach(function(a){AMAP[a.id]=a});
+
+/* ---------------- views & nav ---------------- */
+var VIEWS=[
+ ["overview","Executive overview",1],["sites","Global collaboration",1],["roadmap","Roadmap",1],
+ ["discover","Discover",2],["flows","Task flows",2],["stlc","STLC map",2],["onboard","Register & onboard",2],
+ ["value","Reuse & value",3],["platform","Platform & governance",3],["spec","Build spec",3]
+];
+var ROLEHOME={exec:"overview",lead:"stlc",eng:"discover",owner:"onboard"};
+var ROLESUG={exec:["overview","sites","value"],lead:["stlc","value","onboard"],eng:["discover","flows"],owner:["onboard","value","spec"]};
+function navCount(v){return {discover:ASSETS.length,flows:FLOWS.length,stlc:"10×10",onboard:7,sites:3,value:"",overview:"",roadmap:"rolling",platform:"",spec:""}[v]}
+function buildNav(){
+  var i=0;
+  [1,2,3].forEach(function(g){
+    $("#nav"+g).innerHTML=VIEWS.filter(function(v){return v[2]===g}).map(function(v){i++;
+      return '<a href="#'+v[0]+'" data-v="'+v[0]+'"><span class="nk">'+String(VIEWS.indexOf(v)+1).padStart(2,"0")+'</span>'+esc(v[1])+'<span class="nc">'+esc(navCount(v[0])||"")+'</span></a>'}).join("");
+  });
+}
+function markSug(){var r=$("#role").value;$$(".nav a").forEach(function(a){a.classList.toggle("sug",ROLESUG[r].indexOf(a.dataset.v)>=0)})}
+function route(){
+  var h=(location.hash||"").replace("#","");
+  if(!VIEWS.some(function(v){return v[0]===h})) h=ROLEHOME[$("#role").value]||"overview";
+  VIEWS.forEach(function(v){$("#v-"+v[0]).hidden=v[0]!==h});
+  $$(".nav a").forEach(function(a){a.classList.toggle("on",a.dataset.v===h)});
+  try{localStorage.setItem("wf7.view",h)}catch(e){}
+  window.scrollTo(0,0);
+}
+function go(v){if(location.hash==="#"+v)route();else location.hash=v}
+
+/* ---------------- helpers ---------------- */
+function pill(st){return '<span class="pill st-'+st.toLowerCase()+'">'+st+'</span>'}
+function grpLabel(s){return s.grp==="platform"?"Sol PE platform":s.grp+(s.smpG?' <span class="smpk">Sample</span>':"")}
+function benchLabel(s){
+  if(s.bench) return '<span class="t5" style="font-weight:600">Not eligible · '+s.bench.c+'</span>';
+  if(s.gold && s.gold!=="—") return '<span class="muted">Golden set '+esc(s.gold)+'</span>';
+  return '<span class="muted">Benchmark not planned</span>';
+}
+function fillify(t){return esc(t).replace(/\[(__|[a-z /]+)\]/g,'<span class="fill">[$1]</span>')}
+var tEl=$("#toast"),tT;
+function toast(m){tEl.textContent=m;tEl.hidden=false;clearTimeout(tT);tT=setTimeout(function(){tEl.hidden=true},2600)}
+
+/* ---------------- overview ---------------- */
+function renderOverview(){
+  var bench=SOL.filter(function(s){return s.bench}).length;
+  var primPh=PH.filter(function(_,i){return SOL.some(function(s){return s.ph.indexOf(i+1)>=0})}).length;
+  var K=[
+   ["AI solutions","10","","8 live · 2 pilot",'<span class="real">Real</span>'],
+   ["Reusable AI assets",String(ASSETS.length),"","agents, skills, prompts, logic, tools, data",'<button class="link small" data-go="discover" type="button">Open catalog →</button>'],
+   ["STLC phases covered",String(primPh),"<small>/ 10</small>","with a primary solution",'<button class="link small" data-go="stlc" type="button">See white space →</button>'],
+   ["Engineer-hours saved","~214",'<small>/ month</small>',"Review Shield only; 9 to instrument",'<span class="real">Real</span>'],
+   ["L3 benchmarked",String(bench),"<small>/ 10</small>","Tier-1 certified: 0 · target <span class=\"fill\">[__]</span>",'<button class="link small" data-go="value" type="button">Certification →</button>'],
+   ["Sol PE sites on platform","1","<small>/ 3+</small>","SSIR live · HQ and DSK-PE to align",'<button class="link small" data-go="sites" type="button">Collaboration →</button>']
+  ];
+  $("#kpis").innerHTML=K.map(function(k){return '<div class="kpi"><div class="kl">'+k[0]+'</div><div class="kval">'+k[1]+' '+k[2]+'</div><div class="kn">'+k[3]+'</div><div class="kt">'+k[4]+'</div></div>'}).join("");
+
+  $("#lanes").innerHTML=["A","B","C"].map(function(L){
+    return '<div class="lane l'+L+'"><div class="lane-h"><b>'+L+' · '+LANES[L][0]+'</b><span>'+LANES[L][1]+'</span></div>'+
+      SOL.filter(function(s){return s.lane===L}).map(solCard).join("")+'</div>'}).join("");
+  var z=SMAP.ZN;
+  $("#found").innerHTML='<div class="fb"><div class="eyebrow" style="color:var(--lf)">Foundation</div><b>Zion platform</b><p>Every solution runs on it. <button class="link" data-open="ZN" type="button">Open</button></p></div>'+
+   '<div class="blocks"><span class="blk"><i>AI</i>Governed workflows</span><span class="blk"><i>AI</i>One portal</span><span class="blk"><i>AI</i>Agent runtime + LLM gateway</span><span class="blk"><i>AI</i>Knowledge mesh</span><span class="blk"><i>EXEC</i>UTH automation hub</span><span class="blk"><i>EXEC</i>LaaS lab as a service</span><span class="blk"><i>EXEC</i>DSA analytics</span><span class="blk"><i>EXEC</i>Robotics</span></div>';
+
+  var A=[
+   ["c","Review Shield golden set is missing","Blocks gate G2 and every D1 KPI, which caps it below Tier 1. Owner: Sol PE platform.","RS"],
+   ["h","Converge failure analysis","SHIELD, iUTA and RootLens are all primary in P6. Agree one stack: SHIELD decodes, iUTA triages, RootLens explains.","RL"],
+   ["h","P3 is crowded with five solutions","SpecSpark script generation and KAIzen overlap; the plan merges them into one certified L3-5.b agent.","KZ"],
+   ["m","Value is measured for 1 of 10 solutions","Instrument hours saved and accept-without-edit for the other nine before the next review.",null,"value"],
+   ["m","Fill the [__] baselines before the next portfolio review","SpecSpark, Combinatorial, CoverSight, KAIzen, UFS Forge, SHIELD, iUTA and RootLens deep dives still have open figures.",null,"roadmap"],
+   ["i","White space in P2, P4, P7, P8, P9","Candidates to reuse from HQ or co-build. Bring them to the quadrant discussion.",null,"sites"]
+  ];
+  var SEVN={c:"Critical",h:"High",m:"Medium",i:"Info"};
+  $("#att").innerHTML=A.map(function(a){return '<li><span class="sev sev-'+a[0]+'">'+SEVN[a[0]]+'</span><div><b>'+fillify(a[1])+'</b><p>'+fillify(a[2])+' '+
+    (a[3]?'<button class="link" data-open="'+a[3]+'" type="button">Open</button>':'<button class="link" data-go="'+a[4]+'" type="button">View</button>')+'</p></div></li>'}).join("");
+
+  var cnt=PH.map(function(_,i){return SOL.filter(function(s){return s.ph.indexOf(i+1)>=0}).length});
+  var mx=Math.max.apply(null,cnt);
+  $("#phbars").innerHTML=cnt.map(function(c){return '<div class="cb"><span>'+c+'</span><div class="cbf'+(c?"":" zero")+'" style="height:'+(c/mx*100)+'%;'+(c>=3?"background:var(--warn)":"")+'"></div></div>'}).join("");
+  $("#phlbl").innerHTML=PH.map(function(p,i){return '<span title="'+p+'">P'+(i+1)+'</span>'}).join("");
+
+  var TT=[["Decode a host log",142],["Triage failed runs",118],["Review a merge request",96],["Find coverage gaps",61],["Generate tests from a spec",54],["Reserve a lab rig",40]];
+  $("#topTasks").innerHTML=TT.map(function(t){return '<div class="bar"><span>'+t[0]+'</span><div class="bt"><div class="bf" style="width:'+(t[1]/142*100)+'%"></div></div><span class="bv">'+t[1]+'</span></div>'}).join("");
+  var mixMax=0,mix=TYPES.slice(1).map(function(t){var n=ASSETS.filter(function(a){return a.type===t[0]}).length;mixMax=Math.max(mixMax,n);return [t[1],n]});
+  $("#assetMix").innerHTML=mix.map(function(m){return '<div class="bar"><span>'+m[0]+'</span><div class="bt"><div class="bf" style="width:'+(m[1]/mixMax*100)+'%;background:var(--lb)"></div></div><span class="bv">'+m[1]+'</span></div>'}).join("");
+}
+function solCard(s){
+  return '<button class="solc" type="button" data-open="'+s.id+'"><div class="solc-t"><b>'+esc(s.name)+'</b>'+pill(s.st)+'</div><p>'+esc(s.tag)+'</p>'+
+   '<div class="meta"><span class="mono">'+phText(s)+'</span><span>·</span>'+benchLabel(s)+'</div></button>';
+}
+function phText(s){var p=s.ph.concat(s.sup).sort(function(a,b){return a-b});if(!p.length)return"";return p.length>4?"P1–P10":p.map(function(x){return"P"+x}).join(" · ")}
+
+/* ---------------- discover ---------------- */
+var F={type:"all",q:"",ph:"",prod:"",st:"",sort:"reuse"};
+var TASKS=["Decode a host log","Find coverage gaps","Generate tests from a spec","Triage failed runs","Review my merge request","Heal a broken script","Find root cause","Pairwise configs for NVMe-MI + SPDM","Stress UFS with AI workloads","Reserve a lab rig"];
+function renderDiscoverChrome(){
+  $("#taskChips").innerHTML=TASKS.map(function(t){return '<button class="task" type="button" data-task="'+esc(t)+'">'+esc(t)+'</button>'}).join("");
+  $("#fPh").innerHTML='<option value="">All phases</option>'+PH.map(function(p,i){return '<option value="'+(i+1)+'">P'+(i+1)+' · '+p+'</option>'}).join("");
+  $("#fProd").innerHTML='<option value="">All products</option>'+PRODS.map(function(p){return '<option>'+p+'</option>'}).join("");
+}
+function match(a,q){
+  if(!q) return 1;
+  var words=q.toLowerCase().replace(/[^a-z0-9.+\- ]/g," ").split(/\s+/).filter(function(w){return w.length>2&&["the","and","for","with","from","find","my","a"].indexOf(w)<0});
+  if(!words.length) return 1;
+  var hay=(a.name+" "+a.tasks+" "+(a.parent?SMAP[a.parent].name:"")).toLowerCase(),sc=0;
+  words.forEach(function(w){var stem=w.replace(/(ing|es|s)$/,"");if(hay.indexOf(stem)>=0)sc++});
+  return sc/words.length;
+}
+function renderCards(){
+  var site=$("#site").value;
+  var base=ASSETS.filter(function(a){
+    return (!F.ph||a.ph.indexOf(+F.ph)>=0)&&(!F.prod||a.prod.indexOf(F.prod)>=0)&&(!F.st||a.st===F.st);
+  });
+  if(site==="HQ"||site==="DSK"){
+    $("#typebar").innerHTML="";
+    $("#resCount").textContent="";
+    $("#cards").innerHTML='<div class="empty" style="grid-column:1/-1"><b>'+(site==="HQ"?"HQ · Korea":"DSK-PE")+' catalog is not federated yet.</b><br>Read-only federation is on the roadmap (Next); HQ agent engines (CAST, WingMate, MAGMA, SOLAR-A, SALT) will appear here with a site badge.<br><button class="btn btn-s" style="margin-top:10px" data-go="sites" type="button">Open global collaboration</button></div>';
+    return;
+  }
+  var scored=base.map(function(a){return {a:a,s:match(a,F.q)}}).filter(function(x){return x.s>=0.5});
+  var counts={all:scored.length};TYPES.forEach(function(t){if(t[0]!=="all")counts[t[0]]=scored.filter(function(x){return x.a.type===t[0]}).length});
+  $("#typebar").innerHTML=TYPES.map(function(t){return '<button class="tb'+(F.type===t[0]?" on":"")+'" type="button" data-type="'+t[0]+'">'+t[1]+'<span class="c">'+counts[t[0]]+'</span></button>'}).join("");
+  var list=scored.filter(function(x){return F.type==="all"||x.a.type===F.type});
+  list.sort(function(x,y){
+    if(F.q&&y.s!==x.s) return y.s-x.s;
+    if(F.sort==="az") return x.a.name.localeCompare(y.a.name);
+    if(F.sort==="status") return STRANK[y.a.st]-STRANK[x.a.st]||y.a.reuse-x.a.reuse;
+    return y.a.reuse-x.a.reuse||(x.a.type==="sol"?-1:1);
+  });
+  $("#resCount").innerHTML=list.length+' of '+ASSETS.length+' assets'+(F.q?' for “'+esc(F.q)+'”':'')+' · reuse counts are <span class="smpk">Sample</span>';
+  $("#cards").innerHTML=list.length?list.map(function(x){return assetCard(x.a)}).join(""):'<div class="empty" style="grid-column:1/-1"><b>Nothing matches yet.</b><br>If no asset does this task, register it so the gap is visible to all three groups.<br><button class="btn btn-p btn-s" style="margin-top:10px" data-reg="new" type="button">Register a new AI asset</button></div>';
+}
+function assetCard(a){
+  if(a.isNew) return '<article class="ac l'+a.lane+'"><div class="ac-h"><span class="ty">'+TYN[a.type]+'</span><span class="pill st-build">In review</span></div><h3>'+esc(a.name)+'</h3><div class="par">New registration · <span class="mono">'+a.regId+'</span>'+(a.parent?' · part of '+esc(SMAP[a.parent].name):'')+'</div><p class="d">'+esc(a.desc)+'</p><div class="chips"><span class="chip mono">'+(a.ph.length?a.ph.map(function(p){return"P"+p}).join(" · "):"—")+'</span><span class="chip">'+esc(a.reg.grp)+'</span></div><div class="ac-f"><div class="surf">'+a.surf.split("").map(function(c){return '<span>'+SURF[c]+'</span>'}).join("")+'</div><button class="btn btn-s" data-open="'+a.id+'" type="button">Details</button></div></article>';
+  var par=a.parent?'<div class="par">Part of <button class="link" data-open="'+a.parent+'" type="button">'+esc(SMAP[a.parent].name)+'</button></div>':'<div class="par">'+esc(LANES[a.lane][0])+'</div>';
+  var ph=a.ph.length>4?"P1–P10":a.ph.map(function(p){return"P"+p}).join(" · ");
+  return '<article class="ac l'+a.lane+'"><div class="ac-h"><span class="ty">'+TYN[a.type]+'</span>'+pill(a.st)+'</div>'+
+   '<h3>'+esc(a.name)+'</h3>'+par+'<p class="d">'+esc(a.desc)+'</p>'+
+   '<div class="chips"><span class="chip mono">'+ph+'</span><span class="chip">Used by '+a.reuse+' of 3 groups</span></div>'+
+   '<div class="ac-f"><div class="surf">'+a.surf.split("").map(function(c){return '<span>'+SURF[c]+'</span>'}).join("")+'</div>'+
+   '<div style="display:flex;gap:6px"><button class="btn btn-s" data-open="'+a.id+'" type="button">Details</button><button class="btn btn-s btn-p" data-use="'+a.id+'" type="button">Use</button></div></div></article>';
+}
+
+/* ---------------- STLC ---------------- */
+function renderSTLC(){
+  var cnt=PH.map(function(_,i){return SOL.filter(function(s){return s.ph.indexOf(i+1)>=0}).length});
+  var h='<thead><tr><th class="n">Solution</th>'+PH.map(function(p,i){return '<th>P'+(i+1)+'<small>'+p+'</small></th>'}).join("")+'</tr></thead><tbody>';
+  SOL.forEach(function(s){
+    h+='<tr class="l'+s.lane+'"><td class="n"><button type="button" data-open="'+s.id+'">'+esc(s.name)+'</button></td>';
+    if(s.id==="ZN"){h+='<td colspan="10"><span class="dot z"></span><div class="small muted" style="margin-top:3px">Every phase: workflows · portal · agents · LLM gateway · knowledge mesh · UTH · LaaS · DSA · Robotics</div></td>'}
+    else PH.forEach(function(_,i){var p=i+1;h+='<td class="'+(cnt[i]>=3?"hot":cnt[i]===0?"gap":"")+'">'+(s.ph.indexOf(p)>=0?'<span class="dot p" title="Primary"></span>':s.sup.indexOf(p)>=0?'<span class="dot s" title="Supporting"></span>':"")+'</td>'});
+    h+='</tr>';
+  });
+  h+='<tr class="tot"><td class="n">Primary count</td>'+cnt.map(function(c){return '<td class="'+(c>=3?"hot":c===0?"gap":"")+'">'+c+'</td>'}).join("")+'</tr></tbody>';
+  $("#mx").innerHTML=h;
+
+  var CAPN=CAPN_G={"1.a":"NL Req Parsing & Classification","1.b":"Feasibility & Quality Analyzer","1.c":"RTM Auto-Gen + Risk Scoring","2.a":"Test Strategy AI Advisor","2.b":"Effort Estimator ML Model","2.c":"Risk Scoring & Plan Generator","3.a":"Scenario + LLM Test Case Gen","3.b":"BDD Writer & Data Synth","3.c":"Script Dev/Review & Coverage","3.d":"AI Code Review Agent","4.a":"IaC Provisioner","4.b":"Env Validator & Drift Detector","4.c":"Access & Security Recommender","5.a":"Test Orchestrator","5.b":"Self-Healing Script Agent","5.c":"Visual AI + Perf Analyzer","6.a":"Defect Classifier & Severity AI","6.b":"Duplicate Detector","6.c":"RCA Analyzer + Pattern Detector","7.a":"Metrics Analytics Intelligence","7.b":"Predictive QA ML Model","7.c":"Auto Report Generator","8.a":"Exit Criteria Evaluator","8.b":"Knowledge Extractor","8.c":"Process Optimizer","9.a":"Release Gate Validator","9.b":"Deployment Verifier","9.c":"Comms Drafter & Rollback","10.a":"Anomaly Detection","10.b":"Customer Feedback Analyzer","10.c":"Hotfix Triage & MLOps"};
+  var owners={};SOL.forEach(function(s){s.cap.forEach(function(c){(owners[c]=owners[c]||[]).push(s)})});
+  $("#capgrid").innerHTML=PH.map(function(p,i){
+    var ids=Object.keys(CAPN).filter(function(k){return k.split(".")[0]===String(i+1)});
+    return '<div class="capph"><h4>P'+(i+1)+' · '+p+'</h4>'+ids.map(function(k){var o=owners[k];
+      if(o) return '<div class="cap has l'+o[0].lane+'"><span class="ci">'+k+'</span>'+esc(CAPN[k])+'<b>'+o.map(function(s){return esc(s.name)+(s.capP?" (proposed)":"")}).join(" · ")+'</b></div>';
+      return '<div class="cap open"><span class="ci">'+k+'</span>'+esc(CAPN[k])+'</div>'}).join("")+'</div>'}).join("");
+}
+
+/* ---------------- flows ---------------- */
+// node: [solutionId|'gate'|'out', title, code]
+var FLOWS=[
+ {id:"fa",name:"Failed regression → defect with root cause",who:"Test engineers · FA engineers",ph:"P5 → P6",st:"Pilot",runs:"212",time:"[__] min",
+  why:"The failure-analysis convergence, as one flow. Each solution does the step it is best at.",
+  n:[["IU","Collect & classify","iuta.triage_failed_run"],["SH","Decode logs, build timeline","shield.decode_host_log"],["IU","De-duplicate & route","iuta.match_duplicate"],["RL","Rank root causes","rootlens.find_similar_failures"],["gate","Engineer confirms RCA","G4 · human approval"],["out","Jira defect + RCA written to graph","jira · rca-kg"]]},
+ {id:"s2t",name:"New spec release → ready-to-run tests",who:"Test architects · test designers",ph:"P1 → P5",st:"Pilot",runs:"9",time:"[__] days",
+  why:"From an NVMe or UFS spec drop to traced, executable tests, with coverage checked before scripts are written.",
+  n:[["SS","Extract requirements","specspark.extract_requirements"],["CT","T-way arrays for MI / SPDM clusters","ct.generate_tway"],["SS","Design scenarios & cases","specspark.design_tests"],["gate","Architect approves at 100% coverage","G4 · human approval"],["CS","Trace & coverage gate","coversight.find_coverage_gaps"],["KZ","Generate, run & heal scripts","kaizen.run · uth-mcp"],["RS","Review on merge request","reviewshield.review_mr"]]},
+ {id:"cov",name:"Coverage gap closure",who:"Test owners per product line",ph:"P3 → P7",st:"Pilot",runs:"34",time:"[__] h",
+  why:"Keeps the RTM current: every gap becomes a reviewed pull request, and coverage is re-mapped on merge.",
+  n:[["CS","Map requirements to tests","coversight.map_coverage"],["CS","Generate scenario + script PR","coversight.close_gap"],["RS","AI review of the PR","reviewshield.review_mr"],["gate","Owner merges","G4 · human approval"],["CS","Re-verify and update RTM","coversight.reverify"]]},
+ {id:"f2l",name:"Field failure → lab repro → verified fix",who:"FA, customer quality, release",ph:"P10 → P6 → P9",st:"Planned",runs:"—",time:"—",
+  why:"The H3 closed loop. Zion reproduces the field event in the lab before a fix is approved.",
+  n:[["SH","Decode field logs","shield.decode_host_log"],["RL","Recall similar failures","rootlens.find_similar_failures"],["ZN","Plan repro, reserve rig, power-cycle","uth-mcp · laas-mcp · robotics-mcp"],["KZ","Run repro script","kaizen.run"],["RL","Confirm root cause","rootlens.rank_hypotheses"],["gate","Release board: fix Go / No-Go","G4 · human approval"]]},
+ {id:"ufs",name:"Next-gen UFS stress & triage",who:"UFS validation",ph:"P5 → P6",st:"Build",runs:"[__]",time:"nightly",
+  why:"Real on-device AI workloads stress UFS overnight; anomalies are triaged before the morning stand-up.",
+  n:[["UF","Run AI workload profiles","ufsforge.run_ai_workload"],["ZN","DSA anomaly detection","dsa.predict_anomaly"],["SH","Correlate host logs","shield.decode_host_log"],["IU","Triage & route","iuta.triage_failed_run"],["out","Morning triage report","zion portal"]]}
+];
+function renderFlows(){
+  $("#flowList").innerHTML=FLOWS.map(function(f){
+    var nodes=f.n.map(function(n,i){
+      var cls,lab;
+      if(n[0]==="gate"){cls="node gate";lab="Human gate"}else if(n[0]==="out"){cls="node out";lab="Output"}else{var s=SMAP[n[0]];cls="node l"+s.lane;lab=s.name}
+      return (i?'<div class="arr" aria-hidden="true">→</div>':"")+'<div class="'+cls+'"><span class="ns">'+esc(lab)+'</span><b>'+esc(n[1])+'</b><code>'+esc(n[2])+'</code></div>'}).join("");
+    return '<div class="flow"><div class="flow-h"><div><h3>'+esc(f.name)+'</h3><p>'+esc(f.why)+'</p></div>'+
+      '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'+pill(f.st)+'<span class="chip mono">'+f.ph+'</span><button class="btn btn-s btn-p" data-flow="'+f.id+'" type="button">Launch flow</button></div></div>'+
+      '<div class="chain">'+nodes+'</div>'+
+      '<div class="small muted">For '+esc(f.who)+' · runs this month <span class="smp">'+fillify(f.runs)+'</span> · typical time '+fillify(f.time)+'</div></div>'}).join("");
+}
+
+/* ---------------- onboarding ---------------- */
+var KCOLS=[["Registered","G1"],["Duplicate check","G1"],["Contract & SSO","G3 · G4"],["Zion integration","LLM gw · MCP"],["Listed in catalog","G6"],["Benchmark","G2 · G5"],["Certified tier","Tier 1–2"]];
+var KCARDS=[
+ [0,"UART trace parser","grp2 · new submission","ZN",true],
+ [1,"NVMe Error-Log Summarizer","grp3 · 86% match with SHIELD","SH",true],
+ [2,"CoverSight","Golden prompts v2 · moving to gateway","CS"],[2,"Combinatorial Testing","Contract for t-way skill","CT"],[2,"UFS Forge","Device-farm access via LaaS","UF"],
+ [3,"SpecSpark","Pilot on UTH and QEMU","SS"],[3,"KAIzen","Heal approvals via G4","KZ"],[3,"SHIELD","Becoming shared log parser","SH"],[3,"iUTA","Shared failure taxonomy","IU"],
+ [4,"RootLens","RCA graph live · golden set L3-6.c in prep","RL"],[4,"Zion","Execution substrate","ZN"],
+ [5,"Review Shield","R1 · 49.2 · 2 of 6 gates","RS"]
+];
+function renderKan(){
+  $("#kan").innerHTML=KCOLS.map(function(c,i){var cs=KCARDS.filter(function(k){return k[0]===i});
+    return '<div class="kcol"><h4>'+c[0]+'<span>'+cs.length+'</span></h4><div class="kg">'+c[1]+'</div>'+
+      (cs.length?cs.map(function(k){var s=SMAP[k[3]];return '<button class="kc l'+s.lane+'" type="button" data-open="'+(k[5]||(k[4]?"":k[3]))+'"><b>'+esc(k[1])+'</b><span>'+esc(k[2])+'</span></button>'}).join(""):'<div class="small muted" style="padding:6px">None yet</div>')+'</div>'}).join("");
+}
+
+/* ---------------- value ---------------- */
+function renderValue(){
+  var V=[["Engineer-hours saved","~214",'<small>/ mo</small>',"Review Shield measured",'<span class="real">Real</span>'],
+   ["Review effort saved","97.7%","","per MR vs manual review",'<span class="real">Real</span>'],
+   ["Reuse rate across groups","38%","","assets used by 2+ groups",'<span class="smpk">Sample</span>'],
+   ["Accept-without-edit","[__]","","not yet tracked",'<span class="muted small">On roadmap · Now</span>'],
+   ["Tier-1 certified functions","0","","target [__] per review cycle",'<span class="real">Real</span>'],
+   ["Instrumented solutions","1","<small>/ 10</small>","value reported automatically",'<span class="real">Real</span>']];
+  $("#vkpis").innerHTML=V.map(function(k){return '<div class="kpi"><div class="kl">'+k[0]+'</div><div class="kval">'+fillify(k[1])+' '+k[2]+'</div><div class="kn">'+fillify(k[3])+'</div><div class="kt">'+k[4]+'</div></div>'}).join("");
+  var L=[["t1","Tier 1 · Certified","≥ 85","Sol PE standard; others adopt and contribute",0],["t2","Tier 2 · Conditional","75–84","Preferred base; merge strengths, re-benchmark",0],["t3","Tier 3 · Group-local","60–74","Usable in its own group only",0],["t4","Tier 4 · Rework","45–59","Fix gaps before reuse",0],["t5","Not eligible","gate fail or < 45","Review Shield (49.2, 4 gates open)",1],["","Not yet benchmarked","—","9 solutions; golden sets in preparation",9]];
+  $("#ladder").innerHTML=L.map(function(r){return '<div class="rung"><b class="'+r[0]+'">'+r[1]+'</b><span class="mono small muted rx">'+r[2]+'</span><span class="small muted rt">'+r[3]+'</span><span class="rc '+r[0]+'">'+r[4]+'</span></div>'}).join("");
+  var D=[["D1 Functional efficacy",31.8,30],["D2 Reuse & genericity",66.7,20],["D3 Scale & performance",52.1,15],["D4 Reliability & trust",44.0,10],["D5 Business value",50.0,15],["D6 Governance",65.7,10]];
+  $("#rsDims").innerHTML=D.map(function(d){return '<div class="dim"><span>'+d[0]+' <span class="muted mono" style="font-size:10.5px">'+d[2]+'%</span></span><div class="bt"><i style="width:'+d[1]+'%"></i></div><span class="num" style="text-align:right;font-weight:600">'+d[1].toFixed(1)+'</span></div>'}).join("");
+  $("#rsGates").innerHTML=SMAP.RS.bench.g.map(function(g,i){return '<span class="gt '+(g?"y":"n")+'">G'+(i+1)+(g?" ✓":" ✗")+'</span>'}).join("");
+  $("#hrs").innerHTML=SOL.filter(function(s){return s.id!=="ZN"}).map(function(s){return s.hrs?'<div class="bar"><span>'+s.name+'</span><div class="bt"><div class="bf" style="width:100%;background:var(--lb)"></div></div><span class="bv">'+s.hrs+'</span></div>':'<div class="bar"><span>'+s.name+'</span><div class="bt"><div class="bf hatch" style="width:100%"></div></div><span class="bv"><span class="fill">[__]</span></span></div>'}).join("");
+  var Q={SS:"Next",CS:"Next",IU:"Next",RL:"Later",KZ:"Later",RS:"Now (R2)",SH:"Later",CT:"—",UF:"—"};
+  $("#bcal").innerHTML='<tr><th>Solution</th><th>Golden set</th><th>Last round</th><th>Next</th></tr>'+SOL.filter(function(s){return s.id!=="ZN"}).map(function(s){return '<tr><td><button class="link" data-open="'+s.id+'" type="button">'+esc(s.name)+'</button></td><td>'+esc(s.gold)+'</td><td>'+(s.bench?s.bench.round+" · "+s.bench.c:'<span class="muted">—</span>')+'</td><td class="mono">'+Q[s.id]+'</td></tr>'}).join("");
+  var SV=["LLM gateway","UTH","LaaS","DSA","Knowledge graph","Log parser","Golden set & harness"];
+  var U2={SS:["y","y","y","","y","","o"],CT:["","y","y","","","","o"],CS:["y","","","","y","","o"],RS:["o","","","","y","","o"],KZ:["y","y","y","","","o","o"],UF:["","","o","y","","","o"],SH:["y","","","o","","y","o"],IU:["","y","","y","","o","o"],RL:["","","","y","y","o","o"]};
+  $("#svcmx").innerHTML='<tr><th>Solution</th>'+SV.map(function(s){return '<th class="c">'+s+'</th>'}).join("")+'</tr>'+Object.keys(U2).map(function(k){return '<tr><td><b>'+SMAP[k].name+'</b></td>'+U2[k].map(function(v){return '<td class="c">'+(v==="y"?'<span class="svc-y" title="Uses today">●</span>':v==="o"?'<span class="svc-p" title="Planned">○</span>':'<span class="muted">·</span>')+'</td>'}).join("")+'</tr>'}).join("");
+}
+
+/* ---------------- sites ---------------- */
+var SITES=[
+ ["SSIR · Bengaluru","Sol PE India · home site","st-live","Live","10 solutions and "+(ASSETS.length-10)+" reusable assets registered","Hosts the hub, the registry and the L3 benchmark"],
+ ["HQ · Korea","Sol PE headquarters","st-pilot","Alignment in progress","7-layer agent map: CAST, WingMate, MAGMA, SOLAR-A, SALT","Read-only catalog federation on the roadmap (Next)"],
+ ["DSK-PE","Partner PE site","st-planned","Proposed","Joint kick-off on the 7-layer AI architecture held","Shared QA initiatives: spec-to-test, RL-based workload generation"]
+];
+var QUADS=[
+ ["q1","Offer to HQ","Package and share; HQ reuses on its products.",["Review Shield","CoverSight","Combinatorial Testing"],"Sol PE has it · HQ does not"],
+ ["q2","Benchmark & converge","Run both on one golden set; the stronger becomes the shared standard.",["Test generation","Failure analysis"],"Both have it"],
+ ["q3","Co-develop","Build once, jointly, on shared services.",["Golden sets","Log parser","Field → lab closed loop"],"Neither has it"],
+ ["q4","Reuse from HQ","Adopt HQ's function; Sol PE adds memory-product packs.",["Test planning","Env setup","Reporting & closure","Release gate"],"HQ has it · Sol PE does not"]
+];
+var JB=[
+ ["Review Shield for HQ repositories","Offer to HQ","Review Shield","L3-3.d · Tier 1"],
+ ["CoverSight as coverage standard","Offer to HQ","CoverSight","L3-1.c"],
+ ["Cross-spec combinatorial model","Offer to HQ","Combinatorial Testing","—"],
+ ["Test generation: SpecSpark vs HQ engine","Benchmark & converge","Test generation","L3-3.a"],
+ ["Failure analysis: SHIELD · iUTA · RootLens vs HQ","Benchmark & converge","Failure analysis","L3-6.a · 6.b · 6.c"],
+ ["Shared golden sets for all L3 capabilities","Co-develop","Golden sets","All"],
+ ["Shared log parser and failure signatures","Co-develop","Log parser","—"],
+ ["Field → lab → fix closed loop","Co-develop","Field → lab closed loop","L3-10.a"],
+ ["Test strategy, estimation and planning (P2)","Reuse from HQ","Test planning","L3-2.a–2.c"],
+ ["Environment provisioning and drift (P4)","Reuse from HQ","Env setup","L3-4.a–4.c"],
+ ["Reporting, exit criteria, knowledge (P7–P8)","Reuse from HQ","Reporting & closure","L3-7.x · 8.x"],
+ ["Release gate validation (P9)","Reuse from HQ","Release gate","L3-9.a"]
+];
+var jbFilter=null;
+function renderSites(){
+  $("#siteList").innerHTML=SITES.map(function(s){return '<div class="site"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3>'+s[0]+'</h3><span class="pill '+s[2]+'">'+s[3]+'</span></div><div class="loc">'+s[1]+'</div><p class="small">'+esc(s[4])+'</p><p class="small muted">'+esc(s[5])+'</p></div>'}).join("")+
+    '<button class="site add" type="button" id="addSite"><b>+ Add a Sol PE site</b><span class="small">Name, AI lead, and catalog to federate</span></button>';
+  $("#quad").innerHTML='<div class="qh corner"></div><div class="qh">HQ does not have it</div><div class="qh">HQ has it</div>'+
+    '<div class="qh row">Sol PE has it</div>'+qc(QUADS[0])+qc(QUADS[1])+
+    '<div class="qh row">Sol PE does not</div>'+qc(QUADS[2])+qc(QUADS[3]);
+  renderJB();
+}
+function qc(q){return '<div class="qc '+q[0]+'"><h4>'+q[1]+'</h4><p>'+q[2]+'</p><div class="chips">'+q[3].map(function(c){return '<button class="task" type="button" data-jb="'+esc(c)+'">'+esc(c)+'</button>'}).join("")+'</div></div>'}
+function renderJB(){
+  var rows=JB.filter(function(r){return !jbFilter||r[2]===jbFilter});
+  $("#jbNote").textContent=jbFilter?("Filtered to: "+jbFilter):"Candidate items for cross-site work, ready for owners and dates";
+  $("#jb").innerHTML='<tr><th>Item</th><th>Quadrant</th><th>Sol PE owner</th><th>Partner owner</th><th>Target date</th><th>L3 benchmark target</th><th>Status</th></tr>'+
+   rows.map(function(r){return '<tr><td><b>'+esc(r[0])+'</b></td><td>'+esc(r[1])+'</td><td><span class="fill">[owner]</span></td><td><span class="fill">[HQ owner]</span></td><td><span class="fill">[date]</span></td><td class="mono small">'+esc(r[3])+'</td><td><span class="pill st-planned">Proposed</span></td></tr>'}).join("");
+}
+
+/* ---------------- platform ---------------- */
+function renderPlatform(){
+  $("#l3blk").innerHTML=SOL.filter(function(s){return s.id!=="ZN"}).map(function(s){return '<button class="blk" style="cursor:pointer" type="button" data-open="'+s.id+'">'+s.name+'</button>'}).join("")+'<span class="blk">Orchestrator</span>';
+  var G=[["G1","Registered in the Zion capability registry before development; duplicate check done.",1],["G2","Benchmarked on the shared golden set with a reproducible harness.",0],["G3","Customer specs, logs and telemetry only through the on-prem LLM gateway.",1],["G4","Human approval for irreversible actions: closing defects, access, release Go, committing healed scripts.",1],["G5","Every D1 efficacy KPI at or above its floor.",0],["G6","Documentation pack: README, I/O contract, model card, runbook, benchmark report.",0]];
+  $("#gatesList").innerHTML=G.map(function(g){return '<li style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;align-items:start"><span class="gt '+(g[2]?"y":"n")+'">'+g[0]+'</span><span class="small">'+g[1]+'<br><span class="muted">Review Shield: '+(g[2]?"pass":"open")+'</span></span></li>'}).join("");
+}
+
+/* ---------------- roadmap ---------------- */
+function renderRoadmap(){
+  var R=[
+   ["Recently delivered","done",[["s","Ten AI solutions live or in pilot across the STLC"],["s","Review Shield live on Bitbucket with ~2-min reviews"],["p","L3 benchmark defined; first round run on Review Shield"],["z","Zion architecture: 10 phases, 76 activities, 15 components"]]],
+   ["Now","this quarter",[["p","Catalog and registry live: every solution plus its reusable assets"],["p","Register-before-build (G1) enforced for all three groups"],["p","Value instrumented for every solution"],["z","H1: agent runtime, LLM gateway, knowledge mesh; MVP by day 90"],["s","Review Shield prompt v2 and seeded-defect golden set; benchmark R2"]]],
+   ["Next","1–2 quarters",[["p","Task flows live: failure-analysis chain, spec → tests, coverage closure"],["p","Chat and IDE surfaces on one Zion sign-on"],["s","Benchmark rounds: SpecSpark (3.a), CoverSight (1.c), iUTA (6.a, 6.b)"],["h","Partner-site alignment: maps shared, quadrants agreed, joint backlog owners"],["h","Read-only catalog federation with HQ; DSK-PE after"]]],
+   ["Later","2–4 quarters",[["z","H2: zero-touch execution and AI defect intelligence in shadow mode"],["s","KAIzen + SpecSpark converge into one L3-5.b agent; SHIELD as shared log parser"],["p","First Tier-1 functions published as Sol PE standards and shared across sites"],["z","H3: field → lab → fix closed loop; all six product lines on Zion"]]]
+  ];
+  var TN={p:"Platform",z:"Zion",s:"Solution",h:"HQ"};
+  $("#rm").innerHTML=R.map(function(q){return '<div class="q'+(q[1]==="done"?" qdone":"")+'"><h3>'+q[0]+' <small>'+(q[1]==="done"?"":q[1])+'</small></h3><ul class="clean">'+q[2].map(function(m){return '<li class="ms"><i class="'+m[0]+'">'+TN[m[0]]+'</i><span>'+esc(m[1])+'</span></li>'}).join("")+'</ul></div>'}).join("");
+  $("#soltgt").innerHTML='<tr><th>Solution</th><th>Next steps</th><th>Targets</th></tr>'+SOL.map(function(s){return '<tr><td><button class="link" data-open="'+s.id+'" type="button">'+esc(s.name)+'</button><div>'+pill(s.st)+'</div></td><td><ul class="dots">'+s.nxt.map(function(x){return '<li>'+fillify(x)+'</li>'}).join("")+'</ul></td><td>'+s.tg.map(function(t){return '<div><b class="num">'+fillify(t[0])+'</b> <span class="muted">'+esc(t[1])+'</span></div>'}).join("")+'</td></tr>'}).join("");
+}
+
+/* ---------------- drawer ---------------- */
+var lastFocus=null;
+function openDrawer(id){
+  var a=AMAP[id]; if(!a) return;
+  lastFocus=document.activeElement;
+  if(a.isNew){openNewDrawer(a);return}
+  var s=a.type==="sol"?SMAP[id]:null, p=a.parent?SMAP[a.parent]:null, host=s||p;
+  var html='<div class="scrim" data-close="1"></div><aside class="drawer l'+a.lane+'" role="dialog" aria-modal="true" aria-labelledby="dTitle">'+
+   '<div class="dh"><button class="btn btn-s dclose" data-close="1" type="button" aria-label="Close">Close</button>'+
+   '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="ty">'+TYN[a.type]+'</span>'+pill(a.st)+(p?'<span class="small muted">Part of <button class="link" data-open="'+p.id+'" type="button">'+esc(p.name)+'</button></span>':'')+'</div>'+
+   '<h2 id="dTitle">'+esc(a.name)+'</h2><p class="small" style="color:var(--ink2)">'+esc(a.desc)+'</p>'+
+   '<div class="dact"><button class="btn btn-p btn-s" data-use="'+a.id+'" type="button">Use</button><button class="btn btn-s" data-act="fork" type="button">Adapt for my product line</button><button class="btn btn-s" data-act="collab" type="button">Request collaboration</button><button class="btn btn-s" data-act="issue" type="button">Report an issue</button></div></div><div class="db">';
+  if(s){
+    html+='<div class="ds"><h4>At a glance</h4><dl class="kv"><dt>Stage</dt><dd>'+LANES[s.lane][0]+' · '+phText(s)+'</dd><dt>Specs</dt><dd>'+esc(s.spec)+'</dd><dt>Products</dt><dd>'+esc(s.prod.join(" · "))+(s.smpP?' <span class="smpk">Sample</span>':'')+'</dd><dt>Runs on Zion</dt><dd>'+esc(s.zion)+'</dd><dt>Owner</dt><dd>'+grpLabel(s)+'</dd><dt>L3 capability</dt><dd class="mono">'+(s.cap.length?s.cap.join(" · ")+(s.capP?" (proposed)":""):"—")+'</dd><dt>Benchmark</dt><dd>'+benchLabel(s)+'</dd></dl></div>';
+    if(s.bench) html+='<div class="ds"><h4>Gates</h4><div class="gates">'+s.bench.g.map(function(g,i){return '<span class="gt '+(g?"y":"n")+'">G'+(i+1)+(g?" ✓":" ✗")+'</span>'}).join("")+'</div></div>';
+    html+='<div class="ds"><h4>How it works</h4><ol class="how" style="padding:0;margin:0">'+s.how.map(function(h){return '<li><span><b>'+esc(h[0])+'.</b> '+esc(h[1])+'</span></li>'}).join("")+'</ol></div>';
+    html+='<div class="ds"><h4>Current state</h4><ul class="dots small">'+s.now.map(function(x){return '<li>'+fillify(x)+'</li>'}).join("")+'</ul></div>';
+    html+='<div class="ds"><h4>Next steps</h4><ul class="dots small">'+s.nxt.map(function(x){return '<li>'+fillify(x)+'</li>'}).join("")+'</ul></div>';
+    html+='<div class="ds"><h4>Targets</h4><div class="tgts">'+s.tg.map(function(t){return '<div class="tg"><b>'+fillify(t[0])+'</b><span>'+esc(t[1])+'</span></div>'}).join("")+'</div></div>';
+    var kids=ASSETS.filter(function(x){return x.parent===s.id});
+    if(kids.length) html+='<div class="ds"><h4>Reusable parts ('+kids.length+')</h4><div class="chips">'+kids.map(function(k){return '<button class="task" type="button" data-open="'+k.id+'">'+esc(TYN[k.type])+': '+esc(k.name)+'</button>'}).join("")+'</div></div>';
+  } else {
+    var ph=a.ph.length>4?"P1–P10":a.ph.map(function(x){return"P"+x}).join(" · ");
+    var call=a.id.replace(/^(sk|tl|lg|pp|ds)\./,(p?p.name.toLowerCase().replace(/[^a-z]/g,""):"zion")+".");
+    html+='<div class="ds"><h4>At a glance</h4><dl class="kv"><dt>STLC</dt><dd class="mono">'+ph+'</dd><dt>Products</dt><dd>'+esc(a.prod.join(" · "))+'</dd><dt>Owner</dt><dd>'+grpLabel(p)+'</dd><dt>Used by</dt><dd><span class="smp">'+a.reuse+' of 3 groups</span></dd><dt>Benchmark</dt><dd>Inherits from '+esc(p.name)+' · '+benchLabel(p)+'</dd></dl></div>';
+    html+='<div class="ds"><h4>Use it</h4><div class="surfaces" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">'+a.surf.split("").map(function(c){
+      var ex={P:"zion/ai/assets/"+a.id,C:"@"+p.name.toLowerCase().replace(/[^a-z]/g,"")+" "+a.name.toLowerCase(),I:"> Sol PE: "+a.name,A:"POST /v1/skills/"+call,M:"tool: "+call}[c];
+      return '<div class="sf"><b>'+SURF[c]+'</b><code>'+esc(ex)+'</code></div>'}).join("")+'</div></div>';
+    html+='<div class="ds"><h4>Contract</h4><dl class="kv"><dt>Version</dt><dd class="mono">'+(a.st==="Live"?"1.x":a.st==="Pilot"?"0.x":"—")+' · SemVer</dd><dt>Access</dt><dd>Zion SSO · RBAC</dd><dt>Model route</dt><dd>Zion LLM gateway (on-prem)</dd><dt>Docs</dt><dd>README · I/O contract · runbook</dd></dl></div>';
+    var sib=ASSETS.filter(function(x){return x.parent===a.parent&&x.id!==a.id}).slice(0,6);
+    if(sib.length) html+='<div class="ds"><h4>Also in '+esc(p.name)+'</h4><div class="chips">'+sib.map(function(k){return '<button class="task" type="button" data-open="'+k.id+'">'+esc(k.name)+'</button>'}).join("")+'</div></div>';
+  }
+  html+='</div></aside>';
+  $("#drawerRoot").innerHTML=html;
+  var c=$(".dclose"); if(c) c.focus();
+}
+function closeDrawer(){$("#drawerRoot").innerHTML="";if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+
+/* ---------------- register AI asset (modal) ---------------- */
+var RSTEPS=[
+ ["Basics","Name, type, the task it does","G1"],
+ ["Ownership & scope","Owner, site, STLC, products","G1"],
+ ["Interface & access","Where and how engineers use it","Contract"],
+ ["Data & governance","Model route, data, approvals","G3 · G4"],
+ ["Benchmark & docs","Golden set, baseline, docs","G2 · G5 · G6"],
+ ["Review & submit","Duplicate decision, submit","G1"]
+];
+var ATYPES=[["sol","Solution","End-to-end product with its own UI or pipeline"],["agent","Agent","Reasoning component inside a solution"],["skill","Skill","One callable task, e.g. decode a host log"],["prompt","Prompt pack","Versioned prompts or system prompts"],["logic","Analysis logic","Rules, parsers, heuristics, taxonomies"],["tool","Tool · MCP","Connector or MCP server to a system"],["data","Data · knowledge","Golden set, knowledge graph, dataset"]];
+var RSTAT=["Idea / planned","Build","Pilot","Live"];
+var RSITES=["SSIR · Bengaluru","HQ · Korea","DSK-PE","Other site"];
+var RGRPS=["grp1","grp2","grp3","Sol PE platform"];
+var RSPECS=["NVMe","SATA","UFS","eMMC","NVMe-MI","OAM","OCP","SPDM","PLDM","MCTP","TCG"];
+var RSURF=[["P","Zion portal"],["C","Chat assistant"],["I","IDE (VS Code)"],["Z","Zion console (UTH / LaaS)"],["A","API"],["M","MCP tool"]];
+var RDEPS=["LLM gateway","Embedding service","Log parser","Rule engine","Knowledge graph","UTH-MCP","LaaS-MCP","Robotics-MCP","DSA Insights","Golden set harness"];
+var RDATA=["Customer logs","Confidential specs","Telemetry","Source code","Defect records","No customer data"];
+var RIRREV=["Opens, links or closes defects","Commits or merges code","Changes lab or device state","Grants access","None"];
+var RGOLD=["L3-1.c (RTM / coverage)","L3-3.a (test generation)","L3-3.d (code review)","L3-5.b (self-healing)","L3-6.a / 6.b (triage)","L3-6.c (RCA)","Propose a new golden set","Not decided yet"];
+var regStep=0, regErr={}, regDone=null, regCount=0, regDupCache=[];
+function regBlank(){return {name:"",type:"",parent:"",task:"",kw:[],status:"",grp:"",site:"",owner:"",email:"",champ:"",channel:"",prim:[],supp:[],cap:"",prods:[],specs:[],surf:[],contract:"",contractUrl:"",repo:"",ver:"0.1.0",inp:"",out:"",deps:[],audience:"All Sol PE sites",route:"",models:"",dclass:[],ret:"",irrev:[],hgAck:false,redact:true,attest:false,gold:"",baseline:"",hrs:"",users:"",readme:"",io:"",card:"",runbook:"",listDate:"",dupDecision:"",dupTarget:"",justify:""}}
+var REG=regBlank();
+try{var dr=localStorage.getItem("wf7.regDraft");if(dr){var o=JSON.parse(dr);for(var k in o)if(k in REG)REG[k]=o[k]}}catch(e){}
+function regExample(){var r=regBlank();
+  r.name="NVMe Error-Log Summarizer";r.type="skill";r.task="Reads an NVMe Error Information log and host dmesg, and writes a plain-language summary of the failure with likely causes.";r.kw=["nvme error log","dmesg","failure summary"];r.status="Build";
+  r.grp="grp3";r.site="SSIR · Bengaluru";r.owner="[owner name]";r.email="[owner]@samsung.com";r.champ="[grp3 AI champion]";r.channel="#solpe-grp3-ai";r.prim=[6];r.supp=[5];r.cap="6.c";r.prods=["Client SSD","Enterprise SSD","DC SSD"];r.specs=["NVMe"];
+  r.surf=["P","C","A","M"];r.contract="OpenAPI 3.1 + JSON Schema";r.repo="sol-pe/nvme-errlog-summarizer";r.inp="NVMe Error Information log page (binary or JSON), host dmesg text";r.out="Summary markdown, likely causes with evidence lines, failure category";r.deps=["LLM gateway","Log parser"];
+  r.route="Zion LLM gateway (on-prem)";r.models="Gateway default code model";r.dclass=["Customer logs","Defect records"];r.ret="30 days, then purge inputs";r.irrev=["Opens, links or closes defects"];r.hgAck=true;r.attest=true;
+  r.gold="L3-6.c (RCA)";r.baseline="[__] min per failure by hand";r.hrs="40";r.users="25";r.readme="sol-pe/nvme-errlog-summarizer/README.md";return r}
+function regHasContent(){return !!(REG.name||REG.task||REG.type)}
+
+/* field builders */
+function fe(id){return regErr[id]?'<span class="err" id="e_'+id+'">'+esc(regErr[id])+'</span>':''}
+function inv(id){return regErr[id]?' aria-invalid="true" aria-describedby="e_'+id+'"':''}
+function fText(id,label,o){o=o||{};return '<div class="f'+(o.full?" full":"")+'"><label for="r_'+id+'"'+(o.req?' class="req"':'')+'>'+label+'</label><input class="inp'+(o.mono?" mono":"")+'" id="r_'+id+'" data-f="'+id+'" type="'+(o.type||"text")+'" value="'+esc(REG[id])+'" placeholder="'+esc(o.ph||"")+'"'+(o.max?' maxlength="'+o.max+'"':'')+inv(id)+'>'+(o.hint?'<span class="hint">'+o.hint+'</span>':'')+fe(id)+'</div>'}
+function fArea(id,label,o){o=o||{};return '<div class="f full"><label for="r_'+id+'"'+(o.req?' class="req"':'')+'>'+label+'</label><textarea class="inp" rows="'+(o.rows||3)+'" id="r_'+id+'" data-f="'+id+'" placeholder="'+esc(o.ph||"")+'"'+(o.max?' maxlength="'+o.max+'"':'')+inv(id)+'>'+esc(REG[id])+'</textarea><div style="display:flex;justify-content:space-between;gap:8px">'+(o.hint?'<span class="hint">'+o.hint+'</span>':'<span></span>')+(o.max?'<span class="cnt" id="c_'+id+'">'+REG[id].length+' / '+o.max+'</span>':'')+'</div>'+fe(id)+'</div>'}
+function fSel(id,label,opts,o){o=o||{};return '<div class="f'+(o.full?" full":"")+'"><label for="r_'+id+'"'+(o.req?' class="req"':'')+'>'+label+'</label><select id="r_'+id+'" data-f="'+id+'"'+(o.rerender?' data-rr="1"':'')+inv(id)+'><option value="">'+(o.ph||"Select…")+'</option>'+opts.map(function(x){var v=Array.isArray(x)?x[0]:x,t=Array.isArray(x)?x[1]:x;return '<option value="'+esc(v)+'"'+(String(REG[id])===String(v)?" selected":"")+'>'+esc(t)+'</option>'}).join("")+'</select>'+(o.hint?'<span class="hint">'+o.hint+'</span>':'')+fe(id)+'</div>'}
+function fMulti(id,label,opts,o){o=o||{};var cur=REG[id];return '<div class="f full" role="group" aria-labelledby="l_'+id+'"><span class="fl'+(o.req?" req":"")+'" id="l_'+id+'">'+label+'</span><div class="ck" id="r_'+id+'"'+inv(id)+'>'+opts.map(function(x,i){var v=Array.isArray(x)?x[0]:x,t=Array.isArray(x)?x[1]:x;return '<label for="r_'+id+'_'+i+'"><input type="checkbox" id="r_'+id+'_'+i+'" data-m="'+id+'" data-v="'+esc(v)+'"'+(o.num?' data-num="1"':'')+(o.rerender?' data-rr="1"':'')+(cur.map(String).indexOf(String(v))>=0?" checked":"")+'>'+esc(t)+'</label>'}).join("")+'</div>'+(o.hint?'<span class="hint">'+o.hint+'</span>':'')+fe(id)+'</div>'}
+function fTog(id,label,o){o=o||{};return '<div class="f full"><label class="tog" for="r_'+id+'"><input type="checkbox" id="r_'+id+'" data-b="'+id+'"'+(REG[id]?" checked":"")+inv(id)+'><span'+(o.req?' class="req"':'')+'>'+label+'</span></label>'+fe(id)+'</div>'}
+function sec(t,sub,body){return '<div class="fsec"><h4>'+t+(sub?'<span>'+sub+'</span>':'')+'</h4>'+body+'</div>'}
+
+function regStepHTML(){
+  var r=REG,h="";
+  if(regStep===0){
+    h+=sec("What is it?","",'<div class="fgrid">'+fText("name","Asset name",{req:1,ph:"e.g. NVMe Error-Log Summarizer",max:80,full:1,hint:"Name it so an engineer recognises it. Avoid internal codenames only you use."})+'</div>'+
+      '<div class="f full" role="radiogroup" aria-labelledby="l_type"><span class="fl req" id="l_type">Asset type</span><div class="tcards" id="r_type"'+inv("type")+'>'+ATYPES.map(function(t,i){return '<label class="tcard" for="r_type_'+i+'"><input type="radio" name="rtype" id="r_type_'+i+'" data-f="type" data-rr="1" value="'+t[0]+'"'+(r.type===t[0]?" checked":"")+'><b>'+t[1]+'</b><span>'+t[2]+'</span></label>'}).join("")+'</div>'+fe("type")+'</div>'+
+      (r.type&&r.type!=="sol"?'<div class="fgrid">'+fSel("parent","Part of an existing solution",SOL.map(function(s){return [s.id,s.name]}),{ph:"Standalone (not part of a solution)",hint:"Linking it makes it show under that solution in the catalog."})+'</div>':''));
+    h+=sec("What does it do for an engineer?","drives search and the duplicate check",fArea("task","Task it performs",{req:1,max:300,rows:3,ph:"Start with a verb: “Reads an NVMe error log and summarises the failure with likely causes.”",hint:"At least 20 characters. Write it the way an engineer would search for it."})+
+      '<div class="f full"><label for="r_kwin">Task keywords</label><div class="tagin" id="r_kw">'+r.kw.map(function(k,i){return '<span class="tagx">'+esc(k)+'<button type="button" data-kwx="'+i+'" aria-label="Remove '+esc(k)+'">×</button></span>'}).join("")+'<input id="r_kwin" placeholder="Type a keyword and press Enter" autocomplete="off"></div><span class="hint">Up to 8. Terms engineers use: protocol names, log types, commands.</span></div>'+
+      '<div class="fgrid">'+fSel("status","Current status",RSTAT,{req:1})+'</div>');
+  }
+  if(regStep===1){
+    h+=sec("Ownership","who answers questions about it",'<div class="fgrid">'+fSel("grp","Owner group",RGRPS,{req:1})+fSel("site","Site",RSITES,{req:1})+fText("owner","Owner name",{req:1,ph:"Full name"})+fText("email","Owner email",{req:1,type:"email",ph:"name@samsung.com"})+fText("champ","AI champion",{ph:"Your group's AI champion",hint:"Reviews the registration first."})+fText("channel","Support channel",{ph:"#channel or mailing list"})+'</div>');
+    h+=sec("Where it fits in the STLC","",fMulti("prim","Primary phases",PH.map(function(p,i){return [i+1,"P"+(i+1)+" "+p]}),{req:1,num:1,rerender:1,hint:"Phases where it does the core work."})+
+      fMulti("supp","Supporting phases",PH.map(function(p,i){return [i+1,"P"+(i+1)+" "+p]}).filter(function(x){return r.prim.indexOf(x[0])<0}),{num:1})+
+      '<div class="fgrid">'+fSel("cap","L3 capability",(function(){var ks=Object.keys(CAPN_G).filter(function(k){return !r.prim.length||r.prim.indexOf(+k.split(".")[0])>=0});return ks.map(function(k){return [k,k+" · "+CAPN_G[k]]}).concat([["new","New capability (not in the L3 list)"]])})(),{ph:r.prim.length?"Select a capability…":"Pick primary phases first",hint:"Benchmark KPIs come from this capability.",full:1})+'</div>');
+    h+=sec("Products and specifications","",fMulti("prods","Product lines",PRODS,{req:1})+fMulti("specs","Specifications",RSPECS,{}));
+  }
+  if(regStep===2){
+    h+=sec("Where engineers can use it","",fMulti("surf","Surfaces",RSURF,{req:1,hint:"All surfaces use one Zion sign-on."})+
+      '<div class="fgrid">'+fSel("audience","Who can use it",["All Sol PE sites","My group only","Selected sites"],{})+'<div class="f"><span class="fl">Access control</span><div class="note">Zion SSO and RBAC. Callers keep their own permissions.</div></div></div>');
+    h+=sec("Contract","versioned input and output",'<div class="fgrid">'+fSel("contract","Contract type",["OpenAPI 3.1 + JSON Schema","MCP tool definition","CLI","UI only (no programmatic access)"],{})+fText("ver","Version",{req:1,mono:1,ph:"0.1.0",hint:"Semantic version: major.minor.patch"})+
+      fText("repo","Source repository",{req:1,mono:1,ph:"sol-pe/your-repo",full:1})+fText("contractUrl","Contract or spec link",{mono:1,ph:"Link to OpenAPI file or MCP schema",full:1})+'</div>'+
+      fArea("inp","Inputs",{rows:2,ph:"What the caller gives it: files, IDs, parameters"})+fArea("out","Outputs",{rows:2,ph:"What it returns: report, labels, script, PR"}));
+    h+=sec("Shared services it uses","",fMulti("deps","Depends on",RDEPS,{hint:"Re-implementing a shared service scores 0 on the D2 reuse KPI."}));
+  }
+  if(regStep===3){
+    h+=sec("Models and data","gate G3",'<div class="fgrid">'+fSel("route","Model route",["Zion LLM gateway (on-prem)","No LLM (rules, ML or heuristics only)"],{req:1,hint:"External or personal LLM endpoints are not allowed."})+fText("models","Models used",{ph:"e.g. gateway default code model"})+'</div>'+
+      fMulti("dclass","Data it touches",RDATA,{})+'<div class="fgrid">'+fSel("ret","Input retention",["30 days, then purge inputs","90 days","Keep for audit (1 year)"],{})+'</div>'+
+      fTog("redact","Redact confidential codenames from generated text")+
+      fTog("attest","I confirm customer specs, logs and telemetry are processed only on-prem through the Zion LLM gateway",{req:1}));
+    var hasIrr=r.irrev.length&&r.irrev.indexOf("None")<0;
+    h+=sec("Irreversible actions","gate G4",fMulti("irrev","Can it do any of these?",RIRREV,{rerender:1})+
+      (hasIrr?'<div class="note warn">Every flow that uses this asset will pause for a human approval before these actions.</div>'+fTog("hgAck","I will keep a human approval step before each of these actions",{req:1}):''));
+  }
+  if(regStep===4){
+    h+=sec("Benchmark","gates G2 and G5",'<div class="fgrid">'+fSel("gold","Golden set",RGOLD,{req:1,hint:"Shared sets keep scores comparable across groups."})+fText("baseline","Manual baseline today",{ph:"e.g. 45 min per failure by hand",hint:"How the task is done without this asset."})+fText("hrs","Expected hours saved / month",{type:"number",ph:"e.g. 40"})+fText("users","Expected monthly users",{type:"number",ph:"e.g. 25"})+'</div>');
+    h+=sec("Documentation pack","gate G6 · needed before listing, not to register",'<div class="fgrid">'+fText("readme","README",{mono:1,ph:"Link"})+fText("io","I/O contract",{mono:1,ph:"Link"})+fText("card","Model card",{mono:1,ph:"Link (if it uses a model)"})+fText("runbook","Runbook",{mono:1,ph:"Link"})+fText("listDate","Target date to be listed",{type:"date"})+'</div>');
+  }
+  if(regStep===5){
+    var d=regDupCache[0];
+    if(d&&d.p>=55){
+      h+=sec("Duplicate decision","gate G1",'<div class="note warn"><b>'+esc(d.a.name)+'</b> ('+TYN[d.a.type]+(d.a.parent?' · '+esc(SMAP[d.a.parent].name):'')+') overlaps '+d.p+'% with this asset. Choose how to proceed.</div>'+
+       '<div class="f full" role="radiogroup" aria-labelledby="l_dd"><span class="fl req" id="l_dd">Decision</span><div class="tcards" id="r_dupDecision"'+inv("dupDecision")+'>'+
+       [["extend","Extend the existing asset","Contribute to "+d.a.name+". The owner co-reviews."],["new","Register as a new asset","The review board decides before work starts."]].map(function(o,i){return '<label class="tcard" for="r_dd_'+i+'"><input type="radio" name="rdd" id="r_dd_'+i+'" data-f="dupDecision" data-rr="1" value="'+o[0]+'"'+(r.dupDecision===o[0]?" checked":"")+'><b>'+o[1]+'</b><span>'+esc(o[2])+'</span></label>'}).join("")+'</div>'+fe("dupDecision")+'</div>'+
+       (r.dupDecision==="new"?fArea("justify","Why a new asset is needed",{req:1,rows:2,max:400,ph:"What the existing asset cannot do, and why extending it is not practical"}):''));
+    } else h+='<div class="note acc">No likely duplicate found in the catalog. You can submit.</div>';
+    h+='<div class="rev">'+regReview()+'</div>';
+  }
+  return h;
+}
+function rv(v){if(Array.isArray(v))v=v.join(", ");return v===""||v==null||v===false?'<dd class="miss">Not given</dd>':'<dd>'+esc(v===true?"Yes":v)+'</dd>'}
+function regReview(){
+  var r=REG,tn=(ATYPES.filter(function(t){return t[0]===r.type})[0]||["",""])[1];
+  var S=[[0,"Basics",[["Name",r.name],["Type",tn],["Part of",r.parent?SMAP[r.parent].name:""],["Task",r.task],["Keywords",r.kw],["Status",r.status]]],
+   [1,"Ownership & scope",[["Owner group",r.grp],["Site",r.site],["Owner",r.owner?r.owner+" · "+r.email:""],["AI champion",r.champ],["Primary phases",r.prim.map(function(p){return"P"+p})],["Supporting",r.supp.map(function(p){return"P"+p})],["L3 capability",r.cap],["Products",r.prods],["Specs",r.specs]]],
+   [2,"Interface & access",[["Surfaces",r.surf.map(function(c){return (RSURF.filter(function(x){return x[0]===c})[0]||["",""])[1]})],["Audience",r.audience],["Contract",r.contract],["Version",r.ver],["Repository",r.repo],["Depends on",r.deps]]],
+   [3,"Data & governance",[["Model route",r.route],["Data touched",r.dclass],["Retention",r.ret],["Irreversible actions",r.irrev],["On-prem attestation",r.attest]]],
+   [4,"Benchmark & docs",[["Golden set",r.gold],["Baseline",r.baseline],["Hours saved / month",r.hrs],["README",r.readme],["Runbook",r.runbook]]]];
+  return S.map(function(x){return '<div class="revs"><h5>'+x[1]+'<button class="link small" type="button" data-rstep="'+x[0]+'">Edit</button></h5><dl>'+x[2].map(function(f){return '<dt>'+f[0]+'</dt>'+rv(f[1])}).join("")+'</dl></div>'}).join("");
+}
+
+/* validation */
+function regValidate(step){
+  var r=REG,e={};
+  if(step===0){ if(r.name.trim().length<3)e.name="Enter a name of at least 3 characters.";
+    if(!r.type)e.type="Choose what kind of asset this is.";
+    if(r.task.trim().length<20)e.task="Describe the task in at least 20 characters so others can find it.";
+    if(!r.status)e.status="Choose the current status."; }
+  if(step===1){ if(!r.grp)e.grp="Choose the owner group."; if(!r.site)e.site="Choose the site.";
+    if(!r.owner.trim())e.owner="Enter the owner's name.";
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(r.email))e.email="Enter a valid email, like name@samsung.com.";
+    if(!r.prim.length)e.prim="Pick at least one primary STLC phase."; if(!r.prods.length)e.prods="Pick at least one product line."; }
+  if(step===2){ if(!r.surf.length)e.surf="Pick at least one place engineers can use it.";
+    if(!r.repo.trim())e.repo="Enter the source repository.";
+    if(!/^\d+\.\d+\.\d+$/.test(r.ver.trim()))e.ver="Use major.minor.patch, for example 0.1.0."; }
+  if(step===3){ if(!r.route)e.route="Choose the model route.";
+    if(!r.attest)e.attest="Confirm on-prem processing to continue.";
+    if(r.irrev.length&&r.irrev.indexOf("None")<0&&!r.hgAck)e.hgAck="Confirm a human approval step for these actions."; }
+  if(step===4){ if(!r.gold)e.gold="Choose a golden set, or “Not decided yet”."; }
+  if(step===5){ var d=regDupCache[0]; if(d&&d.p>=55){ if(!r.dupDecision)e.dupDecision="Choose whether to extend the existing asset or register a new one.";
+    if(r.dupDecision==="new"&&r.justify.trim().length<20)e.justify="Explain in at least 20 characters why a new asset is needed."; } }
+  return e;
+}
+var stepBad={};
+
+/* duplicate scan */
+var STOPW="the and for with from into that this then than are was were has have its which when what who how our your their writes reads using used each also".split(" ");
+function regWords(t){var seen={};return (t||"").toLowerCase().replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(function(w){if(w.length<3||STOPW.indexOf(w)>=0||seen[w])return false;seen[w]=1;return true})}
+function regDupScan(){
+  var q=regWords(REG.name+" "+REG.task+" "+REG.kw.join(" "));
+  if(q.length<3){regDupCache=[];return regDupCache}
+  regDupCache=ASSETS.filter(function(a){return !a.isNew}).map(function(a){
+    var hay=(a.name+" "+a.tasks+" "+a.desc+" "+(a.parent?SMAP[a.parent].name:"")).toLowerCase();
+    var hit=q.filter(function(w){return hay.indexOf(w.length>=5?w.slice(0,5):w)>=0}).length;
+    var sc=hit/q.length*1.6; if(REG.prim.length&&REG.prim.some(function(p){return a.ph.indexOf(p)>=0}))sc+=0.08; if(REG.type&&REG.type===a.type)sc+=0.06;
+    return {a:a,p:Math.min(97,Math.round(sc*100))}}).filter(function(x){return x.p>=30}).sort(function(x,y){return y.p-x.p}).slice(0,4);
+  return regDupCache;
+}
+function regGates(){
+  var r=REG,d=regDupCache[0],irr=r.irrev.length&&r.irrev.indexOf("None")<0;
+  return [["G1","Registered before build, duplicate checked",!!(r.name&&r.task.length>=20&&r.type)&&(!(d&&d.p>=55)||!!r.dupDecision)],
+   ["G2","Golden set chosen",!!r.gold&&r.gold!=="Not decided yet"],
+   ["G3","On-prem model route confirmed",!!r.route&&r.attest],
+   ["G4","Human approval for irreversible actions",!irr||r.hgAck],
+   ["G5","Manual baseline recorded",!!r.baseline.trim()],
+   ["G6","README, I/O contract and runbook linked",!!(r.readme&&r.io&&r.runbook)]];
+}
+function regRequiredPct(){var t=0,ok=0;for(var i=0;i<5;i++){var e=regValidate(i),n={0:4,1:6,2:3,3:2,4:1}[i];t+=n;ok+=n-Math.min(n,Object.keys(e).length)}return Math.round(ok/t*100)}
+function regRail(){
+  var ds=regDupScan(),g=regGates(),pct=regRequiredPct();
+  var h='<div><h4>Required fields</h4><div class="small"><b class="num">'+pct+'%</b> complete</div><div class="prog"><i style="width:'+pct+'%"></i></div></div>';
+  h+='<div><h4>Possible duplicates</h4>'+(ds.length?'<div style="display:flex;flex-direction:column;gap:6px">'+ds.map(function(x){var c=x.p>=55?"hi":x.p>=40?"md":"";return '<div class="dupi '+c+'"><div class="dt"><b>'+esc(x.a.name)+'</b><span class="pc">'+x.p+'%</span></div><span class="sm">'+TYN[x.a.type]+(x.a.parent?' · '+esc(SMAP[x.a.parent].name):'')+' · '+x.a.st+'</span><button class="link small" type="button" data-peek="'+x.a.id+'" style="align-self:flex-start">View in catalog</button></div>'}).join("")+'</div>'+(ds[0].p>=55?'<p class="small" style="margin-top:6px;color:var(--bad)">Likely duplicate. You will choose to extend it or justify a new asset on the last step.</p>':''):'<p class="small muted">'+(regWords(REG.name+" "+REG.task).length<3?"Fill in the name and task to check the catalog.":"No close match in the catalog.")+'</p>')+'</div>';
+  h+='<div><h4>Gate readiness</h4><ul class="clean rdy">'+g.map(function(x){return '<li><span class="gt '+(x[2]?"y":"u")+'">'+x[0]+'</span><span>'+x[1]+(x[2]?"":' <span class="muted">· open</span>')+'</span></li>'}).join("")+'</ul><p class="small muted" style="margin-top:8px">G1, G3 and G4 are needed to submit. G2, G5 and G6 are needed before the asset is listed and benchmarked.</p></div>';
+  h+='<div class="note">After you submit, your group\'s AI champion reviews within 3 working days.</div>';
+  var el=$("#mrail"); if(el) el.innerHTML=h;
+  var st=$("#stepper"); if(st) st.innerHTML=regStepperHTML();
+}
+function regStepperHTML(){return RSTEPS.map(function(x,i){var cls=i===regStep?"on":stepBad[i]?"bad":(i<regStep||Object.keys(regValidate(i)).length===0&&i<5&&regHasContent())?"done":"";return '<li><button class="stp '+cls+'" type="button" data-rstep="'+i+'"'+(i===regStep?' aria-current="step"':'')+'><i>'+(cls==="done"?"✓":cls==="bad"?"!":i+1)+'</i><span>'+x[0]+'</span></button></li>'}).join("")}
+function regRender(focusFirstErr){
+  var root=$("#regRoot");
+  if(regDone){root.innerHTML='<div class="mscrim"></div><div class="modal" role="dialog" aria-modal="true" aria-labelledby="regTitle"><div class="mh" style="padding-bottom:14px"><h2 id="regTitle">Register AI asset</h2><button class="btn btn-s mclose" type="button" data-rclose="1">Close</button></div>'+
+    '<div class="mb"><div class="okpanel"><div class="big" aria-hidden="true">✓</div><h3>'+esc(regDone.name)+' is registered</h3><span class="rid">'+regDone.id+'</span>'+
+    '<p class="muted">'+(regDone.dup==="extend"?"Filed as a contribution to "+esc(regDone.target)+". Its owner is added as co-reviewer.":regDone.dup==="new"?"Sent to the review board for a duplicate decision before work starts.":"No duplicate found. It is now visible in the catalog as “In review”.")+'</p>'+
+    '<ol><li>Your group\'s AI champion reviews it within 3 working days.</li><li>Contract and SSO checks, then Zion integration on the onboarding pipeline.</li><li>It is listed once G6 docs are linked, and benchmarked on '+esc(regDone.gold||"its golden set")+'.</li></ol>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn" type="button" data-rafter="pipe">View in pipeline</button><button class="btn" type="button" data-rafter="cat">View in catalog</button><button class="btn btn-p" type="button" data-rafter="again">Register another</button></div></div></div><div class="mf"><span class="small muted">Registration ID '+regDone.id+'</span><span></span></div></div>';
+    var b=root.querySelector("[data-rafter]"); if(b) b.focus(); return;}
+  var resumed=regHasContent()&&!root.innerHTML;
+  root.innerHTML='<div class="mscrim" data-rclose="1"></div><div class="modal" role="dialog" aria-modal="true" aria-labelledby="regTitle">'+
+   '<div class="mh"><div><h2 id="regTitle">Register AI asset</h2><p class="msub">Register before you build. Fields marked <span style="color:var(--bad)">*</span> are required. The catalog is checked for duplicates as you type.</p></div><button class="btn btn-s mclose" type="button" data-rclose="1" aria-label="Close registration form">Close</button>'+
+   '<ol class="stepper" id="stepper" aria-label="Registration steps"></ol></div>'+
+   '<div class="mb"><form class="mform" id="regForm" novalidate>'+(resumed?'<div class="note acc" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>Continuing your unsent registration.</span><button class="link small" type="button" data-rfresh="1">Start over</button></div>':'')+
+   '<div><div class="eyebrow">Step '+(regStep+1)+' of 6 · '+RSTEPS[regStep][2]+'</div><h3 style="font-size:19px;margin-top:2px">'+RSTEPS[regStep][0]+'</h3><p class="small muted">'+RSTEPS[regStep][1]+'</p></div>'+regStepHTML()+'</form>'+
+   '<aside class="mrail" id="mrail" aria-label="Live checks"></aside></div>'+
+   '<div class="mf"><div class="mfl"><button class="btn" type="button" data-rdraft="1">Save draft</button><span class="small muted">'+(Object.keys(regErr).length?'<span style="color:var(--bad)">'+Object.keys(regErr).length+' field'+(Object.keys(regErr).length>1?"s need":" needs")+' attention</span>':'')+'</span></div>'+
+   '<div class="mfr"><button class="btn" type="button" data-rnav="-1"'+(regStep===0?" disabled":"")+'>Back</button>'+(regStep<5?'<button class="btn btn-p" type="button" data-rnav="1">Next: '+RSTEPS[regStep+1][0]+'</button>':'<button class="btn btn-p" type="button" data-rsubmit="1">Submit registration</button>')+'</div></div></div>';
+  regRail();
+  var target=focusFirstErr?root.querySelector('[aria-invalid="true"] input, [aria-invalid="true"]'):root.querySelector("#regForm input:not([type=hidden]), #regForm select, #regForm textarea");
+  if(target&&target.focus) target.focus();
+}
+function regOpen(mode){
+  if(mode==="example"){REG=regExample();regStep=0}
+  else if(mode==="new"&&regDone){REG=regBlank();regStep=0}
+  regDone=null;regErr={};stepBad={};
+  lastFocus=document.activeElement; $("#regRoot").innerHTML=(mode==="example")?"x":""; regRender(false);
+}
+function regClose(){$("#regRoot").innerHTML="";if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+function regGoStep(n){
+  if(n>regStep){ for(var i=regStep;i<n;i++){var e=regValidate(i); if(Object.keys(e).length){regStep=i;regErr=e;stepBad[i]=true;regRender(true);return} stepBad[i]=false} }
+  regErr={};regStep=n;$("#regRoot").innerHTML="x";regRender(false);
+  var f=$("#regForm"); if(f) f.scrollTop=0;
+}
+function regSubmit(){
+  for(var i=0;i<=5;i++){var e=regValidate(i); if(Object.keys(e).length){regStep=i;regErr=e;stepBad[i]=true;$("#regRoot").innerHTML="x";regRender(true);toast("Fix the highlighted fields on “"+RSTEPS[i][0]+"”");return}}
+  regCount++; var r=JSON.parse(JSON.stringify(REG)), d=regDupCache[0], id="REG-"+(1040+regCount);
+  var target=d&&d.p>=55?d.a:null, parent=r.parent||(r.dupDecision==="extend"&&target?(target.parent||target.id):"");
+  var lane=parent&&SMAP[parent]?SMAP[parent].lane:"F";
+  var stMap={"Idea / planned":"Planned",Build:"Build",Pilot:"Pilot",Live:"Live"};
+  var asset={id:"new-"+regCount,type:r.type,name:r.name,parent:parent||null,desc:r.task,ph:r.prim.concat(r.supp),st:stMap[r.status]||"Planned",reuse:0,surf:r.surf.filter(function(c){return c!=="Z"}).join("")||"P",tasks:(r.name+" "+r.task+" "+r.kw.join(" ")).toLowerCase(),prod:r.prods.length?r.prods:PRODS,lane:lane,isNew:true,reg:r,regId:id};
+  ASSETS.push(asset);AMAP[asset.id]=asset;
+  KCARDS.push([target?1:0,r.name,id+" · "+r.grp+(target?(r.dupDecision==="extend"?" · extends "+target.name:" · board decision"):""),parent&&SMAP[parent]?parent:"ZN",false,asset.id]);
+  renderKan();renderCards();var cur=(location.hash||"").replace("#","");buildNav();markSug();$$(".nav a").forEach(function(a){a.classList.toggle("on",a.dataset.v===cur)});
+  regDone={id:id,name:r.name,dup:target?r.dupDecision:"",target:target?target.name:"",gold:r.gold&&r.gold!=="Not decided yet"&&r.gold!=="Propose a new golden set"?r.gold:""};
+  try{localStorage.removeItem("wf7.regDraft")}catch(x){}
+  REG=regBlank();regStep=0;regErr={};stepBad={};
+  regRender(false);toast(id+" registered");
+}
+function renderRSteps(){ $("#rsteps").innerHTML=RSTEPS.map(function(x,i){return '<div class="rst"><i>'+(i+1)+'</i><b>'+x[0]+'</b><p>'+x[1]+'</p><span>'+x[2]+'</span></div>'}).join("") }
+function openNewDrawer(a){
+  var r=a.reg;
+  $("#drawerRoot").innerHTML='<div class="scrim" data-close="1"></div><aside class="drawer l'+a.lane+'" role="dialog" aria-modal="true" aria-labelledby="dTitle"><div class="dh"><button class="btn btn-s dclose" data-close="1" type="button" aria-label="Close">Close</button><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="ty">'+TYN[a.type]+'</span><span class="pill st-build">In review</span><span class="small muted mono">'+a.regId+'</span></div><h2 id="dTitle">'+esc(a.name)+'</h2><p class="small" style="color:var(--ink2)">'+esc(a.desc)+'</p></div><div class="db">'+
+   '<div class="ds"><h4>Registration</h4><dl class="kv"><dt>Owner</dt><dd>'+esc(r.owner)+' · '+esc(r.grp)+' · '+esc(r.site)+'</dd><dt>Status</dt><dd>'+esc(r.status)+'</dd><dt>Part of</dt><dd>'+(a.parent?esc(SMAP[a.parent].name):"Standalone")+'</dd><dt>STLC</dt><dd class="mono">'+(r.prim.map(function(p){return"P"+p}).join(" · ")||"—")+(r.supp.length?' (+ '+r.supp.map(function(p){return"P"+p}).join(" · ")+')':'')+'</dd><dt>L3 capability</dt><dd class="mono">'+esc(r.cap||"—")+'</dd><dt>Products</dt><dd>'+esc(r.prods.join(" · "))+'</dd><dt>Repository</dt><dd class="mono">'+esc(r.repo)+' · v'+esc(r.ver)+'</dd><dt>Model route</dt><dd>'+esc(r.route)+'</dd><dt>Golden set</dt><dd>'+esc(r.gold)+'</dd><dt>Duplicate</dt><dd>'+(r.dupDecision?esc(r.dupDecision==="extend"?"Extends an existing asset":"New build, board decision"):"No close match")+'</dd></dl></div>'+
+   '<div class="ds"><h4>Gates</h4><div class="gates">'+(function(){var save=REG;REG=r;var g=regGates();REG=save;return g.map(function(x){return '<span class="gt '+(x[2]?"y":"u")+'">'+x[0]+(x[2]?" ✓":"")+'</span>'}).join("")})()+'</div></div></div></aside>';
+}
+
+/* ---------------- theme ---------------- */
+var ROOT=document.documentElement, mq=window.matchMedia?window.matchMedia("(prefers-color-scheme: dark)"):null;
+function themeMode(){try{return localStorage.getItem("wf7.theme")||"system"}catch(e){return "system"}}
+function effective(m){return m==="system"?(mq&&mq.matches?"dark":"light"):m}
+function applyTheme(m){
+  if(m==="system") ROOT.removeAttribute("data-theme"); else ROOT.setAttribute("data-theme",m);
+  try{localStorage.setItem("wf7.theme",m)}catch(e){}
+  $$("[data-theme-set]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.themeSet===m))});
+  var n=$("#thNow"); if(n) n.innerHTML='Showing <b style="color:var(--ink)">'+effective(m)+'</b>'+(m==="system"?" (from system)":"");
+  $$("#tmap tr[data-tk]").forEach(function(r){var on=effective(m);r.querySelector(".cL").style.outline=on==="light"?"2px solid var(--acc)":"none";r.querySelector(".cD").style.outline=on==="dark"?"2px solid var(--acc)":"none"});
+}
+if(mq&&mq.addEventListener) mq.addEventListener("change",function(){if(themeMode()==="system")applyTheme("system")});
+var TROLE={bg:"Page ground",panel:"Cards and panels",soft:"Inset surface",soft2:"Track / chip fill",ink:"Primary text",ink2:"Secondary text",mute:"Muted text",faint:"Labels, hints",line:"Hairline borders",line2:"Control borders",
+ acc:"Zion accent",["acc-soft"]:"Accent tint (selected nav)",["acc-ink"]:"Accent text and links",["on-acc"]:"Text on accent",
+ la:"Lane A · Design the tests",lb:"Lane B · Build & run",lc:"Lane C · Find root cause",lf:"Foundation · Zion",["la-s"]:"Lane A tint",["lb-s"]:"Lane B tint",["lc-s"]:"Lane C tint",["lf-s"]:"Foundation tint",
+ ok:"Live · pass · Tier 1",["ok-s"]:"Success tint",warn:"Build · crowded · high",["warn-s"]:"Warning tint",bad:"Critical · gate fail",["bad-s"]:"Critical tint",info:"Pilot · medium",["info-s"]:"Info tint",smp:"Sample data marker",
+ ly1:"L1 Work process",ly2:"L2 Application",ly3:"L3 Agent",ly4:"L4 Data",ly5:"Execution substrate",ly1s:"L1 tint",ly2s:"L2 tint",ly3s:"L3 tint",ly4s:"L4 tint",ly5s:"Execution tint",["on-ly"]:"Text on layer label",scrim:"Drawer backdrop"};
+var TGROUP=[["Surfaces & text",["bg","panel","soft","soft2","ink","ink2","mute","faint","line","line2"]],["Zion accent",["acc","acc-soft","acc-ink","on-acc"]],["Solution lanes",["la","la-s","lb","lb-s","lc","lc-s","lf","lf-s"]],["Status & severity",["ok","ok-s","warn","warn-s","bad","bad-s","info","info-s","smp"]],["Architecture layers",["ly1","ly1s","ly2","ly2s","ly3","ly3s","ly4","ly4s","ly5","ly5s","on-ly","scrim"]]];
+function parseTokens(){
+  var css=Array.prototype.map.call(document.querySelectorAll("style"),function(x){return x.textContent}).join("\n");
+  function block(re){var m=css.match(re);var o={};if(!m)return o;m[1].replace(/--([\w-]+)\s*:\s*([^;]+);/g,function(_,k,v){o[k]=v.trim()});return o}
+  return {L:block(/\/\*[^*]*\*\/\s*:root\{([\s\S]*?)\n\}/)||{},D:block(/:root\[data-theme="dark"\]\{([\s\S]*?)\}/)};
+}
+function renderThemeMap(){
+  var t=parseTokens(); if(!Object.keys(t.L).length){var m=document.querySelector("style").textContent.match(/:root\{([\s\S]*?)\n\}/);if(m){m[1].replace(/--([\w-]+)\s*:\s*([^;]+);/g,function(_,k,v){t.L[k]=v.trim()})}}
+  var h='<tr><th>Token</th><th>Role</th><th>Light</th><th>Dark</th><th>Sample in both themes</th></tr>';
+  TGROUP.forEach(function(g){
+    h+='<tr><td colspan="5" style="background:var(--soft);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)">'+g[0]+'</td></tr>';
+    g[1].forEach(function(k){var L=t.L[k]||"—",D=t.D[k]||L,sw=function(v,c){return '<span class="swatch '+c+'" style="border-radius:5px;padding:2px"><i style="background:'+v+'"></i>'+esc(v)+'</span>'};
+      var bgL=k==="on-acc"?t.L.acc:k==="on-ly"?t.L.ly3:t.L.panel,bgD=k==="on-acc"?t.D.acc:k==="on-ly"?t.D.ly3:t.D.panel,isFill=/(-s|s|bg|panel|soft|soft2|scrim)$/.test(k)&&!/^(ink|ink2|mute|faint)$/.test(k);
+      var pv=isFill?'<div class="pv"><span class="tm-cell" style="background:'+L+';border-color:'+t.L.line2+';color:'+t.L.ink+'">Aa</span><span class="tm-cell" style="background:'+D+';border-color:'+t.D.line2+';color:'+t.D.ink+'">Aa</span></div>'
+        :'<div class="pv"><span class="tm-cell" style="background:'+bgL+';border-color:'+t.L.line+';color:'+L+';font-weight:700">Aa ●</span><span class="tm-cell" style="background:'+bgD+';border-color:'+t.D.line+';color:'+D+';font-weight:700">Aa ●</span></div>';
+      h+='<tr data-tk="'+k+'"><td class="mono small">--'+k+'</td><td class="small">'+esc(TROLE[k]||"")+'</td><td>'+sw(L,"cL")+'</td><td>'+sw(D,"cD")+'</td><td>'+pv+'</td></tr>'});
+  });
+  $("#tmap").innerHTML=h;
+}
+
+/* ---------------- events ---------------- */
+document.addEventListener("click",function(e){
+  var th=e.target.closest("[data-theme-set]"); if(th){applyTheme(th.dataset.themeSet);return}
+  var rg=e.target.closest("[data-reg]"); if(rg){closeDrawer();regOpen(rg.dataset.reg);return}
+  if($("#regRoot").innerHTML){
+    var m;
+    if((m=e.target.closest("[data-rclose]"))){regClose();return}
+    if((m=e.target.closest("[data-rnav]"))){regGoStep(Math.max(0,Math.min(5,regStep+(+m.dataset.rnav))));return}
+    if((m=e.target.closest("[data-rstep]"))){regGoStep(+m.dataset.rstep);return}
+    if((m=e.target.closest("[data-rsubmit]"))){regSubmit();return}
+    if((m=e.target.closest("[data-rdraft]"))){try{localStorage.setItem("wf7.regDraft",JSON.stringify(REG));toast("Draft saved on this browser")}catch(x){toast("Could not save a draft in this browser; your entries stay until you close the page")}return}
+    if((m=e.target.closest("[data-rfresh]"))){REG=regBlank();regStep=0;regErr={};stepBad={};try{localStorage.removeItem("wf7.regDraft")}catch(x){}$("#regRoot").innerHTML="x";regRender(false);return}
+    if((m=e.target.closest("[data-kwx]"))){REG.kw.splice(+m.dataset.kwx,1);regRerender();return}
+    if((m=e.target.closest("[data-peek]"))){var id=m.dataset.peek;regClose();openDrawer(id);return}
+    if((m=e.target.closest("[data-rafter]"))){var w=m.dataset.rafter;if(w==="again"){regDone=null;$("#regRoot").innerHTML="x";regRender(false)}else{regClose();regDone=null;go(w==="pipe"?"onboard":"discover")}return}
+    if(e.target.closest(".modal"))return;
+  }
+  var t=e.target.closest("[data-open],[data-go],[data-use],[data-close],[data-type],[data-task],[data-flow],[data-jb],[data-act],#qgo,#jbAll,#addSite");
+  if(!t) return;
+  if(t.dataset.close){closeDrawer();return}
+  if(t.dataset.open!==undefined){if(t.dataset.open)openDrawer(t.dataset.open);else toast("New submission: opens in the review queue (wireframe)");return}
+  if(t.dataset.go){closeDrawer();go(t.dataset.go);return}
+  if(t.dataset.use){var a=AMAP[t.dataset.use];toast("Opening "+a.name+" in the Zion portal with your sign-on (wireframe)");return}
+  if(t.dataset.act){toast({fork:"Adapt: creates a product-line config pack, not a fork of the code",collab:"Collaboration request sent to the owner and AI champion (wireframe)",issue:"Issue form opens in the asset's tracker (wireframe)"}[t.dataset.act]);return}
+  if(t.dataset.type){F.type=t.dataset.type;renderCards();return}
+  if(t.dataset.task){F.q=t.dataset.task;$("#q").value=F.q;$$(".task[data-task]").forEach(function(x){x.classList.toggle("on",x===t)});F.type="all";renderCards();return}
+  if(t.dataset.flow){var f=FLOWS.filter(function(x){return x.id===t.dataset.flow})[0];toast(f.st==="Planned"?f.name+" is planned for a later horizon (Zion H3)":"Launching: "+f.name+" (wireframe)");return}
+  if(t.dataset.jb){jbFilter=t.dataset.jb;renderJB();$("#jb").scrollIntoView({behavior:"smooth",block:"nearest"});return}
+  if(t.id==="jbAll"){jbFilter=null;renderJB();return}
+  if(t.id==="qgo"){F.q=$("#q").value.trim();renderCards();return}
+  if(t.id==="addSite"){toast("Add site: name, AI lead and catalog endpoint (wireframe)");return}
+});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"){if($("#regRoot").innerHTML){regClose();return}if($("#drawerRoot").innerHTML)closeDrawer()}});
+document.addEventListener("change",function(e){
+  var id=e.target.id;
+  if(id==="fPh"){F.ph=e.target.value;renderCards()}
+  if(id==="fProd"){F.prod=e.target.value;renderCards()}
+  if(id==="fSt"){F.st=e.target.value;renderCards()}
+  if(id==="fSort"){F.sort=e.target.value;renderCards()}
+  if(id==="role"){markSug();try{localStorage.setItem("wf7.role",e.target.value)}catch(x){}go(ROLEHOME[e.target.value])}
+  if(id==="site"){renderCards();if($("#site").value!=="all"&&$("#site").value!=="SSIR")go("discover")}
+});
+$("#q").addEventListener("keydown",function(e){if(e.key==="Enter"){F.q=e.target.value.trim();renderCards()}});
+$("#q").addEventListener("input",function(e){if(!e.target.value){F.q="";$$(".task[data-task]").forEach(function(x){x.classList.remove("on")});renderCards()}});
+$("#gq").addEventListener("keydown",function(e){if(e.key==="Enter"){F.q=e.target.value.trim();$("#q").value=F.q;F.type="all";renderCards();go("discover")}});
+function regRerender(){var f=$("#regForm"),st=f?f.scrollTop:0,ae=document.activeElement&&document.activeElement.id;$("#regRoot").innerHTML="x";regRender(false);f=$("#regForm");if(f)f.scrollTop=st;if(ae){var el=document.getElementById(ae);if(el)el.focus()}}
+function regFieldUpdate(t){
+  if(!t.closest||!t.closest("#regRoot"))return false;
+  var f=t.dataset.f,mm=t.dataset.m,bb=t.dataset.b;
+  if(f){REG[f]=t.value; if(regErr[f]){delete regErr[f]; t.removeAttribute("aria-invalid"); var er=$("#e_"+f); if(er)er.remove()} var c=$("#c_"+f); if(c)c.textContent=t.value.length+" / "+t.maxLength;}
+  else if(mm){var v=t.dataset.num?+t.dataset.v:t.dataset.v,arr=REG[mm].slice(),i=arr.map(String).indexOf(String(v));
+    if(t.checked&&i<0)arr.push(v); if(!t.checked&&i>=0)arr.splice(i,1);
+    if(mm==="irrev"&&t.checked){arr=v==="None"?["None"]:arr.filter(function(x){return x!=="None"})}
+    if(mm==="dclass"&&t.checked){arr=v==="No customer data"?["No customer data"]:arr.filter(function(x){return x!=="No customer data"})}
+    if(mm==="prim"){REG.supp=REG.supp.filter(function(p){return arr.indexOf(p)<0}); if(REG.cap&&REG.cap!=="new"&&arr.length&&arr.indexOf(+REG.cap.split(".")[0])<0)REG.cap="";}
+    REG[mm]=arr; if(regErr[mm])delete regErr[mm];}
+  else if(bb){REG[bb]=t.checked; if(regErr[bb])delete regErr[bb];}
+  else return false;
+  return true;
+}
+document.addEventListener("input",function(e){if(regFieldUpdate(e.target)&&e.target.dataset.f)regRail()});
+document.addEventListener("change",function(e){var t=e.target;if(!t.closest||!t.closest("#regRoot"))return;regFieldUpdate(t);if(t.dataset.rr||t.dataset.m==="irrev"||t.dataset.m==="dclass")regRerender();else regRail()},true);
+document.addEventListener("keydown",function(e){
+  var root=$("#regRoot"); if(!root.innerHTML) return;
+  if(e.target.id==="r_kwin"&&(e.key==="Enter"||e.key===",")){e.preventDefault();var v=e.target.value.trim().replace(/,$/,"");if(v&&REG.kw.length<8&&REG.kw.indexOf(v)<0){REG.kw.push(v)}regRerender();var k=$("#r_kwin");if(k)k.focus();return}
+  if(e.target.id==="r_kwin"&&e.key==="Backspace"&&!e.target.value&&REG.kw.length){REG.kw.pop();regRerender();var k2=$("#r_kwin");if(k2)k2.focus();return}
+  if(e.key==="Enter"&&e.target.tagName==="INPUT"&&e.target.closest("#regForm")){e.preventDefault();return}
+  if(e.key==="Tab"){var md=root.querySelector(".modal");if(!md)return;var fs=$$('button:not([disabled]),input:not([type="radio"]):not([tabindex="-1"]),input[type="radio"]:checked,select,textarea,[href]',md).filter(function(x){return x.offsetParent!==null||x.type==="radio"});if(!fs.length)return;var first=fs[0],last=fs[fs.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}
+});
+$("#regRoot").addEventListener("submit",function(e){e.preventDefault()});
+window.addEventListener("hashchange",route);
+
+/* ---------------- init ---------------- */
+try{var r0=localStorage.getItem("wf7.role");if(r0&&ROLEHOME[r0])$("#role").value=r0}catch(e){}
+buildNav();markSug();
+renderOverview();renderDiscoverChrome();renderCards();renderSTLC();renderFlows();renderRSteps();renderKan();renderValue();renderSites();renderPlatform();renderRoadmap();
+if(!location.hash){try{var v0=localStorage.getItem("wf7.view");if(v0&&VIEWS.some(function(v){return v[0]===v0})){history.replaceState(null,"","#"+v0)}}catch(e){}}
+renderThemeMap();applyTheme(themeMode());
+route();
+})();
+</script>
